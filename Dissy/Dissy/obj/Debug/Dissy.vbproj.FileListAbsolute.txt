@@ -1,0 +1,12 @@
+C:\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.exe.config
+C:\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.exe
+C:\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.pdb
+C:\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.xml
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.vbprojResolveAssemblyReference.cache
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.Form1.resources
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.Resources.resources
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.vbproj.GenerateResource.Cache
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.vbproj.CoreCompileInputs.cache
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.exe
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.xml
+C:\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.pdb
