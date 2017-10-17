@@ -411,9 +411,9 @@ Partial Class Form1
         Me.Label28.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label28.Location = New System.Drawing.Point(11, 147)
         Me.Label28.Name = "Label28"
-        Me.Label28.Size = New System.Drawing.Size(148, 16)
+        Me.Label28.Size = New System.Drawing.Size(155, 16)
         Me.Label28.TabIndex = 19
-        Me.Label28.Text = "Generated torque [N.m]"
+        Me.Label28.Text = "Generated torque [kN.m]"
         '
         'TextBox10
         '
@@ -822,9 +822,9 @@ Partial Class Form1
         Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label7.Location = New System.Drawing.Point(15, 95)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(87, 16)
+        Me.Label7.Size = New System.Drawing.Size(94, 16)
         Me.Label7.TabIndex = 15
-        Me.Label7.Text = "Torque [N.m]"
+        Me.Label7.Text = "Torque [kN.m]"
         '
         'TextBox3
         '
@@ -913,7 +913,7 @@ Partial Class Form1
         Me.ClientSize = New System.Drawing.Size(653, 674)
         Me.Controls.Add(Me.TabControl1)
         Me.Name = "Form1"
-        Me.Text = "Dinintegrator"
+        Me.Text = "Disintegrator"
         Me.TabControl1.ResumeLayout(False)
         Me.TabPage1.ResumeLayout(False)
         Me.GroupBox5.ResumeLayout(False)

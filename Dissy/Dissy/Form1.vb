@@ -95,15 +95,15 @@ Public Class Form1
 
         TextBox1.Text = l_tot.ToString("0.0")
         TextBox2.Text = rad.ToString("0.0")
-        TextBox3.Text = torque.ToString("0")
+        TextBox3.Text = (torque / 1000).ToString("0") '[kNm]
         TextBox4.Text = tip_speed.ToString("0.0")
         TextBox5.Text = lump_weight.ToString("0.0")
         TextBox6.Text = acc.ToString("0")
         TextBox7.Text = f_tip.ToString("0")
         TextBox8.Text = key_l.ToString("0")
-        TextBox9.Text = (max_key_torque / 1000).ToString("0")
-        TextBox10.Text = lump_torque.ToString("0")
-        TextBox11.Text = (max_key_force / 1000).ToString("0")
+        TextBox9.Text = (max_key_torque / 1000).ToString("0.0") '[kNm]
+        TextBox10.Text = (lump_torque / 1000).ToString("0.0")   '[kNm]
+        TextBox11.Text = (max_key_force / 1000).ToString("0")   '[kN]
         TextBox12.Text = allowed_stress.ToString("0")
     End Sub
 
