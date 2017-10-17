@@ -24,8 +24,15 @@ Partial Class Form1
     Private Sub InitializeComponent()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
-        Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         Me.GroupBox5 = New System.Windows.Forms.GroupBox()
+        Me.Label32 = New System.Windows.Forms.Label()
+        Me.TextBox16 = New System.Windows.Forms.TextBox()
+        Me.TextBox15 = New System.Windows.Forms.TextBox()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.TextBox14 = New System.Windows.Forms.TextBox()
+        Me.TextBox13 = New System.Windows.Forms.TextBox()
+        Me.Label31 = New System.Windows.Forms.Label()
+        Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         Me.Label30 = New System.Windows.Forms.Label()
         Me.TextBox12 = New System.Windows.Forms.TextBox()
         Me.Label29 = New System.Windows.Forms.Label()
@@ -88,13 +95,6 @@ Partial Class Form1
         Me.Label2 = New System.Windows.Forms.Label()
         Me.NumericUpDown2 = New System.Windows.Forms.NumericUpDown()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
-        Me.Label31 = New System.Windows.Forms.Label()
-        Me.TextBox13 = New System.Windows.Forms.TextBox()
-        Me.TextBox14 = New System.Windows.Forms.TextBox()
-        Me.Label14 = New System.Windows.Forms.Label()
-        Me.TextBox15 = New System.Windows.Forms.TextBox()
-        Me.TextBox16 = New System.Windows.Forms.TextBox()
-        Me.Label32 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox5.SuspendLayout()
@@ -147,16 +147,6 @@ Partial Class Form1
         Me.TabPage1.Text = "Data"
         Me.TabPage1.UseVisualStyleBackColor = True
         '
-        'ComboBox1
-        '
-        Me.ComboBox1.BackColor = System.Drawing.Color.Yellow
-        Me.ComboBox1.FormatString = "N1"
-        Me.ComboBox1.FormattingEnabled = True
-        Me.ComboBox1.Location = New System.Drawing.Point(194, 42)
-        Me.ComboBox1.Name = "ComboBox1"
-        Me.ComboBox1.Size = New System.Drawing.Size(50, 21)
-        Me.ComboBox1.TabIndex = 33
-        '
         'GroupBox5
         '
         Me.GroupBox5.Controls.Add(Me.Label32)
@@ -187,6 +177,78 @@ Partial Class Form1
         Me.GroupBox5.TabIndex = 17
         Me.GroupBox5.TabStop = False
         Me.GroupBox5.Text = "Shaft"
+        '
+        'Label32
+        '
+        Me.Label32.AutoSize = True
+        Me.Label32.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label32.Location = New System.Drawing.Point(19, 276)
+        Me.Label32.Name = "Label32"
+        Me.Label32.Size = New System.Drawing.Size(220, 16)
+        Me.Label32.TabIndex = 42
+        Me.Label32.Text = "Key material C45K, Rm= 650 N/mm2"
+        '
+        'TextBox16
+        '
+        Me.TextBox16.Location = New System.Drawing.Point(247, 43)
+        Me.TextBox16.Name = "TextBox16"
+        Me.TextBox16.Size = New System.Drawing.Size(38, 20)
+        Me.TextBox16.TabIndex = 41
+        Me.TextBox16.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'TextBox15
+        '
+        Me.TextBox15.Location = New System.Drawing.Point(223, 95)
+        Me.TextBox15.Name = "TextBox15"
+        Me.TextBox15.Size = New System.Drawing.Size(62, 20)
+        Me.TextBox15.TabIndex = 40
+        Me.TextBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label14.Location = New System.Drawing.Point(15, 68)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(158, 16)
+        Me.Label14.TabIndex = 39
+        Me.Label14.Text = "DIN 6885-1 key size [mm]"
+        '
+        'TextBox14
+        '
+        Me.TextBox14.Location = New System.Drawing.Point(223, 69)
+        Me.TextBox14.Name = "TextBox14"
+        Me.TextBox14.Size = New System.Drawing.Size(62, 20)
+        Me.TextBox14.TabIndex = 38
+        Me.TextBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'TextBox13
+        '
+        Me.TextBox13.Location = New System.Drawing.Point(167, 95)
+        Me.TextBox13.Name = "TextBox13"
+        Me.TextBox13.Size = New System.Drawing.Size(49, 20)
+        Me.TextBox13.TabIndex = 37
+        Me.TextBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'Label31
+        '
+        Me.Label31.AutoSize = True
+        Me.Label31.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label31.Location = New System.Drawing.Point(15, 42)
+        Me.Label31.Name = "Label31"
+        Me.Label31.Size = New System.Drawing.Size(173, 16)
+        Me.Label31.TabIndex = 36
+        Me.Label31.Text = "DIN 6885-1 key dia min-max"
+        '
+        'ComboBox1
+        '
+        Me.ComboBox1.BackColor = System.Drawing.Color.Yellow
+        Me.ComboBox1.FormatString = "N1"
+        Me.ComboBox1.FormattingEnabled = True
+        Me.ComboBox1.Location = New System.Drawing.Point(194, 42)
+        Me.ComboBox1.Name = "ComboBox1"
+        Me.ComboBox1.Size = New System.Drawing.Size(50, 21)
+        Me.ComboBox1.TabIndex = 33
         '
         'Label30
         '
@@ -261,7 +323,7 @@ Partial Class Form1
         Me.NumericUpDown18.Size = New System.Drawing.Size(62, 20)
         Me.NumericUpDown18.TabIndex = 28
         Me.NumericUpDown18.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.NumericUpDown18.Value = New Decimal(New Integer() {750, 0, 0, 0})
+        Me.NumericUpDown18.Value = New Decimal(New Integer() {650, 0, 0, 0})
         '
         'Label24
         '
@@ -839,72 +901,10 @@ Partial Class Form1
         Me.TabPage2.Location = New System.Drawing.Point(4, 22)
         Me.TabPage2.Name = "TabPage2"
         Me.TabPage2.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabPage2.Size = New System.Drawing.Size(645, 611)
+        Me.TabPage2.Size = New System.Drawing.Size(645, 648)
         Me.TabPage2.TabIndex = 1
         Me.TabPage2.Text = "TabPage2"
         Me.TabPage2.UseVisualStyleBackColor = True
-        '
-        'Label31
-        '
-        Me.Label31.AutoSize = True
-        Me.Label31.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label31.Location = New System.Drawing.Point(15, 42)
-        Me.Label31.Name = "Label31"
-        Me.Label31.Size = New System.Drawing.Size(173, 16)
-        Me.Label31.TabIndex = 36
-        Me.Label31.Text = "DIN 6885-1 key dia min-max"
-        '
-        'TextBox13
-        '
-        Me.TextBox13.Location = New System.Drawing.Point(167, 95)
-        Me.TextBox13.Name = "TextBox13"
-        Me.TextBox13.Size = New System.Drawing.Size(49, 20)
-        Me.TextBox13.TabIndex = 37
-        Me.TextBox13.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'TextBox14
-        '
-        Me.TextBox14.Location = New System.Drawing.Point(223, 69)
-        Me.TextBox14.Name = "TextBox14"
-        Me.TextBox14.Size = New System.Drawing.Size(62, 20)
-        Me.TextBox14.TabIndex = 38
-        Me.TextBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'Label14
-        '
-        Me.Label14.AutoSize = True
-        Me.Label14.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label14.Location = New System.Drawing.Point(15, 68)
-        Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(158, 16)
-        Me.Label14.TabIndex = 39
-        Me.Label14.Text = "DIN 6885-1 key size [mm]"
-        '
-        'TextBox15
-        '
-        Me.TextBox15.Location = New System.Drawing.Point(223, 95)
-        Me.TextBox15.Name = "TextBox15"
-        Me.TextBox15.Size = New System.Drawing.Size(62, 20)
-        Me.TextBox15.TabIndex = 40
-        Me.TextBox15.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'TextBox16
-        '
-        Me.TextBox16.Location = New System.Drawing.Point(247, 43)
-        Me.TextBox16.Name = "TextBox16"
-        Me.TextBox16.Size = New System.Drawing.Size(38, 20)
-        Me.TextBox16.TabIndex = 41
-        Me.TextBox16.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'Label32
-        '
-        Me.Label32.AutoSize = True
-        Me.Label32.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label32.Location = New System.Drawing.Point(19, 276)
-        Me.Label32.Name = "Label32"
-        Me.Label32.Size = New System.Drawing.Size(108, 16)
-        Me.Label32.TabIndex = 42
-        Me.Label32.Text = "Key material C45"
         '
         'Form1
         '
