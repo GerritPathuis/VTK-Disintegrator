@@ -8,6 +8,11 @@ Imports Word = Microsoft.Office.Interop.Word
 Imports System.Management
 
 Public Class Form1
+
+    Dim dirpath_Eng As String = "N:\Engineering\VBasic\Dissy_input\"
+    Dim dirpath_Rap As String = "N:\Engineering\VBasic\Dissy_rapport_copy\"
+    Dim dirpath_Home As String = "C:\Temp\"
+
     'according to DIN6885-1
     Public Shared shaft_key() As String = {
     "6;8;2x2;1.2;1.0",
@@ -40,7 +45,7 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, NumericUpDown10.ValueChanged, ComboBox1.SelectedIndexChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, NumericUpDown10.ValueChanged, ComboBox1.SelectedIndexChanged
         Calc_tab1()
     End Sub
 
@@ -117,16 +122,20 @@ Public Class Form1
         drive_power_max = drive_key_force * drive_r * rad   '[W]
         safety_coupling_key = drive_power_max / Installed_power
 
-
-
         '--------- Hydraulic nut --
         Dim spacer_od, spacer_id, spacer_radius, fric As Double
-        Dim max_torque As Double
-        spacer_od = NumericUpDown5.Value
+        Dim max_torque, delta_l, shaft_l, pull_force, area As Double
+        pull_force = NumericUpDown19.Value
+        spacer_od = NumericUpDown10.Value
         fric = NumericUpDown6.Value
         spacer_id = NumericUpDown12.Value
         spacer_radius = (spacer_od + spacer_id) / 4
-        max_torque = NumericUpDown19.Value * fric * (spacer_radius / 1000)
+        max_torque = pull_force * fric * (spacer_radius / 1000)     '[kNm]   
+        area = PI / 4 * spacer_id ^ 2                               '[mm2]
+        shaft_l = (NumericUpDown9.Value + NumericUpDown11.Value) * NumericUpDown7.Value '[mm]
+
+        delta_l = pull_force * 10 ^ 3 * shaft_l / (190000 * area)            '[mm]
+
 
         '-------- present-------
         TextBox1.Text = l_tot.ToString("0")
@@ -150,12 +159,16 @@ Public Class Form1
         TextBox29.Text = (start_torque / 1000).ToString("0")    '[kNm]
         TextBox32.Text = safety_coupling_key.ToString("0.0")    '[kNm]
         TextBox33.Text = specific_load.ToString("0.0")          '[]
+        TextBox34.Text = delta_l.ToString("0.00")               '[mm]
+        TextBox35.Text = shaft_l.ToString("0")                  '[mm]
+
 
         '------- checks---------
         TextBox25.BackColor = IIf(max_torque < start_torque, Color.LightGreen, Color.Red)
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        '----------- directory's-----------
 
         Thread.CurrentThread.CurrentCulture = New CultureInfo("en-US")
         Thread.CurrentThread.CurrentUICulture = New CultureInfo("en-US")
@@ -201,7 +214,7 @@ Public Class Form1
         Dim oTable As Word.Table
         Dim oPara1, oPara2 As Word.Paragraph
         Dim row As Integer
-        Dim ufilename, file_name As String
+        Dim ufilename As String
 
         Try
             oWord = CType(CreateObject("Word.Application"), Word.Application)
@@ -252,10 +265,9 @@ Public Class Form1
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
-
             '------------------ Drive Details----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 5, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 6, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -277,7 +289,7 @@ Public Class Form1
             row += 1
             oTable.Cell(row, 1).Range.Text = "Nominal Motor torque"
             oTable.Cell(row, 2).Range.Text = TextBox3.Text
-            oTable.Cell(row, 3).Range.Text = " [kNm]"
+            oTable.Cell(row, 3).Range.Text = "[kNm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Locked Motor torque"
             oTable.Cell(row, 2).Range.Text = TextBox29.Text
@@ -292,7 +304,7 @@ Public Class Form1
 
             '------------------ material----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 6, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 5, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -370,7 +382,7 @@ Public Class Form1
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
-            '------------------ beaters----------------------
+            '------------------ Beaters----------------------
             'Insert a table, fill it with data and change the column widths.
             oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 12, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
@@ -430,15 +442,157 @@ Public Class Form1
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
-            ' ufilename = "Fan_select_report_" & TextBox283.Text & "_" & TextBox284.Text & DateTime.Now.ToString("_yyyy_MM_dd") & "(" & TextBox89.Text & ")" & ".docx"
-            'If Directory.Exists(dirpath_Rap) Then
-            '    ufilename = dirpath_Rap & ufilename
-            'Else
-            '    ufilename = dirpath_Home & ufilename
-            'End If
-            'oWord.ActiveDocument.SaveAs(ufilename.ToString)
+            '------------------ Beaters shaft ----------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Beater shaft"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft diameter"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown12.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key size"
+            oTable.Cell(row, 2).Range.Text = TextBox14.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "key length"
+            oTable.Cell(row, 2).Range.Text = TextBox8.Text
+            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Allowed stress"
+            oTable.Cell(row, 2).Range.Text = TextBox12.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key t1"
+            oTable.Cell(row, 2).Range.Text = TextBox13.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Max force 1 key"
+            oTable.Cell(row, 2).Range.Text = TextBox11.Text
+            oTable.Cell(row, 3).Range.Text = "[N]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Max Torque 2 keys"
+            oTable.Cell(row, 2).Range.Text = TextBox9.Text
+            oTable.Cell(row, 3).Range.Text = "[kN.m]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Safety factor"
+            oTable.Cell(row, 2).Range.Text = TextBox32.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------ Material lump ----------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Material lump (Reufelsei-Devils egg)"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Egg diameter"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown14.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Egg weight"
+            oTable.Cell(row, 2).Range.Text = TextBox5.Text
+            oTable.Cell(row, 3).Range.Text = "[kg]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Acceleration time"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown15.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[sec]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Acceleration"
+            oTable.Cell(row, 2).Range.Text = TextBox6.Text
+            oTable.Cell(row, 3).Range.Text = "[m/s2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Acceleration force"
+            oTable.Cell(row, 2).Range.Text = TextBox7.Text
+            oTable.Cell(row, 3).Range.Text = "[N]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Generated torque"
+            oTable.Cell(row, 2).Range.Text = TextBox10.Text
+            oTable.Cell(row, 3).Range.Text = "[kNm]"
+
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+
+            '------------------ Hydaulic Nut ----------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Hydraulic Nut"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Spacer OD"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Spacer ID"
+            oTable.Cell(row, 2).Range.Text = TextBox23.Text
+            oTable.Cell(row, 3).Range.Text = "[kg]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Friction radius"
+            oTable.Cell(row, 2).Range.Text = TextBox24.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Friction coef."
+            oTable.Cell(row, 2).Range.Text = NumericUpDown6.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[-]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Strech force"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown19.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[KN]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Max. allowable torque"
+            oTable.Cell(row, 2).Range.Text = TextBox25.Text
+            oTable.Cell(row, 3).Range.Text = "[kNm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Stretch length"
+            oTable.Cell(row, 2).Range.Text = TextBox34.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+
+            '------------- store rapport------------------
+            ufilename = "Fan_select_report_" & TextBox30.Text & "_" & TextBox31.Text & DateTime.Now.ToString("_yyyy_MM_dd") & ".docx"
+
+            '---- if path not exist then create one----------
+            Try
+                If (Not System.IO.Directory.Exists(dirpath_Home)) Then System.IO.Directory.CreateDirectory(dirpath_Home)
+                If (Not System.IO.Directory.Exists(dirpath_Eng)) Then System.IO.Directory.CreateDirectory(dirpath_Eng)
+                If (Not System.IO.Directory.Exists(dirpath_Rap)) Then System.IO.Directory.CreateDirectory(dirpath_Rap)
+            Catch ex As Exception
+            End Try
+
+            If Directory.Exists(dirpath_Rap) Then
+                ufilename = dirpath_Rap & ufilename
+            Else
+                ufilename = dirpath_Home & ufilename
+            End If
+            oWord.ActiveDocument.SaveAs(ufilename.ToString)
         Catch ex As Exception
-            'MessageBox.Show(ex.Message & " Problem storing file to " & dirpath_Rap)  ' Show the exception's message.
+            MessageBox.Show(ex.Message & " Problem storing file to " & dirpath_Rap)  ' Show the exception's message.
         End Try
     End Sub
 
