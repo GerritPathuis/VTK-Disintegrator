@@ -4,7 +4,7 @@ Imports System.Math
 
 Imports System.Globalization
 Imports System.Threading
-'Imports Word = Microsoft.Office.Interop.Word
+Imports Word = Microsoft.Office.Interop.Word
 Imports System.Management
 
 Public Class Form1
@@ -45,12 +45,13 @@ Public Class Form1
     End Sub
 
     Private Sub Calc_tab1()
-        Dim power, rpm, rad, motor_torque, dia_beater As Double
+        Dim Installed_power, rpm, rad, motor_torque, dia_beater As Double
         Dim l_wet, l_add, l_tot As Double
         Dim tip_speed, acc, acc_time As Double
         Dim lump_dia, lump_weight, density, f_tip, lump_torque As Double
         Dim key_h, key_l, shaft_radius, max_key_torque, max_key_force As Double
         Dim start_torque, allowed_stress As Double
+        Dim specific_load As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -72,7 +73,7 @@ Public Class Form1
         Double.TryParse(TextBox13.Text, key_h)      '[mm]
         key_l = NumericUpDown9.Value                '[mm]
 
-        power = NumericUpDown1.Value
+        Installed_power = NumericUpDown1.Value * 1000    '[W]
         rpm = NumericUpDown2.Value
         dia_beater = NumericUpDown8.Value / 1000    '[m]
         lump_dia = NumericUpDown14.Value / 1000     '[m]
@@ -82,13 +83,16 @@ Public Class Form1
         shaft_radius = NumericUpDown12.Value / 2000   '[mm]
         allowed_stress = NumericUpDown18.Value / (1.5 * 1.25)  '[N/mm2]
 
+
         rad = rpm / 60 * 2 * PI
-        motor_torque = power * 1000 / rad
+        motor_torque = Installed_power / rad
         start_torque = motor_torque * 2.0
 
         l_wet = NumericUpDown3.Value
         l_add = NumericUpDown4.Value
         l_tot = (l_add + l_wet) * 1000 / 3600   '[kg/s]
+
+        specific_load = 3600 * l_tot / Installed_power  '[ton/(kW.hr)]
 
         tip_speed = dia_beater * rpm * PI / 60  '[m/s]
 
@@ -104,13 +108,16 @@ Public Class Form1
 
         '--------- max Allowed power on coupling key --
         Dim drive_key_force, drive_l, drive_b, drive_r As Double
-        Dim drive_power_max As Double
+        Dim drive_power_max, safety_coupling_key As Double
 
         Double.TryParse(TextBox21.Text, drive_b)            '[mm] key t1
         drive_l = NumericUpDown17.Value                     '[mm]  
         drive_key_force = allowed_stress * drive_b * drive_l '[N]
         drive_r = NumericUpDown13.Value / 2000              '[m] radius
         drive_power_max = drive_key_force * drive_r * rad   '[W]
+        safety_coupling_key = drive_power_max / Installed_power
+
+
 
         '--------- Hydraulic nut --
         Dim spacer_od, spacer_id, spacer_radius, fric As Double
@@ -122,7 +129,7 @@ Public Class Form1
         max_torque = NumericUpDown19.Value * fric * (spacer_radius / 1000)
 
         '-------- present-------
-        TextBox1.Text = l_tot.ToString("0.0")
+        TextBox1.Text = l_tot.ToString("0")
         TextBox2.Text = rad.ToString("0.0")
         TextBox3.Text = (motor_torque / 1000).ToString("0") '[kNm]
         TextBox4.Text = tip_speed.ToString("0.0")
@@ -141,6 +148,8 @@ Public Class Form1
         TextBox24.Text = spacer_radius.ToString("0")            '[mm]
         TextBox25.Text = max_torque.ToString("0")               '[kNm]
         TextBox29.Text = (start_torque / 1000).ToString("0")    '[kNm]
+        TextBox32.Text = safety_coupling_key.ToString("0.0")    '[kNm]
+        TextBox33.Text = specific_load.ToString("0.0")          '[]
 
         '------- checks---------
         TextBox25.BackColor = IIf(max_torque < start_torque, Color.LightGreen, Color.Red)
@@ -164,20 +173,276 @@ Public Class Form1
         ComboBox1.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 13, -1)) 'Select ..
         ComboBox2.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 18, -1)) 'Select ..
     End Sub
-    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click, NumericUpDown23.ValueChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown20.ValueChanged, TabPage3.Enter
-        Dim overall_length, width, mass, mass_inert, mass_in_tot, thick As Double
+    Private Sub Calc_inertia()
+        Dim overall_length, width, weight, mass_inert, mass_in_tot, thick As Double
 
-        '-------- mass moment of 
-        overall_length = NumericUpDown20.Value / 1000
+        '-------- mass moment of --------------
+        overall_length = NumericUpDown8.Value / 1000
         width = (NumericUpDown21.Value + NumericUpDown22.Value) / 2000
-        thick = NumericUpDown23.Value / 1000
-        mass = overall_length * width * thick * 7800    '[kg]
+        thick = NumericUpDown9.Value / 1000
+        weight = overall_length * width * thick * 7800    '[kg]
 
-        mass_inert = 1 / 12 * mass * overall_length ^ 2 '[k.m2]
-        mass_in_tot = mass_inert * NumericUpDown7.Value '[k.m2]
+        mass_inert = 1 / 12 * weight * overall_length ^ 2 '[kg.m2]
+        mass_in_tot = mass_inert * NumericUpDown7.Value '[kg.m2]
 
-        TextBox26.Text = mass_inert.ToString("0")       '[k.m2]
-        TextBox27.Text = mass_in_tot.ToString("0")      '[k.m2]
-        TextBox28.Text = mass.ToString("0")             '[k.m2]
+        TextBox26.Text = mass_inert.ToString("0")       '[kg.m2]
+        TextBox27.Text = mass_in_tot.ToString("0")      '[kg.m2]
+        TextBox28.Text = weight.ToString("0")           '[kg]
+    End Sub
+
+    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        Write_to_word()
+    End Sub
+
+    Private Sub Write_to_word()
+
+        Dim oWord As Word.Application
+        Dim oDoc As Word.Document
+        Dim oTable As Word.Table
+        Dim oPara1, oPara2 As Word.Paragraph
+        Dim row As Integer
+        Dim ufilename, file_name As String
+
+        Try
+            oWord = CType(CreateObject("Word.Application"), Word.Application)
+            oWord.Visible = True
+            oDoc = oWord.Documents.Add
+
+            oDoc.PageSetup.TopMargin = 35
+            oDoc.PageSetup.BottomMargin = 20
+            oDoc.PageSetup.RightMargin = 20
+            oDoc.PageSetup.Orientation = Word.WdOrientation.wdOrientPortrait
+            oDoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4
+            'oDoc.PageSetup.VerticalAlignment = Word.WdVerticalAlignment.wdAlignVerticalCenter
+
+            oPara1 = oDoc.Content.Paragraphs.Add
+            oPara1.Range.Text = "VTK Engineering"
+            oPara1.Range.Font.Name = "Arial"
+            oPara1.Range.Font.Size = 14
+            oPara1.Range.Font.Bold = CInt(True)
+            oPara1.Format.SpaceAfter = 0.5                '24 pt spacing after paragraph. 
+            oPara1.Range.InsertParagraphAfter()
+
+            oPara2 = oDoc.Content.Paragraphs.Add
+            oPara2.Format.SpaceAfter = 1
+            oPara2.Range.Font.Bold = CInt(False)
+            oPara2.Range.Text = "Disintegrator stress calculation" & vbCrLf
+            oPara2.Range.InsertParagraphAfter()
+
+            '----------------------------------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 4, 2)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 10
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+
+            oTable.Cell(1, 1).Range.Text = "Project Name"
+            oTable.Cell(1, 2).Range.Text = TextBox30.Text
+            oTable.Cell(2, 1).Range.Text = "Item number"
+            oTable.Cell(2, 2).Range.Text = TextBox31.Text
+            oTable.Cell(3, 1).Range.Text = "Author "
+            oTable.Cell(3, 2).Range.Text = Environment.UserName
+            oTable.Cell(4, 1).Range.Text = "Date "
+            oTable.Cell(4, 2).Range.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns 
+            oTable.Columns(2).Width = oWord.InchesToPoints(2)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+
+            '------------------ Drive Details----------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 5, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Electric motor "
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Installed Power"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[kW]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Speed "
+            oTable.Cell(row, 2).Range.Text = NumericUpDown2.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Radial speed"
+            oTable.Cell(row, 2).Range.Text = TextBox2.Text
+            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Nominal Motor torque"
+            oTable.Cell(row, 2).Range.Text = TextBox3.Text
+            oTable.Cell(row, 3).Range.Text = " [kNm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Locked Motor torque"
+            oTable.Cell(row, 2).Range.Text = TextBox29.Text
+            oTable.Cell(row, 3).Range.Text = "[kNm]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------ material----------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 6, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Material"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Wet material"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown3.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[ton/hr]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Dry material"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown4.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[ton/hr]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Total material"
+            oTable.Cell(row, 2).Range.Text = TextBox1.Text
+            oTable.Cell(row, 3).Range.Text = "[kg/sn]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Density"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown16.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[kg/m3]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------ Coupling key----------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 6, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Coupling key"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft diameter"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown13.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key size"
+            oTable.Cell(row, 2).Range.Text = TextBox18.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "key length"
+            oTable.Cell(row, 2).Range.Text = TextBox17.Text
+            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Allowed stress"
+            oTable.Cell(row, 2).Range.Text = TextBox19.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key t1"
+            oTable.Cell(row, 2).Range.Text = TextBox21.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Max force 1 key"
+            oTable.Cell(row, 2).Range.Text = TextBox22.Text
+            oTable.Cell(row, 3).Range.Text = "[N]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Max Allowed power 1 key"
+            oTable.Cell(row, 2).Range.Text = TextBox20.Text
+            oTable.Cell(row, 3).Range.Text = "[kW]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Safety factor"
+            oTable.Cell(row, 2).Range.Text = TextBox32.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------ beaters----------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 12, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Beaters"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "No of beaters"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown7.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[-]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Overall length"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown8.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Center width"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown21.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Tip width"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown22.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Beater plate thickness"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown9.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Friction disk dia"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Friction disk thckness"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown11.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Tip speed"
+            oTable.Cell(row, 2).Range.Text = TextBox4.Text
+            oTable.Cell(row, 3).Range.Text = "[m/s]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Beater weight"
+            oTable.Cell(row, 2).Range.Text = TextBox28.Text
+            oTable.Cell(row, 3).Range.Text = "[kg]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Beater inertia"
+            oTable.Cell(row, 2).Range.Text = TextBox26.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Total inertia"
+            oTable.Cell(row, 2).Range.Text = TextBox27.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            ' ufilename = "Fan_select_report_" & TextBox283.Text & "_" & TextBox284.Text & DateTime.Now.ToString("_yyyy_MM_dd") & "(" & TextBox89.Text & ")" & ".docx"
+            'If Directory.Exists(dirpath_Rap) Then
+            '    ufilename = dirpath_Rap & ufilename
+            'Else
+            '    ufilename = dirpath_Home & ufilename
+            'End If
+            'oWord.ActiveDocument.SaveAs(ufilename.ToString)
+        Catch ex As Exception
+            'MessageBox.Show(ex.Message & " Problem storing file to " & dirpath_Rap)  ' Show the exception's message.
+        End Try
+    End Sub
+
+    Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click, TabPage2.Enter
+        Calc_inertia()
     End Sub
 End Class
