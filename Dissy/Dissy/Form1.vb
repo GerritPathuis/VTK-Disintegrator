@@ -45,7 +45,7 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, NumericUpDown10.ValueChanged, ComboBox1.SelectedIndexChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged
         Calc_tab1()
     End Sub
 
@@ -53,14 +53,14 @@ Public Class Form1
         Dim Installed_power, rpm, rad, motor_torque, dia_beater As Double
         Dim l_wet, l_add, l_tot As Double
         Dim tip_speed, acc, acc_time As Double
-        Dim lump_dia, lump_weight, density, f_tip, lump_torque As Double
+        Dim lump_dia, lump_weight, density, f_tip, lump_torque, safety_lump As Double
         Dim key_h, key_l, shaft_radius, max_key_torque, max_key_force As Double
         Dim start_torque, allowed_stress As Double
-        Dim specific_load As Double
+        Dim specific_load, load_beater_tip As Double
+        Dim no_beaters As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
-
             TextBox13.Text = words(3)       '(t1) Key depth in shaft
             TextBox15.Text = words(4)       '(t2) Key above shaft
             TextBox16.Text = words(1)       'Max shaft diameter [mm]
@@ -74,7 +74,7 @@ Public Class Form1
             TextBox21.Text = words(3)       '(t1) Key depth in shaft
         End If
 
-
+        no_beaters = NumericUpDown7.Value
         Double.TryParse(TextBox13.Text, key_h)      '[mm]
         key_l = NumericUpDown9.Value                '[mm]
 
@@ -88,7 +88,6 @@ Public Class Form1
         shaft_radius = NumericUpDown12.Value / 2000   '[mm]
         allowed_stress = NumericUpDown18.Value / (1.5 * 1.25)  '[N/mm2]
 
-
         rad = rpm / 60 * 2 * PI
         motor_torque = Installed_power / rad
         start_torque = motor_torque * 2.0
@@ -98,9 +97,11 @@ Public Class Form1
         l_tot = (l_add + l_wet) * 1000 / 3600   '[kg/s]
 
         specific_load = 3600 * l_tot / Installed_power  '[ton/(kW.hr)]
+        load_beater_tip = l_tot / (rpm / 60 * no_beaters * 2)
 
         tip_speed = dia_beater * rpm * PI / 60  '[m/s]
 
+        '---- Lump calculation--------
         lump_weight = 4 / 3 * PI * (lump_dia / 2) ^ 3 * density
 
         acc = tip_speed / acc_time              '[m/s2]
@@ -110,39 +111,40 @@ Public Class Form1
         max_key_force = key_h * key_l * allowed_stress
         max_key_torque = max_key_force * shaft_radius
         max_key_torque *= 2     'two keys 
+        safety_lump = max_key_torque / lump_torque
 
         '--------- max Allowed power on coupling key --
         Dim drive_key_force, drive_l, drive_b, drive_r As Double
-        Dim drive_power_max, safety_coupling_key As Double
+        Dim drive_power_max, safety_coupling_key, safety_nut As Double
 
         Double.TryParse(TextBox21.Text, drive_b)            '[mm] key t1
         drive_l = NumericUpDown17.Value                     '[mm]  
         drive_key_force = allowed_stress * drive_b * drive_l '[N]
         drive_r = NumericUpDown13.Value / 2000              '[m] radius
         drive_power_max = drive_key_force * drive_r * rad   '[W]
-        safety_coupling_key = drive_power_max / Installed_power
+        safety_coupling_key = drive_power_max / start_torque
 
-        '--------- Hydraulic nut --
+        '--------- Hydraulic nut (spacer = friction disk) --
         Dim spacer_od, spacer_id, spacer_radius, fric As Double
         Dim max_torque, delta_l, shaft_l, pull_force, area As Double
         pull_force = NumericUpDown19.Value
-        spacer_od = NumericUpDown10.Value
+        spacer_od = NumericUpDown21.Value
         fric = NumericUpDown6.Value
         spacer_id = NumericUpDown12.Value
         spacer_radius = (spacer_od + spacer_id) / 4
-        max_torque = pull_force * fric * (spacer_radius / 1000)     '[kNm]   
+        max_torque = pull_force * fric * (spacer_radius / 1000)     '[kNm]
+        safety_nut = max_torque / start_torque * 1000                     '[-]
         area = PI / 4 * spacer_id ^ 2                               '[mm2]
-        shaft_l = (NumericUpDown9.Value + NumericUpDown11.Value) * NumericUpDown7.Value '[mm]
+        shaft_l = (NumericUpDown9.Value + NumericUpDown11.Value) * no_beaters '[mm]
 
         delta_l = pull_force * 10 ^ 3 * shaft_l / (190000 * area)            '[mm]
-
 
         '-------- present-------
         TextBox1.Text = l_tot.ToString("0")
         TextBox2.Text = rad.ToString("0.0")
-        TextBox3.Text = (motor_torque / 1000).ToString("0") '[kNm]
+        TextBox3.Text = (motor_torque / 1000).ToString("0.0") '[kNm]
         TextBox4.Text = tip_speed.ToString("0.0")
-        TextBox5.Text = lump_weight.ToString("0.0")
+        TextBox5.Text = lump_weight.ToString("0.00")
         TextBox6.Text = acc.ToString("0")
         TextBox7.Text = f_tip.ToString("0")
         TextBox8.Text = key_l.ToString("0")
@@ -156,15 +158,21 @@ Public Class Form1
         TextBox23.Text = spacer_id.ToString("0")                '[mm]
         TextBox24.Text = spacer_radius.ToString("0")            '[mm]
         TextBox25.Text = max_torque.ToString("0")               '[kNm]
-        TextBox29.Text = (start_torque / 1000).ToString("0")    '[kNm]
+        TextBox29.Text = (start_torque / 1000).ToString("0.0")  '[kNm]
         TextBox32.Text = safety_coupling_key.ToString("0.0")    '[kNm]
         TextBox33.Text = specific_load.ToString("0.0")          '[]
         TextBox34.Text = delta_l.ToString("0.00")               '[mm]
         TextBox35.Text = shaft_l.ToString("0")                  '[mm]
-
+        TextBox36.Text = load_beater_tip.ToString("0.0")        '[kg]
+        TextBox37.Text = spacer_od.ToString("0")                '[mm]
+        TextBox39.Text = safety_nut.ToString("0.0")             '[-]
+        TextBox40.Text = safety_lump.ToString("0.0")            '[-]
 
         '------- checks---------
-        TextBox25.BackColor = IIf(max_torque < start_torque, Color.LightGreen, Color.Red)
+        'TextBox25.BackColor = IIf(max_torque < start_torque, Color.LightGreen, Color.Red)
+        TextBox39.BackColor = IIf(safety_nut > 1.2, Color.LightGreen, Color.Red)
+        TextBox40.BackColor = IIf(safety_lump > 1.2, Color.LightGreen, Color.Red)
+        Calc_inertia()
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -187,20 +195,41 @@ Public Class Form1
         ComboBox2.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 18, -1)) 'Select ..
     End Sub
     Private Sub Calc_inertia()
-        Dim overall_length, width, weight, mass_inert, mass_in_tot, thick As Double
+        Dim overall_length, half_beater_weight, I_mass_inert, I_mass_in_tot, thick As Double
+        Dim no_beaters, B, H, H2, tip_width As Double
+        Dim tb, th, I_missing_tip, tip_weight As Double
 
         '-------- mass moment of --------------
+        'see http://www.dtic.mil/dtic/tr/fulltext/u2/274936.pdf
+        no_beaters = NumericUpDown7.Value
         overall_length = NumericUpDown8.Value / 1000
-        width = (NumericUpDown21.Value + NumericUpDown22.Value) / 2000
+        H = overall_length / 2     '[m]
+        B = NumericUpDown21.Value / 1000
         thick = NumericUpDown9.Value / 1000
-        weight = overall_length * width * thick * 7800    '[kg]
+        tip_width = NumericUpDown22.Value / 1000
 
-        mass_inert = 1 / 12 * weight * overall_length ^ 2 '[kg.m2]
-        mass_in_tot = mass_inert * NumericUpDown7.Value '[kg.m2]
+        '---- top triangle is cut off------------
+        th = tip_width / B * H          'missing_tip_height
+        tb = tip_width                  'missing_tip_base
+        tip_weight = th * tb * thick * 7850 / 2    '[kg] (triangle)
+        I_missing_tip = (half_beater_weight / 24) * ((7 * tb ^ 2) + (4 * th ^ 2)) '[kg.m2] one triangle
 
-        TextBox26.Text = mass_inert.ToString("0")       '[kg.m2]
-        TextBox27.Text = mass_in_tot.ToString("0")      '[kg.m2]
-        TextBox28.Text = weight.ToString("0")           '[kg]
+        '---- Beater triangle including missing tip ---------
+        H2 = H + th
+        half_beater_weight = H2 * B * thick * 7850 / 2    '[kg] (triangle)
+        I_mass_inert = (half_beater_weight / 24) * ((7 * B ^ 2) + (4 * H2 ^ 2)) '[kg.m2] one triangle
+
+        '---- now subtract the missing tio
+        I_mass_inert = I_mass_inert - I_missing_tip
+        I_mass_inert *= 2                                   'two triangles is one beater
+        half_beater_weight = half_beater_weight - tip_weight
+        I_mass_in_tot = I_mass_inert * no_beaters '[kg.m2]
+
+
+        '----present--------
+        TextBox26.Text = I_mass_inert.ToString("0")                   '[kg.m2]
+        TextBox27.Text = I_mass_in_tot.ToString("0")                  '[kg.m2]
+        TextBox28.Text = (half_beater_weight * 2).ToString("0")     '[kg]
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -336,7 +365,7 @@ Public Class Form1
 
             '------------------ Coupling key----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 6, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -372,7 +401,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox20.Text
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Safety factor"
+            oTable.Cell(row, 1).Range.Text = "Safety factor (locked motor)"
             oTable.Cell(row, 2).Range.Text = TextBox32.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
@@ -384,7 +413,7 @@ Public Class Form1
 
             '------------------ Beaters----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 12, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 11, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -412,8 +441,8 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = NumericUpDown9.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Friction disk dia"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString
+            oTable.Cell(row, 1).Range.Text = "Friction disk OD"
+            oTable.Cell(row, 2).Range.Text = TextBox37.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Friction disk thckness"
@@ -443,13 +472,13 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Beaters shaft ----------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             row = 1
-            oTable.Cell(row, 1).Range.Text = "Beater shaft"
+            oTable.Cell(row, 1).Range.Text = "Beater shaft key"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Shaft diameter"
             oTable.Cell(row, 2).Range.Text = NumericUpDown12.Value.ToString
@@ -478,10 +507,7 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Max Torque 2 keys"
             oTable.Cell(row, 2).Range.Text = TextBox9.Text
             oTable.Cell(row, 3).Range.Text = "[kN.m]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Safety factor"
-            oTable.Cell(row, 2).Range.Text = TextBox32.Text
-            oTable.Cell(row, 3).Range.Text = "[-]"
+
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
@@ -490,13 +516,13 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Material lump ----------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             row = 1
-            oTable.Cell(row, 1).Range.Text = "Material lump (Reufelsei-Devils egg)"
+            oTable.Cell(row, 1).Range.Text = "Material lump (Teufelsei)"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Egg diameter"
             oTable.Cell(row, 2).Range.Text = NumericUpDown14.Value.ToString
@@ -521,7 +547,10 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Generated torque"
             oTable.Cell(row, 2).Range.Text = TextBox10.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
-
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Safety factor"
+            oTable.Cell(row, 2).Range.Text = TextBox40.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
@@ -531,7 +560,7 @@ Public Class Form1
 
 
             '------------------ Hydaulic Nut ----------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -539,11 +568,11 @@ Public Class Form1
             row = 1
             oTable.Cell(row, 1).Range.Text = "Hydraulic Nut"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Spacer OD"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString
+            oTable.Cell(row, 1).Range.Text = "Friction disk OD"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown21.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Spacer ID"
+            oTable.Cell(row, 1).Range.Text = "Friction disk ID"
             oTable.Cell(row, 2).Range.Text = TextBox23.Text
             oTable.Cell(row, 3).Range.Text = "[kg]"
             row += 1
@@ -599,4 +628,6 @@ Public Class Form1
     Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click, TabPage2.Enter
         Calc_inertia()
     End Sub
+
+
 End Class
