@@ -45,7 +45,7 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown10.ValueChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged
         Calc_tab1()
     End Sub
 
@@ -631,14 +631,12 @@ Public Class Form1
         Calc_inertia()
     End Sub
     Private Sub Calc_shaft_coupling()
-        Dim dia, dia_calc, t1, f1, m1 As Double
-        Dim J, area As Double
-        Dim τ, σ_allowed As Double
+        Dim dia, dia_calc, t1, m1 As Double
+        Dim j, τ, σ_allowed As Double
 
         dia = NumericUpDown13.Value         'dia shaft
         Double.TryParse(TextBox21.Text, t1) 'depth key
         dia_calc = dia - t1                 'shaft calculation diameter
-        f1 = 0                              'pulling force
         Double.TryParse(TextBox29.Text, m1) 'torque locked motor
         m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
         σ_allowed = NumericUpDown10.Value / 1.5 / 1.25 'σ_allowed
@@ -654,22 +652,21 @@ Public Class Form1
         TextBox41.Text = dia.ToString("0.0")
         TextBox42.Text = t1.ToString("0.0")
         TextBox43.Text = dia_calc.ToString("0.0")
-        TextBox44.Text = (m1 / 10 ^ 6).ToString("0")    '[kNm]
-        TextBox45.Text = f1.ToString("0")
+        TextBox44.Text = (m1 / 10 ^ 3).ToString("0")    '[Nm]
         TextBox46.Text = τ.ToString("0")
         TextBox48.Text = σ_allowed.ToString("0")  'allowed stress
         TextBox60.Text = J.ToString("0")
-        TextBox63.Text = area.ToString("0")
-
         '--------- checks ---------
         TextBox46.BackColor = IIf(τ < σ_allowed, Color.LightGreen, Color.Red)
     End Sub
     Private Sub Calc_shaft_beaters()
-        Dim dia, dia_calc, t1, f1, m1, m2, length As Double
+        Dim dia, dia_calc, t1, f1, m1, m2 As Double
+        Dim length_l, length_a, length_b, R1 As Double
         Dim J, I, area As Double
-        Dim σd, σb, τ, σ2, σ_allowed As Double
+        Dim σd, σb, τ, σ_allowed, safety_stress As Double
+        Dim temp, τmax, σ12, σ12a, σ12b As Double
         Dim dia_fric As Double
-        Dim wght, q As Double
+        Dim wght, w As Double
 
         dia = NumericUpDown12.Value         '[mm] dia shaft
         Double.TryParse(TextBox13.Text, t1) '[mm] depth key
@@ -677,10 +674,13 @@ Public Class Form1
         f1 = NumericUpDown19.Value * 10 ^ 3 '[N]pulling force
         Double.TryParse(TextBox29.Text, m1) 'torque locked motor
         m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
-        length = NumericUpDown8.Value       '[mm] bearing-bearing length
+        length_l = NumericUpDown8.Value     '[mm] bearing-bearing length
+        length_b = NumericUpDown20.Value    '[mm] beater shaft key
         dia_fric = NumericUpDown21.Value    '[mm] spacer plate
         σ_allowed = NumericUpDown10.Value / 1.5 / 1.25 'σ_allowed
         wght = NumericUpDown5.Value         '[kg]
+
+
 
         '--------- Calc Polar Moment of Inertia   -----------
         'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
@@ -694,35 +694,64 @@ Public Class Form1
         σd = f1 / area
 
         '--------- calc σb (bend force) -----------
-        ' http://www-classes.usc.edu/engr/ce/457/moment_table.pdf
-        'Uniform load 
-        q = wght * 10 / length              '[n/mm] uniform load
-        m2 = q * length ^ 2 / 8             '[Nmm] Max moment
+        'http://www-classes.usc.edu/engr/ce/457/moment_table.pdf
+        'http://www.awc.org/pdf/codes-standards/publications/design-aids/AWC-DA6-BeamFormulas-0710.pdf
+        'https://theconstructor.org/structural-engg/solid-mechanics/combined-bending-direct-and-torsional-stresses/3704/
+        'Simple support with Partial Uniform load 
+
+        w = wght * 9.81 / length_b         '[N/mm] uniform load
+        length_a = (length_l - length_b) / 2
+        R1 = wght * 9.81 / 2               'R1=R2= half weight
+        m2 = R1 * (length_a + R1 / (2 * w))
+
         σb = m2 * (dia_calc / 2) / I
 
         '--------- calc τ -----------
         τ = m1 * (dia_calc / 2) / J
 
-        '--------- calc combined stress -----------
-        σ2 = 0.5 * Sqrt(((σd - σb) / 2) ^ 2 + 4 * τ ^ 2)
+        '--------- calc combined principle stress -----------
+        τmax = 0.5 * Sqrt(((σd - σb) / 2) ^ 2 + 4 * τ ^ 2)
+        temp = Sqrt(((σd - σb) * 0.5) ^ 2 + τ ^ 2)
+
+        σ12a = ((σd + σb) / 2) + temp   'possibility 1
+        σ12b = ((σd + σb) / 2) - temp   'possibility 2
+        σ12 = IIf(σ12a > σ12b, σ12a, σ12b)  'select the biggest
+
+        safety_stress = σ_allowed / σ12
 
         '---------- present --------------
-        TextBox47.Text = m2.ToString("0")               '[Nm]
+        TextBox47.Text = (m2 / 1000).ToString("0")      '[Nm]
         TextBox56.Text = dia.ToString("0.0")            '[mm]
         TextBox57.Text = t1.ToString("0.0")             '[mm]
         TextBox58.Text = dia_calc.ToString("0.0")       '[mm]
-        TextBox53.Text = (m1 / 10 ^ 6).ToString("0")    '[kNm]
+        TextBox53.Text = (m1 / 10 ^ 3).ToString("0")    '[Nm]
         TextBox54.Text = (f1 / 1000).ToString("0")      '[kN]
-        TextBox55.Text = length.ToString("0.0")
+        TextBox55.Text = length_L.ToString("0")
         TextBox51.Text = τ.ToString("0")
         TextBox52.Text = σd.ToString("0")
         TextBox59.Text = σb.ToString("0")
-        TextBox50.Text = σ2.ToString("0")
+        TextBox50.Text = σ12.ToString("0")
         TextBox61.Text = J.ToString("0")
         TextBox62.Text = I.ToString("0")
+        TextBox63.Text = area.ToString("0")
         TextBox64.Text = dia_fric.ToString("0")
-        '--------- checks ---------
-        TextBox50.BackColor = IIf(σ2 < σ_allowed, Color.LightGreen, Color.Red)
-    End Sub
+        TextBox45.Text = safety_stress.ToString("0.0")
+        TextBox49.Text = τmax.ToString("0.0")
 
+        '--------- checks ---------
+        TextBox49.BackColor = IIf(τmax < σ_allowed, Color.LightGreen, Color.Red)
+        TextBox50.BackColor = IIf(σ12 < σ_allowed, Color.LightGreen, Color.Red)
+        TextBox52.BackColor = IIf(σd < σ_allowed, Color.LightGreen, Color.Red)
+        TextBox51.BackColor = IIf(τ < σ_allowed, Color.LightGreen, Color.Red)
+        TextBox59.BackColor = IIf(σb < σ_allowed, Color.LightGreen, Color.Red)
+        TextBox45.BackColor = IIf(safety_stress > 1.2, Color.LightGreen, Color.Red)
+        '--------- beater shaft/key length input wrong--------- 
+        If (length_l < length_b) Then
+            NumericUpDown8.BackColor = Color.Red
+            NumericUpDown20.BackColor = Color.Red
+        Else
+            NumericUpDown8.BackColor = Color.Yellow
+            NumericUpDown20.BackColor = Color.Yellow
+        End If
+    End Sub
 End Class
