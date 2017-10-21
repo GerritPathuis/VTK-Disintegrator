@@ -45,7 +45,7 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown10.ValueChanged
         Calc_tab1()
     End Sub
 
@@ -173,6 +173,8 @@ Public Class Form1
         TextBox39.BackColor = IIf(safety_nut > 1.2, Color.LightGreen, Color.Red)
         TextBox40.BackColor = IIf(safety_lump > 1.2, Color.LightGreen, Color.Red)
         Calc_inertia()
+        Calc_shaft_coupling()
+        Calc_shaft_beaters()
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -628,6 +630,99 @@ Public Class Form1
     Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click, TabPage2.Enter
         Calc_inertia()
     End Sub
+    Private Sub Calc_shaft_coupling()
+        Dim dia, dia_calc, t1, f1, m1 As Double
+        Dim J, area As Double
+        Dim τ, σ_allowed As Double
 
+        dia = NumericUpDown13.Value         'dia shaft
+        Double.TryParse(TextBox21.Text, t1) 'depth key
+        dia_calc = dia - t1                 'shaft calculation diameter
+        f1 = 0                              'pulling force
+        Double.TryParse(TextBox29.Text, m1) 'torque locked motor
+        m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
+        σ_allowed = NumericUpDown10.Value / 1.5 / 1.25 'σ_allowed
+
+        '--------- Calc Polar Moment of Inertia of Area   -----------
+        'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
+        J = (PI * dia_calc ^ 4) / 32    '[mm4] Solid shaft
+
+        '--------- calc τ -----------
+        τ = m1 * (dia_calc / 2) / J
+
+        '---------- present --------------
+        TextBox41.Text = dia.ToString("0.0")
+        TextBox42.Text = t1.ToString("0.0")
+        TextBox43.Text = dia_calc.ToString("0.0")
+        TextBox44.Text = (m1 / 10 ^ 6).ToString("0")    '[kNm]
+        TextBox45.Text = f1.ToString("0")
+        TextBox46.Text = τ.ToString("0")
+        TextBox48.Text = σ_allowed.ToString("0")  'allowed stress
+        TextBox60.Text = J.ToString("0")
+        TextBox63.Text = area.ToString("0")
+
+        '--------- checks ---------
+        TextBox46.BackColor = IIf(τ < σ_allowed, Color.LightGreen, Color.Red)
+    End Sub
+    Private Sub Calc_shaft_beaters()
+        Dim dia, dia_calc, t1, f1, m1, m2, length As Double
+        Dim J, I, area As Double
+        Dim σd, σb, τ, σ2, σ_allowed As Double
+        Dim dia_fric As Double
+        Dim wght, q As Double
+
+        dia = NumericUpDown12.Value         '[mm] dia shaft
+        Double.TryParse(TextBox13.Text, t1) '[mm] depth key
+        dia_calc = dia - t1                 '[mm]shaft calculation diameter
+        f1 = NumericUpDown19.Value * 10 ^ 3 '[N]pulling force
+        Double.TryParse(TextBox29.Text, m1) 'torque locked motor
+        m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
+        length = NumericUpDown8.Value       '[mm] bearing-bearing length
+        dia_fric = NumericUpDown21.Value    '[mm] spacer plate
+        σ_allowed = NumericUpDown10.Value / 1.5 / 1.25 'σ_allowed
+        wght = NumericUpDown5.Value         '[kg]
+
+        '--------- Calc Polar Moment of Inertia   -----------
+        'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
+        J = PI * dia_calc ^ 4 / 32    '[mm4] Solid shaft
+
+        '--------- Calc Area Moment of Inertia    -----------
+        I = PI * dia_calc ^ 4 / 64    '[mm4] Solid shaft
+
+        '--------- calc σd (pull force) -----------
+        area = PI / 4 * dia_calc ^ 2    '[mm2]
+        σd = f1 / area
+
+        '--------- calc σb (bend force) -----------
+        ' http://www-classes.usc.edu/engr/ce/457/moment_table.pdf
+        'Uniform load 
+        q = wght * 10 / length              '[n/mm] uniform load
+        m2 = q * length ^ 2 / 8             '[Nmm] Max moment
+        σb = m2 * (dia_calc / 2) / I
+
+        '--------- calc τ -----------
+        τ = m1 * (dia_calc / 2) / J
+
+        '--------- calc combined stress -----------
+        σ2 = 0.5 * Sqrt(((σd - σb) / 2) ^ 2 + 4 * τ ^ 2)
+
+        '---------- present --------------
+        TextBox47.Text = m2.ToString("0")               '[Nm]
+        TextBox56.Text = dia.ToString("0.0")            '[mm]
+        TextBox57.Text = t1.ToString("0.0")             '[mm]
+        TextBox58.Text = dia_calc.ToString("0.0")       '[mm]
+        TextBox53.Text = (m1 / 10 ^ 6).ToString("0")    '[kNm]
+        TextBox54.Text = (f1 / 1000).ToString("0")      '[kN]
+        TextBox55.Text = length.ToString("0.0")
+        TextBox51.Text = τ.ToString("0")
+        TextBox52.Text = σd.ToString("0")
+        TextBox59.Text = σb.ToString("0")
+        TextBox50.Text = σ2.ToString("0")
+        TextBox61.Text = J.ToString("0")
+        TextBox62.Text = I.ToString("0")
+        TextBox64.Text = dia_fric.ToString("0")
+        '--------- checks ---------
+        TextBox50.BackColor = IIf(σ2 < σ_allowed, Color.LightGreen, Color.Red)
+    End Sub
 
 End Class
