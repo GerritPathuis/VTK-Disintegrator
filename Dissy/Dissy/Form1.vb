@@ -650,7 +650,7 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Shaft ----------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 12, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 13, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -694,7 +694,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox52.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Actual σb stress"
+            oTable.Cell(row, 1).Range.Text = "Bend σb stress"
             oTable.Cell(row, 2).Range.Text = TextBox59.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
@@ -702,7 +702,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox50.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Savety facor stress"
+            oTable.Cell(row, 1).Range.Text = "Safety facor stress"
             oTable.Cell(row, 2).Range.Text = TextBox45.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
