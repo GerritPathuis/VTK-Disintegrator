@@ -340,6 +340,40 @@ Public Class Form1
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
+            '------------------ Selected Steel ----------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 5, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Selected steel"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key,σ design compression stress"
+            oTable.Cell(row, 2).Range.Text = TextBox12.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key,τ design shear stress"
+            oTable.Cell(row, 2).Range.Text = TextBox67.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft,σ design compression stress"
+            oTable.Cell(row, 2).Range.Text = TextBox48.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft,τ design shear stress"
+            oTable.Cell(row, 2).Range.Text = TextBox68.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
             '------------------ material----------------------
             'Insert a table, fill it with data and change the column widths.
             oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 5, 3)
@@ -362,7 +396,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox1.Text
             oTable.Cell(row, 3).Range.Text = "[kg/sn]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Density"
+            oTable.Cell(row, 1).Range.Text = "Average density"
             oTable.Cell(row, 2).Range.Text = NumericUpDown16.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[kg/m3]"
 
@@ -394,7 +428,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox17.Text
             oTable.Cell(row, 3).Range.Text = "[rpm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Allowed stress"
+            oTable.Cell(row, 1).Range.Text = "Allowed σ stress"
             oTable.Cell(row, 2).Range.Text = TextBox19.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
@@ -402,11 +436,11 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox21.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Max force 1 key"
+            oTable.Cell(row, 1).Range.Text = "Maximum force 1 key"
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
             oTable.Cell(row, 3).Range.Text = "[N]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Max Allowed power 1 key"
+            oTable.Cell(row, 1).Range.Text = "Maximum Allowed power 1 key"
             oTable.Cell(row, 2).Range.Text = TextBox20.Text
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
@@ -497,11 +531,11 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox14.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "key length"
+            oTable.Cell(row, 1).Range.Text = "Working key length"
             oTable.Cell(row, 2).Range.Text = TextBox8.Text
-            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Allowed compression stress"
+            oTable.Cell(row, 1).Range.Text = "Allowed σ compression stress"
             oTable.Cell(row, 2).Range.Text = TextBox12.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
@@ -509,14 +543,13 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox13.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Max force 1 key"
+            oTable.Cell(row, 1).Range.Text = "Maximum force 1 key"
             oTable.Cell(row, 2).Range.Text = TextBox11.Text
             oTable.Cell(row, 3).Range.Text = "[N]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Max Torque 2 keys"
+            oTable.Cell(row, 1).Range.Text = "Maximum Torque 2 keys"
             oTable.Cell(row, 2).Range.Text = TextBox9.Text
             oTable.Cell(row, 3).Range.Text = "[kN.m]"
-
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
@@ -557,8 +590,13 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox10.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Safety factor"
+            oTable.Cell(row, 1).Range.Text = "Safety factor, key only"
             oTable.Cell(row, 2).Range.Text = TextBox40.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Safety factor, hydraulic nut"
+            oTable.Cell(row, 2).Range.Text = TextBox65.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
