@@ -358,7 +358,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox67.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Shaft,σ design compression stress"
+            oTable.Cell(row, 1).Range.Text = "Shaft,σ design compr.stress"
             oTable.Cell(row, 2).Range.Text = TextBox48.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
@@ -606,7 +606,7 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
 
-            '------------------ Hydaulic Nut ----------------------
+            '------------------ Hydraulic Nut ----------------------
             oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
@@ -649,6 +649,68 @@ Public Class Form1
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
+            '------------------ Shaft ----------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 12, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Shaft"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft drive diameter"
+            oTable.Cell(row, 2).Range.Text = TextBox41.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key depth"
+            oTable.Cell(row, 2).Range.Text = TextBox42.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Calc diameter"
+            oTable.Cell(row, 2).Range.Text = TextBox43.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Drive key τ stress"
+            oTable.Cell(row, 2).Range.Text = TextBox46.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft beater diameter"
+            oTable.Cell(row, 2).Range.Text = TextBox56.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Key depth"
+            oTable.Cell(row, 2).Range.Text = TextBox57.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Calc diameter"
+            oTable.Cell(row, 2).Range.Text = TextBox58.Text
+            oTable.Cell(row, 3).Range.Text = "[mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Torsion τ stress"
+            oTable.Cell(row, 2).Range.Text = TextBox51.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Pull σd stress"
+            oTable.Cell(row, 2).Range.Text = TextBox52.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Actual σb stress"
+            oTable.Cell(row, 2).Range.Text = TextBox59.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Principle combined stress"
+            oTable.Cell(row, 2).Range.Text = TextBox50.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Savety facor stress"
+            oTable.Cell(row, 2).Range.Text = TextBox45.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------- store rapport------------------
             ufilename = "Fan_select_report_" & TextBox30.Text & "_" & TextBox31.Text & DateTime.Now.ToString("_yyyy_MM_dd") & ".docx"
@@ -837,7 +899,7 @@ Public Class Form1
         If String.IsNullOrEmpty(TextBox10.Text) Then TextBox10.Text = "-"
         If String.IsNullOrEmpty(TextBox11.Text) Then TextBox11.Text = "-"
 
-        temp_string = TextBox9.Text & ";" & TextBox10.Text & ";" & TextBox11.Text & ";"
+        temp_string = TextBox30.Text & ";" & TextBox31.Text & ";"
         temp_string &= vbCrLf & "BREAK" & vbCrLf & ";"
 
         '-------- find all numeric, combobox, checkbox and radiobutton controls -----------------
@@ -938,9 +1000,8 @@ Public Class Form1
 
             '----- retrieve case condition-----
             words = control_words(0).Split(separators, StringSplitOptions.None) 'Split first line the read file content
-            TextBox9.Text = words(0)                  'Project number
-            TextBox10.Text = words(1)                 'Item name
-            TextBox11.Text = words(2)                 'Fan type
+            TextBox30.Text = words(0)                  'Project number
+            TextBox31.Text = words(1)                 'Item name
 
             '---------- terugzetten numeric controls -----------------
             FindControlRecursive(all_num, Me, GetType(NumericUpDown))

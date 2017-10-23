@@ -25,7 +25,10 @@ Partial Class Form1
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.Button5 = New System.Windows.Forms.Button()
+        Me.Button4 = New System.Windows.Forms.Button()
         Me.GroupBox19 = New System.Windows.Forms.GroupBox()
+        Me.Label60 = New System.Windows.Forms.Label()
         Me.NumericUpDown25 = New System.Windows.Forms.NumericUpDown()
         Me.Label95 = New System.Windows.Forms.Label()
         Me.Label94 = New System.Windows.Forms.Label()
@@ -160,6 +163,8 @@ Partial Class Form1
         Me.Label13 = New System.Windows.Forms.Label()
         Me.NumericUpDown12 = New System.Windows.Forms.NumericUpDown()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
+        Me.Label37 = New System.Windows.Forms.Label()
+        Me.TextBox39 = New System.Windows.Forms.TextBox()
         Me.Label89 = New System.Windows.Forms.Label()
         Me.NumericUpDown20 = New System.Windows.Forms.NumericUpDown()
         Me.TextBox27 = New System.Windows.Forms.TextBox()
@@ -241,11 +246,7 @@ Partial Class Form1
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.TabPage5 = New System.Windows.Forms.TabPage()
         Me.PictureBox2 = New System.Windows.Forms.PictureBox()
-        Me.Button4 = New System.Windows.Forms.Button()
-        Me.Button5 = New System.Windows.Forms.Button()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
-        Me.TextBox39 = New System.Windows.Forms.TextBox()
-        Me.Label37 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox19.SuspendLayout()
@@ -334,8 +335,29 @@ Partial Class Form1
         Me.TabPage1.Text = "Drive, process & steel properties"
         Me.TabPage1.UseVisualStyleBackColor = True
         '
+        'Button5
+        '
+        Me.Button5.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.Button5.Location = New System.Drawing.Point(507, 106)
+        Me.Button5.Name = "Button5"
+        Me.Button5.Size = New System.Drawing.Size(135, 20)
+        Me.Button5.TabIndex = 36
+        Me.Button5.Text = "Retrieve Input"
+        Me.Button5.UseVisualStyleBackColor = False
+        '
+        'Button4
+        '
+        Me.Button4.BackColor = System.Drawing.Color.LightSteelBlue
+        Me.Button4.Location = New System.Drawing.Point(357, 106)
+        Me.Button4.Name = "Button4"
+        Me.Button4.Size = New System.Drawing.Size(134, 20)
+        Me.Button4.TabIndex = 35
+        Me.Button4.Text = "Save Input"
+        Me.Button4.UseVisualStyleBackColor = False
+        '
         'GroupBox19
         '
+        Me.GroupBox19.Controls.Add(Me.Label60)
         Me.GroupBox19.Controls.Add(Me.NumericUpDown25)
         Me.GroupBox19.Controls.Add(Me.Label95)
         Me.GroupBox19.Controls.Add(Me.Label94)
@@ -347,10 +369,20 @@ Partial Class Form1
         Me.GroupBox19.Controls.Add(Me.Label67)
         Me.GroupBox19.Location = New System.Drawing.Point(357, 421)
         Me.GroupBox19.Name = "GroupBox19"
-        Me.GroupBox19.Size = New System.Drawing.Size(285, 159)
+        Me.GroupBox19.Size = New System.Drawing.Size(285, 178)
         Me.GroupBox19.TabIndex = 34
         Me.GroupBox19.TabStop = False
         Me.GroupBox19.Text = "Shaft steel properties"
+        '
+        'Label60
+        '
+        Me.Label60.AutoSize = True
+        Me.Label60.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label60.Location = New System.Drawing.Point(8, 149)
+        Me.Label60.Name = "Label60"
+        Me.Label60.Size = New System.Drawing.Size(180, 16)
+        Me.Label60.TabIndex = 59
+        Me.Label60.Text = "Heat treated, Steel shot S230"
         '
         'NumericUpDown25
         '
@@ -401,9 +433,9 @@ Partial Class Form1
         Me.Label83.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label83.Location = New System.Drawing.Point(6, 22)
         Me.Label83.Name = "Label83"
-        Me.Label83.Size = New System.Drawing.Size(152, 16)
+        Me.Label83.Size = New System.Drawing.Size(172, 16)
         Me.Label83.TabIndex = 51
-        Me.Label83.Text = "Yield shaft mat. [N/mm2]"
+        Me.Label83.Text = "Yield 0.2 shaft mat. [N/mm2]"
         '
         'NumericUpDown10
         '
@@ -502,9 +534,9 @@ Partial Class Form1
         Me.Label47.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label47.Location = New System.Drawing.Point(8, 20)
         Me.Label47.Name = "Label47"
-        Me.Label47.Size = New System.Drawing.Size(143, 16)
+        Me.Label47.Size = New System.Drawing.Size(163, 16)
         Me.Label47.TabIndex = 54
-        Me.Label47.Text = "Yield strength [N/mm2]"
+        Me.Label47.Text = "Yield 0.2 strength [N/mm2]"
         '
         'Label32
         '
@@ -526,7 +558,7 @@ Partial Class Form1
         Me.NumericUpDown23.Size = New System.Drawing.Size(62, 20)
         Me.NumericUpDown23.TabIndex = 53
         Me.NumericUpDown23.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.NumericUpDown23.Value = New Decimal(New Integer() {690, 0, 0, 0})
+        Me.NumericUpDown23.Value = New Decimal(New Integer() {744, 0, 0, 0})
         '
         'TextBox66
         '
@@ -645,9 +677,9 @@ Partial Class Form1
         Me.Label25.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label25.Location = New System.Drawing.Point(6, 22)
         Me.Label25.Name = "Label25"
-        Me.Label25.Size = New System.Drawing.Size(143, 16)
+        Me.Label25.Size = New System.Drawing.Size(163, 16)
         Me.Label25.TabIndex = 31
-        Me.Label25.Text = "Yield strength [N/mm2]"
+        Me.Label25.Text = "Yield 0.2 strength [N/mm2]"
         '
         'GroupBox9
         '
@@ -1000,9 +1032,9 @@ Partial Class Form1
         Me.Label19.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label19.Location = New System.Drawing.Point(16, 88)
         Me.Label19.Name = "Label19"
-        Me.Label19.Size = New System.Drawing.Size(101, 16)
+        Me.Label19.Size = New System.Drawing.Size(168, 16)
         Me.Label19.TabIndex = 12
-        Me.Label19.Text = "Density [kg/m3]"
+        Me.Label19.Text = "Density (Teufelsei) [kg/m3]"
         '
         'Label3
         '
@@ -1457,7 +1489,7 @@ Partial Class Form1
         Me.GroupBox4.Size = New System.Drawing.Size(322, 222)
         Me.GroupBox4.TabIndex = 19
         Me.GroupBox4.TabStop = False
-        Me.GroupBox4.Text = "Material lump details"
+        Me.GroupBox4.Text = "Material lump (Teufelsei) details"
         '
         'TextBox65
         '
@@ -1827,6 +1859,25 @@ Partial Class Form1
         Me.GroupBox3.TabIndex = 17
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "Beater dimensions"
+        '
+        'Label37
+        '
+        Me.Label37.AutoSize = True
+        Me.Label37.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label37.Location = New System.Drawing.Point(19, 282)
+        Me.Label37.Name = "Label37"
+        Me.Label37.Size = New System.Drawing.Size(116, 16)
+        Me.Label37.TabIndex = 44
+        Me.Label37.Text = "Motor start time [s]"
+        '
+        'TextBox39
+        '
+        Me.TextBox39.Enabled = False
+        Me.TextBox39.Location = New System.Drawing.Point(223, 281)
+        Me.TextBox39.Name = "TextBox39"
+        Me.TextBox39.Size = New System.Drawing.Size(62, 20)
+        Me.TextBox39.TabIndex = 43
+        Me.TextBox39.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Label89
         '
@@ -2420,7 +2471,7 @@ Partial Class Form1
         Me.GroupBox10.Size = New System.Drawing.Size(289, 118)
         Me.GroupBox10.TabIndex = 19
         Me.GroupBox10.TabStop = False
-        Me.GroupBox10.Text = "Torque @ coupling"
+        Me.GroupBox10.Text = "Shaft torque @ coupling"
         '
         'Label84
         '
@@ -2572,9 +2623,9 @@ Partial Class Form1
         Me.Label65.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label65.Location = New System.Drawing.Point(15, 19)
         Me.Label65.Name = "Label65"
-        Me.Label65.Size = New System.Drawing.Size(96, 16)
+        Me.Label65.Size = New System.Drawing.Size(160, 16)
         Me.Label65.TabIndex = 18
-        Me.Label65.Text = "Diameter [mm]"
+        Me.Label65.Text = "Drive shaft diameter [mm]"
         '
         'TextBox41
         '
@@ -2676,48 +2727,9 @@ Partial Class Form1
         Me.PictureBox2.TabIndex = 1
         Me.PictureBox2.TabStop = False
         '
-        'Button4
-        '
-        Me.Button4.BackColor = System.Drawing.Color.LightSteelBlue
-        Me.Button4.Location = New System.Drawing.Point(357, 106)
-        Me.Button4.Name = "Button4"
-        Me.Button4.Size = New System.Drawing.Size(134, 20)
-        Me.Button4.TabIndex = 35
-        Me.Button4.Text = "Save Input"
-        Me.Button4.UseVisualStyleBackColor = False
-        '
-        'Button5
-        '
-        Me.Button5.BackColor = System.Drawing.Color.LightSteelBlue
-        Me.Button5.Location = New System.Drawing.Point(507, 106)
-        Me.Button5.Name = "Button5"
-        Me.Button5.Size = New System.Drawing.Size(135, 20)
-        Me.Button5.TabIndex = 36
-        Me.Button5.Text = "Retrieve Input"
-        Me.Button5.UseVisualStyleBackColor = False
-        '
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
-        '
-        'TextBox39
-        '
-        Me.TextBox39.Enabled = False
-        Me.TextBox39.Location = New System.Drawing.Point(223, 281)
-        Me.TextBox39.Name = "TextBox39"
-        Me.TextBox39.Size = New System.Drawing.Size(62, 20)
-        Me.TextBox39.TabIndex = 43
-        Me.TextBox39.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'Label37
-        '
-        Me.Label37.AutoSize = True
-        Me.Label37.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label37.Location = New System.Drawing.Point(19, 282)
-        Me.Label37.Name = "Label37"
-        Me.Label37.Size = New System.Drawing.Size(116, 16)
-        Me.Label37.TabIndex = 44
-        Me.Label37.Text = "Motor start time [s]"
         '
         'Form1
         '
@@ -3025,4 +3037,5 @@ Partial Class Form1
     Friend WithEvents OpenFileDialog1 As OpenFileDialog
     Friend WithEvents Label37 As Label
     Friend WithEvents TextBox39 As TextBox
+    Friend WithEvents Label60 As Label
 End Class
