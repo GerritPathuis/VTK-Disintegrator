@@ -781,7 +781,7 @@ Public Class Form1
         Dim J, I, area As Double
         Dim σd, σb, τ, safety_stress As Double
         Dim σ_design_shft, τ_design_shft, service_fac As Double
-        Dim temp, τmax, σ12, σ12a, σ12b As Double
+        Dim τmax, σ12 As Double
         Dim dia_fric As Double
         Dim wght, w As Double
 
@@ -799,7 +799,6 @@ Public Class Form1
         σ_design_shft = NumericUpDown10.Value / service_fac 'σ_design
         τ_design_shft = σ_design_shft * 0.58
         wght = NumericUpDown5.Value         '[kg]
-
 
         '--------- Calc Polar Moment of Inertia   -----------
         'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
@@ -829,12 +828,8 @@ Public Class Form1
         τ = m1 * (dia_calc / 2) / J
 
         '--------- calc combined principle stress -----------
-        τmax = 0.5 * Sqrt(((σd - σb) / 2) ^ 2 + 4 * τ ^ 2)
-        temp = Sqrt(((σd - σb) * 0.5) ^ 2 + τ ^ 2)
-
-        σ12a = ((σd + σb) / 2) + temp   'max priciple stress
-        σ12b = ((σd + σb) / 2) - temp   'min priciple stress
-        σ12 = IIf(σ12a > σ12b, σ12a, σ12b)  'select the biggest
+        τmax = 0.5 * Sqrt(((σd - σb) * 0.5) ^ 2 + 4 * τ ^ 2)
+        σ12 = ((σd + σb) * 0.5) + Sqrt(((σd - σb) * 0.5) ^ 2 + τ ^ 2)  'max priciple stress
 
         safety_stress = σ_design_shft / σ12
 
