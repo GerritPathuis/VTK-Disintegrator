@@ -1,7 +1,6 @@
 ﻿Imports System.IO
 Imports System.Text
 Imports System.Math
-
 Imports System.Globalization
 Imports System.Threading
 Imports Word = Microsoft.Office.Interop.Word
@@ -323,7 +322,7 @@ Public Class Form1
             row += 1
             oTable.Cell(row, 1).Range.Text = "Radial speed"
             oTable.Cell(row, 2).Range.Text = TextBox2.Text
-            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            oTable.Cell(row, 3).Range.Text = "[rad/s]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Nominal Motor torque"
             oTable.Cell(row, 2).Range.Text = TextBox3.Text
@@ -376,7 +375,7 @@ Public Class Form1
 
             '------------------ material----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 5, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -394,11 +393,19 @@ Public Class Form1
             row += 1
             oTable.Cell(row, 1).Range.Text = "Total material"
             oTable.Cell(row, 2).Range.Text = TextBox1.Text
-            oTable.Cell(row, 3).Range.Text = "[kg/sn]"
+            oTable.Cell(row, 3).Range.Text = "[kg/s]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Average density"
             oTable.Cell(row, 2).Range.Text = NumericUpDown16.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[kg/m3]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Specific  load"
+            oTable.Cell(row, 2).Range.Text = TextBox33.Text
+            oTable.Cell(row, 3).Range.Text = "[ton/kw]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Specific tip load"
+            oTable.Cell(row, 2).Range.Text = TextBox36.Text
+            oTable.Cell(row, 3).Range.Text = "[kg]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
@@ -424,11 +431,11 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox18.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "key length"
+            oTable.Cell(row, 1).Range.Text = "Key length"
             oTable.Cell(row, 2).Range.Text = TextBox17.Text
-            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Allowed σ stress"
+            oTable.Cell(row, 1).Range.Text = "Design σ stress"
             oTable.Cell(row, 2).Range.Text = TextBox19.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
@@ -438,7 +445,7 @@ Public Class Form1
             row += 1
             oTable.Cell(row, 1).Range.Text = "Maximum force 1 key"
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
-            oTable.Cell(row, 3).Range.Text = "[N]"
+            oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Maximum Allowed power 1 key"
             oTable.Cell(row, 2).Range.Text = TextBox20.Text
@@ -468,7 +475,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = NumericUpDown7.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[-]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Overall length"
+            oTable.Cell(row, 1).Range.Text = "Overall beater diameter"
             oTable.Cell(row, 2).Range.Text = NumericUpDown8.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
@@ -488,7 +495,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox37.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Friction disk thckness"
+            oTable.Cell(row, 1).Range.Text = "Friction disk thickness"
             oTable.Cell(row, 2).Range.Text = NumericUpDown11.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
@@ -621,7 +628,7 @@ Public Class Form1
             row += 1
             oTable.Cell(row, 1).Range.Text = "Friction disk ID"
             oTable.Cell(row, 2).Range.Text = TextBox23.Text
-            oTable.Cell(row, 3).Range.Text = "[kg]"
+            oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Friction radius"
             oTable.Cell(row, 2).Range.Text = TextBox24.Text
@@ -662,7 +669,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox41.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Key depth"
+            oTable.Cell(row, 1).Range.Text = "Key depth t1"
             oTable.Cell(row, 2).Range.Text = TextBox42.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
