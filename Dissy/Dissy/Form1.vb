@@ -53,12 +53,12 @@ Public Class Form1
         Dim l_wet, l_add, l_tot As Double
         Dim tip_speed, acc, acc_time As Double
         Dim lump_dia, lump_weight, density, f_tip, lump_torque As Double
-        Dim safety_lump, safety_lump_nut As Double
-        Dim key_h, key_l, shaft_radius, max_key_torque, max_key_force As Double
+        Dim FOS_lump_key, FOS_lump_nut As Double
+        Dim key_h, key_l, beater_shaft_radius, max_key_torque, max_key_force As Double
         Dim start_torque, service_factor As Double
-        Dim allowed_σ_stress, allowed_τ_stress As Double
+        Dim σ_yield, allowed_σ_stress, allowed_τ_stress As Double
         Dim specific_load, load_beater_tip As Double
-        Dim no_beaters As Double
+        Dim no_beaters, actual_egg_key_force As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -86,23 +86,25 @@ Public Class Form1
         lump_dia = NumericUpDown14.Value / 1000     '[m]
         acc_time = NumericUpDown15.Value
         density = NumericUpDown16.Value
+        σ_yield = NumericUpDown18.Value
 
-        shaft_radius = NumericUpDown12.Value / 2000   '[mm]
-        allowed_σ_stress = NumericUpDown18.Value / service_factor  '[N/mm2]
+        beater_shaft_radius = NumericUpDown12.Value / 2000   '[mm]
+        allowed_σ_stress = σ_yield / service_factor  '[N/mm2]
         allowed_τ_stress = allowed_σ_stress * 0.8   '[N/mm2]
 
+        '-------- motor----------
         rad = rpm / 60 * 2 * PI
         motor_torque = Installed_power / rad
         start_torque = motor_torque * 2.0
+        tip_speed = dia_beater * rpm * PI / 60  '[m/s]
 
+        '-------- process ------
         l_wet = NumericUpDown3.Value
         l_add = NumericUpDown4.Value
         l_tot = (l_add + l_wet) * 1000 / 3600   '[kg/s]
-
         specific_load = 3600 * l_tot / Installed_power  '[ton/(kW.hr)]
         load_beater_tip = l_tot / (rpm / 60 * no_beaters * 2)
 
-        tip_speed = dia_beater * rpm * PI / 60  '[m/s]
 
         '---- Lump calculation--------
         lump_weight = 4 / 3 * PI * (lump_dia / 2) ^ 3 * density
@@ -111,21 +113,25 @@ Public Class Form1
         f_tip = lump_weight * acc               '[N]
         lump_torque = f_tip * (dia_beater / 2)  '[N.m]
 
+        actual_egg_key_force = lump_torque / beater_shaft_radius
+        actual_egg_key_force /= 2    'two keys 
+
         max_key_force = key_h * key_l * allowed_σ_stress
-        max_key_torque = max_key_force * shaft_radius
+        max_key_torque = max_key_force * beater_shaft_radius
         max_key_torque *= 2     'two keys 
-        safety_lump = max_key_torque / lump_torque
+
+        FOS_lump_key = max_key_torque / lump_torque
 
         '--------- max Allowed power on coupling key --
-        Dim drive_key_force, drive_l, drive_b, drive_r As Double
-        Dim drive_power_max, safety_coupling_key As Double
+        Dim actual_drive_key_force, drive_l, drive_b As Double
+        Dim actual_drive_key_stress, FOS_coupling_key As Double
 
         Double.TryParse(TextBox21.Text, drive_b)            '[mm] key t1
-        drive_l = NumericUpDown17.Value                     '[mm]  
-        drive_key_force = allowed_σ_stress * drive_b * drive_l '[N]
-        drive_r = NumericUpDown13.Value / 2000              '[m] radius
-        drive_power_max = drive_key_force * drive_r * rad   '[W]
-        safety_coupling_key = drive_power_max / Installed_power
+        drive_l = NumericUpDown17.Value                     '[mm] key length
+
+        actual_drive_key_force = start_torque / beater_shaft_radius      '[kN]
+        actual_drive_key_stress = actual_drive_key_force / (drive_b * drive_l)   '[N/mm2]
+        FOS_coupling_key = σ_yield / actual_drive_key_stress      '[-]
 
         '--------- Hydraulic nut (spacer = friction disk) --
         Dim spacer_od, spacer_id, spacer_radius, fric As Double
@@ -140,9 +146,7 @@ Public Class Form1
         area = PI / 4 * spacer_id ^ 2                                   '[mm2]
         shaft_l = (NumericUpDown9.Value + NumericUpDown11.Value) * no_beaters '[mm]
         delta_l = pull_force * 10 ^ 3 * shaft_l / (190000 * area)        '[mm]
-
-
-        safety_lump_nut = max_torque_nut * 10 ^ 3 / lump_torque
+        FOS_lump_nut = max_torque_nut * 10 ^ 3 / lump_torque
 
         '-------- present-------
         TextBox1.Text = l_tot.ToString("0")
@@ -158,26 +162,28 @@ Public Class Form1
         TextBox11.Text = (max_key_force / 1000).ToString("0")   '[kN]
         TextBox12.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
         TextBox19.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
-        TextBox20.Text = (drive_power_max / 1000).ToString("0") '[kNm]
-        TextBox22.Text = (drive_key_force / 1000).ToString("0") '[km]
+        TextBox20.Text = (actual_drive_key_stress).ToString("0") '[kNm]
+        TextBox22.Text = (actual_drive_key_force / 10 ^ 3).ToString("0") '[km]
         TextBox23.Text = spacer_id.ToString("0")                '[mm]
         TextBox24.Text = spacer_radius.ToString("0")            '[mm]
         TextBox25.Text = max_torque_nut.ToString("0")           '[kNm]
         TextBox29.Text = (start_torque / 1000).ToString("0.0")  '[kNm]
-        TextBox32.Text = safety_coupling_key.ToString("0.0")    '[kNm]
+        TextBox32.Text = FOS_coupling_key.ToString("0.0")       '[-]
         TextBox33.Text = specific_load.ToString("0.0")          '[]
         TextBox34.Text = delta_l.ToString("0.00")               '[mm]
         TextBox35.Text = shaft_l.ToString("0")                  '[mm]
         TextBox36.Text = load_beater_tip.ToString("0.0")        '[kg]
         TextBox37.Text = spacer_od.ToString("0")                '[mm]
-        TextBox40.Text = safety_lump.ToString("0.0")            '[-]
-        TextBox65.Text = safety_lump_nut.ToString("0.0")        '[-]
+        TextBox40.Text = FOS_lump_key.ToString("0.0")           '[-]
+        TextBox65.Text = FOS_lump_nut.ToString("0.0")           '[-]
         TextBox67.Text = allowed_τ_stress.ToString("0")         '[N/mm2]
+        TextBox70.Text = actual_egg_key_force.ToString("0")     '[N]
+
 
         '------- checks---------
-        TextBox32.BackColor = IIf(safety_coupling_key > 1.5, Color.LightGreen, Color.Red)
-        TextBox40.BackColor = IIf(safety_lump > 1.5, Color.LightGreen, Color.Red)
-        TextBox65.BackColor = IIf(safety_lump_nut > 1.5, Color.LightGreen, Color.Red)
+        TextBox32.BackColor = IIf(FOS_coupling_key > 3, Color.LightGreen, Color.Red)
+        TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
+        TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
         Calc_inertia()
         Calc_shaft_coupling()
         Calc_shaft()
@@ -203,6 +209,13 @@ Public Class Form1
         '----------------- prevent out of bounds------------------
         ComboBox1.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 13, -1)) 'Select ..
         ComboBox2.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 18, -1)) 'Select ..
+
+        TextBox69.Text =
+        "Factors of Design and Safety" & vbCrLf &
+        "FOS= Yield stress/Working stress" & vbCrLf &
+        "FOS must be bigger than 3.0" & vbCrLf &
+        "Design load is maximum load of part the part will ever see in service" & vbCrLf &
+        "Note Yield not Ultimate strength is used" & vbCrLf
     End Sub
     Private Sub Calc_inertia()
         Dim overall_length, half_beater_weight, I_mass_inert, I_mass_in_tot, thick As Double
@@ -451,7 +464,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox20.Text
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Safety factor (locked motor)"
+            oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
             oTable.Cell(row, 2).Range.Text = TextBox32.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
@@ -597,12 +610,12 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox10.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Safety factor, key only"
+            oTable.Cell(row, 1).Range.Text = "Factor of Safety, key only"
             oTable.Cell(row, 2).Range.Text = TextBox40.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Safety factor, hydraulic nut"
+            oTable.Cell(row, 1).Range.Text = "Factor of Safety, hydraulic nut"
             oTable.Cell(row, 2).Range.Text = TextBox65.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
@@ -709,7 +722,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox50.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Safety facor stress"
+            oTable.Cell(row, 1).Range.Text = "FOS stress"
             oTable.Cell(row, 2).Range.Text = TextBox45.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
@@ -779,8 +792,8 @@ Public Class Form1
         Dim dia, dia_calc, t1, f1, m1, m2 As Double
         Dim length_l, length_a, length_b, R1 As Double
         Dim J, I, area As Double
-        Dim σd, σb, τ, safety_stress As Double
-        Dim σ_design_shft, τ_design_shft, service_fac As Double
+        Dim σd, σb, τ, FOS_stress As Double
+        Dim σ_design_shft, σ_yield, τ_design_shft, service_fac As Double
         Dim τmax, σ12 As Double
         Dim dia_fric As Double
         Dim wght, w As Double
@@ -796,7 +809,8 @@ Public Class Form1
         dia_fric = NumericUpDown21.Value    '[mm] spacer plate
 
         service_fac = NumericUpDown25.Value
-        σ_design_shft = NumericUpDown10.Value / service_fac 'σ_design
+        σ_yield = NumericUpDown10.Value
+        σ_design_shft = σ_yield / service_fac 'σ_design
         τ_design_shft = σ_design_shft * 0.58
         wght = NumericUpDown5.Value         '[kg]
 
@@ -828,10 +842,11 @@ Public Class Form1
         τ = m1 * (dia_calc / 2) / J
 
         '--------- calc combined principle stress -----------
+        '---- Stress and Strain formula (2.3-23)-------------
         τmax = 0.5 * Sqrt(((σd - σb) * 0.5) ^ 2 + 4 * τ ^ 2)
         σ12 = ((σd + σb) * 0.5) + Sqrt(((σd - σb) * 0.5) ^ 2 + τ ^ 2)  'max priciple stress
 
-        safety_stress = σ_design_shft / σ12
+        FOS_stress = σ_yield / σ12
 
         '---------- present --------------
         TextBox47.Text = (m2 / 1000).ToString("0")      '[Nm]
@@ -849,7 +864,7 @@ Public Class Form1
         TextBox62.Text = I.ToString("0")
         TextBox63.Text = area.ToString("0")
         TextBox64.Text = dia_fric.ToString("0")
-        TextBox45.Text = safety_stress.ToString("0.0")
+        TextBox45.Text = FOS_stress.ToString("0.0")
         TextBox49.Text = τmax.ToString("0.0")
 
         TextBox48.Text = σ_design_shft.ToString("0")  'allowed stress
@@ -861,7 +876,7 @@ Public Class Form1
         TextBox52.BackColor = IIf(σd < σ_design_shft, Color.LightGreen, Color.Red)
         TextBox51.BackColor = IIf(τ < τ_design_shft, Color.LightGreen, Color.Red)
         TextBox59.BackColor = IIf(σb < σ_design_shft, Color.LightGreen, Color.Red)
-        TextBox45.BackColor = IIf(safety_stress > 2.0, Color.LightGreen, Color.Red)
+        TextBox45.BackColor = IIf(FOS_stress > 3.0, Color.LightGreen, Color.Red)
         '--------- beater shaft/key length input wrong--------- 
         If (length_l < length_b) Then
             NumericUpDown8.BackColor = Color.Red
@@ -1118,4 +1133,5 @@ Public Class Form1
         End Select
         Return (motor_inertia)
     End Function
+
 End Class
