@@ -722,7 +722,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox50.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "FOS stress"
+            oTable.Cell(row, 1).Range.Text = "Factor of Safety stress"
             oTable.Cell(row, 2).Range.Text = TextBox45.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
