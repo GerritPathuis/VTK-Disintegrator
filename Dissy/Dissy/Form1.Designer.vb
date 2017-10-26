@@ -129,6 +129,8 @@ Partial Class Form1
         Me.Label8 = New System.Windows.Forms.Label()
         Me.NumericUpDown11 = New System.Windows.Forms.NumericUpDown()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.TextBox70 = New System.Windows.Forms.TextBox()
+        Me.Label97 = New System.Windows.Forms.Label()
         Me.TextBox65 = New System.Windows.Forms.TextBox()
         Me.Label90 = New System.Windows.Forms.Label()
         Me.TextBox40 = New System.Windows.Forms.TextBox()
@@ -251,8 +253,6 @@ Partial Class Form1
         Me.TabPage6 = New System.Windows.Forms.TabPage()
         Me.TextBox69 = New System.Windows.Forms.TextBox()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
-        Me.Label97 = New System.Windows.Forms.Label()
-        Me.TextBox70 = New System.Windows.Forms.TextBox()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox19.SuspendLayout()
@@ -1503,6 +1503,25 @@ Partial Class Form1
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Material lump (Teufelsei) details"
         '
+        'TextBox70
+        '
+        Me.TextBox70.Enabled = False
+        Me.TextBox70.Location = New System.Drawing.Point(241, 168)
+        Me.TextBox70.Name = "TextBox70"
+        Me.TextBox70.Size = New System.Drawing.Size(62, 20)
+        Me.TextBox70.TabIndex = 59
+        Me.TextBox70.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'Label97
+        '
+        Me.Label97.AutoSize = True
+        Me.Label97.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label97.Location = New System.Drawing.Point(13, 169)
+        Me.Label97.Name = "Label97"
+        Me.Label97.Size = New System.Drawing.Size(167, 16)
+        Me.Label97.TabIndex = 58
+        Me.Label97.Text = "Actual force on 2-keys [kN]"
+        '
         'TextBox65
         '
         Me.TextBox65.Enabled = False
@@ -2582,9 +2601,9 @@ Partial Class Form1
         Me.Label78.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label78.Location = New System.Drawing.Point(15, 44)
         Me.Label78.Name = "Label78"
-        Me.Label78.Size = New System.Drawing.Size(138, 16)
+        Me.Label78.Size = New System.Drawing.Size(156, 16)
         Me.Label78.TabIndex = 16
-        Me.Label78.Text = "Key slot depts t1 [mm]"
+        Me.Label78.Text = "Key (2) slot depts t1 [mm]"
         '
         'Label79
         '
@@ -2786,25 +2805,6 @@ Partial Class Form1
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
-        '
-        'Label97
-        '
-        Me.Label97.AutoSize = True
-        Me.Label97.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label97.Location = New System.Drawing.Point(13, 169)
-        Me.Label97.Name = "Label97"
-        Me.Label97.Size = New System.Drawing.Size(167, 16)
-        Me.Label97.TabIndex = 58
-        Me.Label97.Text = "Actual force on 2-keys [kN]"
-        '
-        'TextBox70
-        '
-        Me.TextBox70.Enabled = False
-        Me.TextBox70.Location = New System.Drawing.Point(241, 168)
-        Me.TextBox70.Name = "TextBox70"
-        Me.TextBox70.Size = New System.Drawing.Size(62, 20)
-        Me.TextBox70.TabIndex = 59
-        Me.TextBox70.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Form1
         '

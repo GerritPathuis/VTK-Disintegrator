@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="Dissy.exe" version="1.0.0.12" publicKeyToken="95f31418eaf262c7" language="neutral" processorArchitecture="msil" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="Dissy" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="Dissy.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          UAC Manifest Options
+          If you want to change the Windows User Account Control level replace the 
+          requestedExecutionLevel node with one of the following.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         If you want to utilize File and Registry Virtualization for backward 
+         compatibility then delete the requestedExecutionLevel node.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Dissy.exe" size="343992">
+      <assemblyIdentity name="Dissy" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>qBLARtg0SQM6hGeNm5WRJ1NgRAtPaxR2q9xznTuOiO4=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="Dissy.exe.config" size="188">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>c922zfRb5ORzqEo8SDjt8Mx8lDMhGTWhqKcK/oileDM=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=VTKNET\GerritP" issuerKeyHash="0d10c1de4aa625510ebe1577ba56c45f6856793d" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>UQXq9JCyp6MVbiBD6413AmKd3BzT7sYKuGbmKL9uMJk=</DigestValue></Reference></SignedInfo><SignatureValue>aCCNbN/7LRHmK1wVxIR0/MO12WbClnP590j3YpMRJI+cbeSr4GE2kF4y/LPovKgRL2MFalSdfGOn7cXYl6u2xOa7HqYL6j28piK46y+p0H04PV4JK2IsIYoUMzVyxjOZLkfZgyEenZ7K3wEfELIKLNf+HdIMwq8gYiiz76KWJag=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>0w6n8MG5q7OSzbDBYFRQSB8t2s+COBtyRSlldR4WM1YapZdra8QEbZ9q5G282D0NzD/tPYO0lXcIkqjN76qE8m5/UREPa8ceKKB59pXLQnJrggNalvEQpM8tCGgc8Eo/1V/Un2wMkC65khSjs5OynE/tJbUgTJ3XXJkuwuj7UX0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="99306ebf28e666b80ac6eed31cdc9d6202778deb43206e15a3a7b290f4ea0551" Description="" Url=""><as:assemblyIdentity name="Dissy.exe" version="1.0.0.12" publicKeyToken="95f31418eaf262c7" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=VTKNET\GerritP</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>NFDqEI9RuFJBmV9WPuxoUVNwf4/Wl6qo+43L4AYvLf4=</DigestValue></Reference></SignedInfo><SignatureValue>l934xMtYV0lhmhgdi0XoEseOmNgaOV8my2pRVy1nv0SA5V2Jd7CJO7B0DRo0LU8aEGS5hDRSVUm/6vKYwJxMiOeuoCpp4p10Go8MjLm6rRySygKDVmW3EnqMEvwVbVA39GW5hPwIOU21PfdhlxcX5Bb8pDHUEAwSvbh49WocYOE=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>0w6n8MG5q7OSzbDBYFRQSB8t2s+COBtyRSlldR4WM1YapZdra8QEbZ9q5G282D0NzD/tPYO0lXcIkqjN76qE8m5/UREPa8ceKKB59pXLQnJrggNalvEQpM8tCGgc8Eo/1V/Un2wMkC65khSjs5OynE/tJbUgTJ3XXJkuwuj7UX0=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB0TCCATqgAwIBAgIQVg5KZkWnr4dPEuVpoMqPkTANBgkqhkiG9w0BAQsFADAnMSUwIwYDVQQDHhwAVgBUAEsATgBFAFQAXABHAGUAcgByAGkAdABQMB4XDTE3MTAxOTEwNDgxOFoXDTE4MTAxOTE2NDgxOFowJzElMCMGA1UEAx4cAFYAVABLAE4ARQBUAFwARwBlAHIAcgBpAHQAUDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA0w6n8MG5q7OSzbDBYFRQSB8t2s+COBtyRSlldR4WM1YapZdra8QEbZ9q5G282D0NzD/tPYO0lXcIkqjN76qE8m5/UREPa8ceKKB59pXLQnJrggNalvEQpM8tCGgc8Eo/1V/Un2wMkC65khSjs5OynE/tJbUgTJ3XXJkuwuj7UX0CAwEAATANBgkqhkiG9w0BAQsFAAOBgQBWtsvzfJe2TUAe6jpDZaPHFMrEacNVXF5VElZ8Bjs4Do/k/txFlQ99c/4KcfJXp+gIeiOAzKAQSow7yRiRcFlOd4bYeSwRq9XYbs0WIYkmQfSaxYAGtEY6NYN2F3VAijZKCvWlmNvqw1GxJiBxf4OpgabdEcPFgTpmQHwNY8nLIw==</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

@@ -800,7 +800,7 @@ Public Class Form1
 
         dia = NumericUpDown12.Value         '[mm] dia shaft
         Double.TryParse(TextBox13.Text, t1) '[mm] depth key
-        dia_calc = dia - t1                 '[mm]shaft calculation diameter
+        dia_calc = dia - 2 * t1             '[mm]shaft calculation diameter
         f1 = NumericUpDown19.Value * 10 ^ 3 '[N] pulling force
         Double.TryParse(TextBox29.Text, m1) 'torque locked motor
         m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
