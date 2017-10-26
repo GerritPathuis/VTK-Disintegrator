@@ -59,6 +59,7 @@ Public Class Form1
         Dim σ_yield, allowed_σ_stress, allowed_τ_stress As Double
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
+        Dim drive_key_radius As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -84,6 +85,7 @@ Public Class Form1
         rpm = NumericUpDown2.Value
         dia_beater = NumericUpDown8.Value / 1000    '[m]
         lump_dia = NumericUpDown14.Value / 1000     '[m]
+        drive_key_radius = NumericUpDown13.Value / 2000     '[m]
         acc_time = NumericUpDown15.Value
         density = NumericUpDown16.Value
         σ_yield = NumericUpDown18.Value
@@ -129,7 +131,7 @@ Public Class Form1
         Double.TryParse(TextBox21.Text, drive_b)            '[mm] key t1
         drive_l = NumericUpDown17.Value                     '[mm] key length
 
-        actual_drive_key_force = start_torque / beater_shaft_radius      '[kN]
+        actual_drive_key_force = start_torque / drive_key_radius      '[kN]
         actual_drive_key_stress = actual_drive_key_force / (drive_b * drive_l)   '[N/mm2]
         FOS_coupling_key = σ_yield / actual_drive_key_stress      '[-]
 
@@ -145,7 +147,7 @@ Public Class Form1
 
         area = PI / 4 * spacer_id ^ 2                                   '[mm2]
         shaft_l = (NumericUpDown9.Value + NumericUpDown11.Value) * no_beaters '[mm]
-        delta_l = pull_force * 10 ^ 3 * shaft_l / (190000 * area)        '[mm]
+        delta_l = pull_force * 10 ^ 3 * shaft_l / (215000 * area)        '[mm]
         FOS_lump_nut = max_torque_nut * 10 ^ 3 / lump_torque
 
         '-------- present-------
