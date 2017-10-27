@@ -44,12 +44,12 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown29.ValueChanged, NumericUpDown28.ValueChanged, NumericUpDown27.ValueChanged
         Calc_tab1()
     End Sub
 
     Private Sub Calc_tab1()
-        Dim Installed_power, rpm, rad, motor_torque, dia_beater As Double
+        Dim tot_Instal_power, rpm, rad, motor_torque, dia_beater As Double
         Dim l_wet, l_add, l_tot As Double
         Dim tip_speed, acc, acc_time As Double
         Dim lump_dia, lump_weight, density, f_tip, lump_torque As Double
@@ -60,6 +60,7 @@ Public Class Form1
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
+        Dim no_motors As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -76,12 +77,14 @@ Public Class Form1
             TextBox21.Text = words(3)       '(t1) Key depth in shaft
         End If
 
+        no_motors = NumericUpDown27.Value
         service_factor = NumericUpDown24.Value
         no_beaters = NumericUpDown7.Value
         Double.TryParse(TextBox13.Text, key_h)      '[mm]
         key_l = NumericUpDown9.Value                '[mm]
 
-        Installed_power = NumericUpDown1.Value * 1000    '[W]
+        tot_Instal_power = NumericUpDown1.Value * 1000    '[kW]
+        tot_Instal_power *= no_motors
         rpm = NumericUpDown2.Value
         dia_beater = NumericUpDown8.Value / 1000    '[m]
         lump_dia = NumericUpDown14.Value / 1000     '[m]
@@ -96,7 +99,7 @@ Public Class Form1
 
         '-------- motor----------
         rad = rpm / 60 * 2 * PI
-        motor_torque = Installed_power / rad
+        motor_torque = tot_Instal_power / rad
         start_torque = motor_torque * 2.0
         tip_speed = dia_beater * rpm * PI / 60  '[m/s]
 
@@ -104,7 +107,7 @@ Public Class Form1
         l_wet = NumericUpDown3.Value
         l_add = NumericUpDown4.Value
         l_tot = (l_add + l_wet) * 1000 / 3600   '[kg/s]
-        specific_load = 3600 * l_tot / Installed_power  '[ton/(kW.hr)]
+        specific_load = 3600 * l_tot / tot_Instal_power  '[ton/(kW.hr)]
         load_beater_tip = l_tot / (rpm / 60 * no_beaters * 2)
 
 
@@ -131,7 +134,7 @@ Public Class Form1
         Double.TryParse(TextBox21.Text, drive_b)            '[mm] key t1
         drive_l = NumericUpDown17.Value                     '[mm] key length
 
-        actual_drive_key_force = start_torque / drive_key_radius      '[kN]
+        actual_drive_key_force = start_torque / drive_key_radius / no_motors      '[kN]
         actual_drive_key_stress = actual_drive_key_force / (drive_b * drive_l)   '[N/mm2]
         FOS_coupling_key = σ_yield / actual_drive_key_stress      '[-]
 
@@ -146,8 +149,8 @@ Public Class Form1
         max_torque_nut = pull_force * fric * (spacer_radius / 1000)     '[kNm]
 
         area = PI / 4 * spacer_id ^ 2                                   '[mm2]
-        shaft_l = (NumericUpDown9.Value + NumericUpDown11.Value) * no_beaters '[mm]
-        delta_l = pull_force * 10 ^ 3 * shaft_l / (215000 * area)        '[mm]
+        shaft_l = NumericUpDown28.Value                                 '[mm] stretch indicator
+        delta_l = pull_force * 10 ^ 3 * shaft_l / (215000 * area)       '[mm]
         FOS_lump_nut = max_torque_nut * 10 ^ 3 / lump_torque
 
         '-------- present-------
@@ -171,15 +174,15 @@ Public Class Form1
         TextBox25.Text = max_torque_nut.ToString("0")           '[kNm]
         TextBox29.Text = (start_torque / 1000).ToString("0.0")  '[kNm]
         TextBox32.Text = FOS_coupling_key.ToString("0.0")       '[-]
-        TextBox33.Text = specific_load.ToString("0.0")          '[]
+        TextBox33.Text = specific_load.ToString("0.00")         '[]
         TextBox34.Text = delta_l.ToString("0.00")               '[mm]
-        TextBox35.Text = shaft_l.ToString("0")                  '[mm]
-        TextBox36.Text = load_beater_tip.ToString("0.0")        '[kg]
+        TextBox35.Text = (tot_Instal_power / 1000).ToString("0") '[kW]
+        TextBox36.Text = load_beater_tip.ToString("0.00")       '[kg]
         TextBox37.Text = spacer_od.ToString("0")                '[mm]
         TextBox40.Text = FOS_lump_key.ToString("0.0")           '[-]
         TextBox65.Text = FOS_lump_nut.ToString("0.0")           '[-]
         TextBox67.Text = allowed_τ_stress.ToString("0")         '[N/mm2]
-        TextBox70.Text = actual_egg_key_force.ToString("0")     '[N]
+        TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
 
 
         '------- checks---------
@@ -319,7 +322,7 @@ Public Class Form1
 
             '------------------ Drive Details----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 6, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -327,9 +330,13 @@ Public Class Form1
             row = 1
             oTable.Cell(row, 1).Range.Text = "Electric motor "
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Installed Power"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value.ToString
+            oTable.Cell(row, 1).Range.Text = "Total installed Power"
+            oTable.Cell(row, 2).Range.Text = TextBox35.Text
             oTable.Cell(row, 3).Range.Text = "[kW]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "No. motors"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown27.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[-]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Speed "
             oTable.Cell(row, 2).Range.Text = NumericUpDown2.Value.ToString
@@ -458,13 +465,13 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox21.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Maximum force 1 key"
+            oTable.Cell(row, 1).Range.Text = "Actual force 1 key"
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
             oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Maximum Allowed power 1 key"
+            oTable.Cell(row, 1).Range.Text = "Actual key stress"
             oTable.Cell(row, 2).Range.Text = TextBox20.Text
-            oTable.Cell(row, 3).Range.Text = "[kW]"
+            oTable.Cell(row, 3).Range.Text = "[N/mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
             oTable.Cell(row, 2).Range.Text = TextBox32.Text
@@ -791,7 +798,7 @@ Public Class Form1
         TextBox46.BackColor = IIf(τ < σ_design_cpl, Color.LightGreen, Color.Red)
     End Sub
     Private Sub Calc_shaft()
-        Dim dia, dia_calc, t1, f1, m1, m2 As Double
+        Dim dia, dia_calc, t1, f1, dm1, dm2 As Double
         Dim length_l, length_a, length_b, R1 As Double
         Dim J, I, area As Double
         Dim σd, σb, τ, FOS_stress As Double
@@ -804,9 +811,9 @@ Public Class Form1
         Double.TryParse(TextBox13.Text, t1) '[mm] depth key
         dia_calc = dia - 2 * t1             '[mm]shaft calculation diameter
         f1 = NumericUpDown19.Value * 10 ^ 3 '[N] pulling force
-        Double.TryParse(TextBox29.Text, m1) 'torque locked motor
-        m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
-        length_l = NumericUpDown8.Value     '[mm] bearing-bearing length
+        Double.TryParse(TextBox29.Text, dm1) 'torque locked motor
+        dm1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
+        length_l = NumericUpDown29.Value    '[mm] bearing-bearing length
         length_b = NumericUpDown20.Value    '[mm] beater shaft key
         dia_fric = NumericUpDown21.Value    '[mm] spacer plate
 
@@ -836,12 +843,12 @@ Public Class Form1
         w = wght * 9.81 / length_b         '[N/mm] uniform load
         length_a = (length_l - length_b) / 2
         R1 = wght * 9.81 / 2               'R1=R2= (half weight * 9.81)
-        m2 = R1 * (length_a + R1 / (2 * w))
+        dm2 = R1 * (length_a + R1 / (2 * w))
 
-        σb = m2 * (dia_calc / 2) / I
+        σb = dm2 * (dia_calc / 2) / I
 
         '--------- calc τ -----------
-        τ = m1 * (dia_calc / 2) / J
+        τ = dm1 * (dia_calc / 2) / J
 
         '--------- calc combined principle stress -----------
         '---- Stress and Strain formula (2.3-23)-------------
@@ -851,13 +858,12 @@ Public Class Form1
         FOS_stress = σ_yield / σ12
 
         '---------- present --------------
-        TextBox47.Text = (m2 / 1000).ToString("0")      '[Nm]
+        TextBox47.Text = (dm2 / 1000).ToString("0")     '[Nm]
         TextBox56.Text = dia.ToString("0.0")            '[mm]
         TextBox57.Text = t1.ToString("0.0")             '[mm]
         TextBox58.Text = dia_calc.ToString("0.0")       '[mm]
-        TextBox53.Text = (m1 / 10 ^ 3).ToString("0")    '[Nm]
+        TextBox53.Text = (dm1 / 10 ^ 3).ToString("0")   '[Nm]
         TextBox54.Text = (f1 / 1000).ToString("0")      '[kN]
-        TextBox55.Text = length_l.ToString("0")
         TextBox51.Text = τ.ToString("0")
         TextBox52.Text = σd.ToString("0")
         TextBox59.Text = σb.ToString("0")
