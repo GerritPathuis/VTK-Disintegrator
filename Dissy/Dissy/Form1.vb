@@ -852,8 +852,9 @@ Public Class Form1
 
         '--------- calc combined principle stress -----------
         '---- Stress and Strain formula (2.3-23)-------------
-        τmax = 0.5 * Sqrt(((σd - σb) * 0.5) ^ 2 + 4 * τ ^ 2)
-        σ12 = ((σd + σb) * 0.5) + Sqrt(((σd - σb) * 0.5) ^ 2 + τ ^ 2)  'max priciple stress
+        'τmax = 0.5 * Sqrt(((σd - σb) * 0.5) ^ 2 + 4 * τ ^ 2)
+        'σ12 = ((σd + σb) * 0.5) + Sqrt(((σd - σb) * 0.5) ^ 2 + τ ^ 2)  'max priciple stress
+        σ12 = Sqrt((σd + σb) ^ 2 + 3 * τ ^ 2)  'Huber and Hencky
 
         FOS_stress = σ_yield / σ12
 
@@ -873,13 +874,11 @@ Public Class Form1
         TextBox63.Text = area.ToString("0")
         TextBox64.Text = dia_fric.ToString("0")
         TextBox45.Text = FOS_stress.ToString("0.0")
-        TextBox49.Text = τmax.ToString("0.0")
 
         TextBox48.Text = σ_design_shft.ToString("0")  'allowed stress
         TextBox68.Text = τ_design_shft.ToString("0")  'allowed stress
 
         '--------- checks ---------
-        TextBox49.BackColor = IIf(τmax < τ_design_shft, Color.LightGreen, Color.Red)
         TextBox50.BackColor = IIf(σ12 < σ_design_shft, Color.LightGreen, Color.Red)
         TextBox52.BackColor = IIf(σd < σ_design_shft, Color.LightGreen, Color.Red)
         TextBox51.BackColor = IIf(τ < τ_design_shft, Color.LightGreen, Color.Red)

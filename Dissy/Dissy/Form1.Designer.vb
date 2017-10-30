@@ -96,6 +96,8 @@ Partial Class Form1
         Me.Label4 = New System.Windows.Forms.Label()
         Me.NumericUpDown4 = New System.Windows.Forms.NumericUpDown()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Label99 = New System.Windows.Forms.Label()
+        Me.TextBox35 = New System.Windows.Forms.TextBox()
         Me.Label98 = New System.Windows.Forms.Label()
         Me.NumericUpDown27 = New System.Windows.Forms.NumericUpDown()
         Me.TextBox29 = New System.Windows.Forms.TextBox()
@@ -211,8 +213,6 @@ Partial Class Form1
         Me.TextBox62 = New System.Windows.Forms.TextBox()
         Me.Label76 = New System.Windows.Forms.Label()
         Me.GroupBox12 = New System.Windows.Forms.GroupBox()
-        Me.TextBox49 = New System.Windows.Forms.TextBox()
-        Me.Label70 = New System.Windows.Forms.Label()
         Me.TextBox45 = New System.Windows.Forms.TextBox()
         Me.Label69 = New System.Windows.Forms.Label()
         Me.TextBox50 = New System.Windows.Forms.TextBox()
@@ -255,8 +255,6 @@ Partial Class Form1
         Me.TabPage6 = New System.Windows.Forms.TabPage()
         Me.TextBox69 = New System.Windows.Forms.TextBox()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
-        Me.TextBox35 = New System.Windows.Forms.TextBox()
-        Me.Label99 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox19.SuspendLayout()
@@ -1138,6 +1136,25 @@ Partial Class Form1
         Me.GroupBox1.TabIndex = 12
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Drive"
+        '
+        'Label99
+        '
+        Me.Label99.AutoSize = True
+        Me.Label99.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label99.Location = New System.Drawing.Point(15, 68)
+        Me.Label99.Name = "Label99"
+        Me.Label99.Size = New System.Drawing.Size(163, 16)
+        Me.Label99.TabIndex = 21
+        Me.Label99.Text = "Total Installed power [kW]"
+        '
+        'TextBox35
+        '
+        Me.TextBox35.Enabled = False
+        Me.TextBox35.Location = New System.Drawing.Point(246, 67)
+        Me.TextBox35.Name = "TextBox35"
+        Me.TextBox35.Size = New System.Drawing.Size(62, 20)
+        Me.TextBox35.TabIndex = 20
+        Me.TextBox35.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'Label98
         '
@@ -2388,42 +2405,21 @@ Partial Class Form1
         '
         'GroupBox12
         '
-        Me.GroupBox12.Controls.Add(Me.TextBox49)
-        Me.GroupBox12.Controls.Add(Me.Label70)
         Me.GroupBox12.Controls.Add(Me.TextBox45)
         Me.GroupBox12.Controls.Add(Me.Label69)
         Me.GroupBox12.Controls.Add(Me.TextBox50)
         Me.GroupBox12.Controls.Add(Me.Label71)
         Me.GroupBox12.Location = New System.Drawing.Point(319, 523)
         Me.GroupBox12.Name = "GroupBox12"
-        Me.GroupBox12.Size = New System.Drawing.Size(329, 102)
+        Me.GroupBox12.Size = New System.Drawing.Size(329, 80)
         Me.GroupBox12.TabIndex = 23
         Me.GroupBox12.TabStop = False
         Me.GroupBox12.Text = "Stress @ beaters"
         '
-        'TextBox49
-        '
-        Me.TextBox49.Enabled = False
-        Me.TextBox49.Location = New System.Drawing.Point(242, 45)
-        Me.TextBox49.Name = "TextBox49"
-        Me.TextBox49.Size = New System.Drawing.Size(62, 20)
-        Me.TextBox49.TabIndex = 55
-        Me.TextBox49.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'Label70
-        '
-        Me.Label70.AutoSize = True
-        Me.Label70.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label70.Location = New System.Drawing.Point(6, 44)
-        Me.Label70.Name = "Label70"
-        Me.Label70.Size = New System.Drawing.Size(210, 16)
-        Me.Label70.TabIndex = 54
-        Me.Label70.Text = "Combined shear stress τ [N/mm2]"
-        '
         'TextBox45
         '
         Me.TextBox45.Enabled = False
-        Me.TextBox45.Location = New System.Drawing.Point(243, 71)
+        Me.TextBox45.Location = New System.Drawing.Point(243, 47)
         Me.TextBox45.Name = "TextBox45"
         Me.TextBox45.Size = New System.Drawing.Size(62, 20)
         Me.TextBox45.TabIndex = 53
@@ -2433,7 +2429,7 @@ Partial Class Form1
         '
         Me.Label69.AutoSize = True
         Me.Label69.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label69.Location = New System.Drawing.Point(7, 70)
+        Me.Label69.Location = New System.Drawing.Point(7, 46)
         Me.Label69.Name = "Label69"
         Me.Label69.Size = New System.Drawing.Size(167, 16)
         Me.Label69.TabIndex = 52
@@ -2847,25 +2843,6 @@ Partial Class Form1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
         '
-        'TextBox35
-        '
-        Me.TextBox35.Enabled = False
-        Me.TextBox35.Location = New System.Drawing.Point(246, 67)
-        Me.TextBox35.Name = "TextBox35"
-        Me.TextBox35.Size = New System.Drawing.Size(62, 20)
-        Me.TextBox35.TabIndex = 20
-        Me.TextBox35.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'Label99
-        '
-        Me.Label99.AutoSize = True
-        Me.Label99.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label99.Location = New System.Drawing.Point(15, 68)
-        Me.Label99.Name = "Label99"
-        Me.Label99.Size = New System.Drawing.Size(163, 16)
-        Me.Label99.TabIndex = 21
-        Me.Label99.Text = "Total Installed power [kW]"
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3138,8 +3115,6 @@ Partial Class Form1
     Friend WithEvents TextBox47 As TextBox
     Friend WithEvents TextBox45 As TextBox
     Friend WithEvents Label69 As Label
-    Friend WithEvents TextBox49 As TextBox
-    Friend WithEvents Label70 As Label
     Friend WithEvents TabPage5 As TabPage
     Friend WithEvents PictureBox2 As PictureBox
     Friend WithEvents TextBox65 As TextBox
