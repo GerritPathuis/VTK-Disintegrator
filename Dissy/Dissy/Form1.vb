@@ -587,7 +587,7 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Material lump ----------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -595,11 +595,11 @@ Public Class Form1
             row = 1
             oTable.Cell(row, 1).Range.Text = "Material lump (Teufelsei)"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Egg diameter"
+            oTable.Cell(row, 1).Range.Text = "Lump diameter"
             oTable.Cell(row, 2).Range.Text = NumericUpDown14.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Egg weight"
+            oTable.Cell(row, 1).Range.Text = "Lump weight"
             oTable.Cell(row, 2).Range.Text = TextBox5.Text
             oTable.Cell(row, 3).Range.Text = "[kg]"
             row += 1
@@ -619,12 +619,12 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox10.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Factor of Safety, key only"
+            oTable.Cell(row, 1).Range.Text = "Factor of Safety w. key only"
             oTable.Cell(row, 2).Range.Text = TextBox40.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Factor of Safety, hydraulic nut"
+            oTable.Cell(row, 1).Range.Text = "Factor of Safety with hydraulic nut"
             oTable.Cell(row, 2).Range.Text = TextBox65.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
@@ -1040,7 +1040,7 @@ Public Class Form1
                         grbx.Value = CDec(ttt)          'OK
                     Else
                         grbx.Value = grbx.Minimum       'NOK
-                        MessageBox.Show("Numeric controls value out of ousode min-max range, Minimum value is used")
+                        MessageBox.Show("Numeric controls value out of outside min-max range, Minimum value is used")
                     End If
                 Else
                     MessageBox.Show("Warning last Numeric controls not found in file")  'NOK

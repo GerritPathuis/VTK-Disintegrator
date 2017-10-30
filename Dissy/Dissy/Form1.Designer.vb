@@ -1970,9 +1970,9 @@ Partial Class Form1
         Me.Label89.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label89.Location = New System.Drawing.Point(15, 64)
         Me.Label89.Name = "Label89"
-        Me.Label89.Size = New System.Drawing.Size(169, 16)
+        Me.Label89.Size = New System.Drawing.Size(176, 16)
         Me.Label89.TabIndex = 42
-        Me.Label89.Text = "Beater shaft key legth [mm]"
+        Me.Label89.Text = "Beater shaft key length [mm]"
         '
         'NumericUpDown20
         '
