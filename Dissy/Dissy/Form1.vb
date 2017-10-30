@@ -1100,10 +1100,11 @@ Public Class Form1
         'see http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
         'see http://electrical-engineering-portal.com/calculation-of-motor-startin
 
-        Ins_power = NumericUpDown1.Value * 10 ^ 3           'Geinstalleerd vermogen [Watt]
-        n_motor = NumericUpDown2.Value
-        rad = n_motor / 60 * 2 * PI                        'Hoeksnelheid [rad/s]
-        fan_load_torque = req_pow_safety / rad             '[N.m]
+        Ins_power = NumericUpDown1.Value * 10 ^ 3   'Geinstalleerd vermogen [Watt]
+        Ins_power *= NumericUpDown27.Value          'no motors
+        n_motor = NumericUpDown2.Value              '[rpm]
+        rad = n_motor / 60 * 2 * PI                 'Hoeksnelheid [rad/s]
+        fan_load_torque = req_pow_safety / rad      '[N.m]
         m_torque_rated = Ins_power / rad
         m_torque_inrush = m_torque_rated * 0.95
         m_torque_max = m_torque_rated * 2.5
