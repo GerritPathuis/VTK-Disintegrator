@@ -221,6 +221,13 @@ Public Class Form1
         "FOS must be bigger than 3.0" & vbCrLf &
         "Design load is maximum load of part the part will ever see in service" & vbCrLf &
         "Note Yield not Ultimate strength is used" & vbCrLf
+
+        TextBox49.Text =
+        "Projects" & vbCrLf &
+        "14.1020 Zeitz" & vbCrLf &
+        "12.1010 Cerestar, Sas van Gent" & vbCrLf &
+        " " & vbCrLf &
+        " " & vbCrLf
     End Sub
     Private Sub Calc_inertia()
         Dim overall_length, half_beater_weight, I_mass_inert, I_mass_in_tot, thick As Double
@@ -803,7 +810,7 @@ Public Class Form1
         Dim J, I, area As Double
         Dim σd, σb, τ, FOS_stress As Double
         Dim σ_design_shft, σ_yield, τ_design_shft, service_fac As Double
-        Dim τmax, σ12 As Double
+        Dim σ12 As Double
         Dim dia_fric As Double
         Dim wght, w As Double
 

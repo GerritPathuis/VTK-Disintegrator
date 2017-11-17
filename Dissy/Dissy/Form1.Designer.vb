@@ -255,6 +255,7 @@ Partial Class Form1
         Me.TabPage6 = New System.Windows.Forms.TabPage()
         Me.TextBox69 = New System.Windows.Forms.TextBox()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.TextBox49 = New System.Windows.Forms.TextBox()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox19.SuspendLayout()
@@ -2821,6 +2822,7 @@ Partial Class Form1
         '
         'TabPage6
         '
+        Me.TabPage6.Controls.Add(Me.TextBox49)
         Me.TabPage6.Controls.Add(Me.TextBox69)
         Me.TabPage6.Location = New System.Drawing.Point(4, 22)
         Me.TabPage6.Name = "TabPage6"
@@ -2835,13 +2837,22 @@ Partial Class Form1
         Me.TextBox69.Location = New System.Drawing.Point(3, 6)
         Me.TextBox69.Multiline = True
         Me.TextBox69.Name = "TextBox69"
-        Me.TextBox69.Size = New System.Drawing.Size(271, 227)
+        Me.TextBox69.Size = New System.Drawing.Size(271, 203)
         Me.TextBox69.TabIndex = 0
         Me.TextBox69.Text = "Safety factors"
         '
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
+        '
+        'TextBox49
+        '
+        Me.TextBox49.Location = New System.Drawing.Point(3, 215)
+        Me.TextBox49.Multiline = True
+        Me.TextBox49.Name = "TextBox49"
+        Me.TextBox49.Size = New System.Drawing.Size(271, 107)
+        Me.TextBox49.TabIndex = 1
+        Me.TextBox49.Text = "Projects"
         '
         'Form1
         '
@@ -3165,4 +3176,5 @@ Partial Class Form1
     Friend WithEvents NumericUpDown29 As NumericUpDown
     Friend WithEvents Label99 As Label
     Friend WithEvents TextBox35 As TextBox
+    Friend WithEvents TextBox49 As TextBox
 End Class
