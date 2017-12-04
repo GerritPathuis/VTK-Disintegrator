@@ -8,9 +8,10 @@ Imports System.Windows.Forms.DataVisualization.Charting
 Imports System.Management
 
 Public Class Form1
-    Dim Inertia_1, Inertia_2, Inertia_3 As Double               'Torsional analyses
-    Dim Springstiff_1, Springstiff_2, Springstiff_3 As Double   'Torsional analyses
-    Dim Torsional_point(100, 2) As Double   'For calculation on torsional frequency
+    Dim _Inertia_1, _Inertia_2, _Inertia_3 As Double  'Torsional analyses
+    Dim _Springstiff_1, _Springstiff_2 As Double      'Torsional analyses
+    Dim _rpm As Double
+    Dim Torsional_point(100, 2) As Double           'For calculation on torsional frequency
 
     Dim dirpath_Eng As String = "N:\Engineering\VBasic\Dissy_input\"
     Dim dirpath_Rap As String = "N:\Engineering\VBasic\Dissy_rapport_copy\"
@@ -50,12 +51,12 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown29.ValueChanged, NumericUpDown28.ValueChanged, NumericUpDown27.ValueChanged, ComboBox3.SelectedIndexChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown29.ValueChanged, NumericUpDown28.ValueChanged, ComboBox3.SelectedIndexChanged, NumericUpDown30.ValueChanged
         Calc_tab1()
     End Sub
 
     Private Sub Calc_tab1()
-        Dim tot_Instal_power, rpm, rad, motor_torque, dia_beater As Double
+        Dim tot_Instal_power, rad, motor_torque, dia_beater As Double
         Dim l_wet, l_add, l_tot As Double
         Dim tip_speed, acc, acc_time As Double
         Dim lump_dia, lump_weight, density, f_tip, lump_torque As Double
@@ -66,7 +67,6 @@ Public Class Form1
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
-        Dim no_motors As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -83,18 +83,17 @@ Public Class Form1
             TextBox21.Text = words(3)       '(t1) Key depth in shaft
         End If
 
-        no_motors = NumericUpDown27.Value
         service_factor = NumericUpDown24.Value
         no_beaters = NumericUpDown7.Value
         Double.TryParse(TextBox13.Text, key_h)      '[mm]
         key_l = NumericUpDown9.Value                '[mm]
 
-        tot_Instal_power = NumericUpDown1.Value * 1000    '[kW]
-        tot_Instal_power *= no_motors
+        tot_Instal_power = (NumericUpDown1.Value + NumericUpDown30.Value) * 1000    '[kW]
+
         If (ComboBox3.SelectedIndex > -1) Then
-            rpm = motor_rpm(ComboBox3.SelectedIndex)
+            _rpm = motor_rpm(ComboBox3.SelectedIndex)
         Else
-            rpm = 1000
+            _rpm = 1000
         End If
         dia_beater = NumericUpDown8.Value / 1000    '[m]
         lump_dia = NumericUpDown14.Value / 1000     '[m]
@@ -108,17 +107,17 @@ Public Class Form1
         allowed_τ_stress = allowed_σ_stress * 0.8   '[N/mm2]
 
         '-------- motor----------
-        rad = rpm / 60 * 2 * PI
+        rad = _rpm / 60 * 2 * PI
         motor_torque = tot_Instal_power / rad
         start_torque = motor_torque * 2.0
-        tip_speed = dia_beater * rpm * PI / 60  '[m/s]
+        tip_speed = dia_beater * _rpm * PI / 60  '[m/s]
 
         '-------- process ------
         l_wet = NumericUpDown3.Value
         l_add = NumericUpDown4.Value
         l_tot = (l_add + l_wet) * 1000 / 3600   '[kg/s]
         specific_load = 3600 * l_tot / tot_Instal_power  '[ton/(kW.hr)]
-        load_beater_tip = l_tot / (rpm / 60 * no_beaters * 2)
+        load_beater_tip = l_tot / (_rpm / 60 * no_beaters * 2)
 
 
         '---- Lump calculation--------
@@ -144,7 +143,7 @@ Public Class Form1
         Double.TryParse(TextBox21.Text, drive_b)            '[mm] key t1
         drive_l = NumericUpDown17.Value                     '[mm] key length
 
-        actual_drive_key_force = start_torque / drive_key_radius / no_motors      '[kN]
+        actual_drive_key_force = start_torque / drive_key_radius       '[kN]
         actual_drive_key_stress = actual_drive_key_force / (drive_b * drive_l)   '[N/mm2]
         FOS_coupling_key = σ_yield / actual_drive_key_stress      '[-]
 
@@ -162,6 +161,10 @@ Public Class Form1
         shaft_l = NumericUpDown28.Value                                 '[mm] stretch indicator
         delta_l = pull_force * 10 ^ 3 * shaft_l / (215000 * area)       '[mm]
         FOS_lump_nut = max_torque_nut * 10 ^ 3 / lump_torque
+
+        '------------- inertia motor -------------------
+        _Inertia_1 = CDbl(Emotor_4P_inert(_rpm, NumericUpDown1.Value * 10 ^ 3))  'Motor #1
+        _Inertia_3 = CDbl(Emotor_4P_inert(_rpm, NumericUpDown30.Value * 10 ^ 3)) 'Motor #2
 
         '-------- present-------
         TextBox1.Text = l_tot.ToString("0")
@@ -193,6 +196,9 @@ Public Class Form1
         TextBox65.Text = FOS_lump_nut.ToString("0.0")           '[-]
         TextBox67.Text = allowed_τ_stress.ToString("0")         '[N/mm2]
         TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
+
+        TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
+        TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
 
 
         '------- checks---------
@@ -278,9 +284,10 @@ Public Class Form1
         I_mass_in_tot = I_mass_inert * no_beaters '[kg.m2]
 
         '----present--------
-        TextBox26.Text = I_mass_inert.ToString("0")                   '[kg.m2]
-        TextBox27.Text = I_mass_in_tot.ToString("0")                  '[kg.m2]
-        TextBox28.Text = (half_beater_weight * 2).ToString("0")     '[kg]
+        TextBox26.Text = I_mass_inert.ToString("0")             '[kg.m2] one beater
+        _Inertia_2 = I_mass_in_tot.ToString("0")                '[kg.m2] total beaters
+        TextBox27.Text = _Inertia_2                             '[kg.m2] 
+        TextBox28.Text = (half_beater_weight * 2).ToString("0") '[kg]
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -359,7 +366,7 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "No. motors"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown27.Value.ToString
+            oTable.Cell(row, 2).Range.Text = "mmm"
             oTable.Cell(row, 3).Range.Text = "[-]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Speed "
@@ -807,7 +814,7 @@ Public Class Form1
         j = (PI * dia_calc ^ 4) / 32    '[mm4] Solid shaft
 
         '--------- calc τ -----------
-        τ = m1 * (dia_calc / 2) / J
+        τ = m1 * (dia_calc / 2) / j
 
         '---------- present --------------
         TextBox41.Text = dia.ToString("0.0")
@@ -817,7 +824,7 @@ Public Class Form1
         TextBox46.Text = τ.ToString("0")
 
 
-        TextBox60.Text = J.ToString("0")
+        TextBox60.Text = j.ToString("0")
         '--------- checks ---------
         TextBox46.BackColor = IIf(τ < σ_design_cpl, Color.LightGreen, Color.Red)
     End Sub
@@ -1115,44 +1122,46 @@ Public Class Form1
         End If
     End Sub
     Private Sub Calc_emotor_4P()        '
-        Dim Ins_power, req_pow_safety, aanlooptijd, n_motor, rad As Double
+        Dim req_pow_safety, aanlooptijd, rad As Double
         Dim m_torque_inrush, m_torque_max, m_torque_rated, m_torque_average As Double
-        Dim impeller_inertia, motor_inertia, total_inertia As Double
+        Dim impeller_inertia, total_inertia As Double
         Dim ang_acceleration, C_acc, inertia_torque, fan_load_torque As Double
+        Dim ins_power1, ins_power2 As Double
 
         '--------- motor torque-------------
         'see http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
         'see http://electrical-engineering-portal.com/calculation-of-motor-startin
 
-        Ins_power = NumericUpDown1.Value * 10 ^ 3   'Geinstalleerd vermogen [Watt]
-        Ins_power *= NumericUpDown27.Value          'no motors
+        ins_power1 = NumericUpDown1.Value * 10 ^ 3   'Geinstalleerd vermogen motor #1 [Watt]
+        Ins_power2 = NumericUpDown30.Value * 10 ^ 3   'Geinstalleerd vermogen motor #2 [Watt]
 
-        If (ComboBox3.SelectedIndex > -1) Then
-            n_motor = motor_rpm(ComboBox3.SelectedIndex) '[rpm]
-        Else
-            n_motor = 1000
-        End If
-
-        rad = n_motor / 60 * 2 * PI                 'Hoeksnelheid [rad/s]
+        rad = _rpm / 60 * 2 * PI                 'Hoeksnelheid [rad/s]
         fan_load_torque = req_pow_safety / rad      '[N.m]
-        m_torque_rated = Ins_power / rad
+        m_torque_rated = (ins_power1 + ins_power2) / rad
         m_torque_inrush = m_torque_rated * 0.95
         m_torque_max = m_torque_rated * 2.5
 
         m_torque_max *= 0.8 ^ 2                                     'Starting voltage is 80%
         m_torque_average = 0.45 * (m_torque_inrush + m_torque_max)  'Average torque motor
 
-        '------------- inertia motor + inertia impeller-------------------
-        motor_inertia = CDbl(Emotor_4P_inert(n_motor, Ins_power))
-        Double.TryParse(TextBox27.Text, impeller_inertia)       '[kg.m2]
-        total_inertia = impeller_inertia + motor_inertia        '[kg.m2]
+
+        Double.TryParse(TextBox27.Text, _Inertia_2)             '[kg.m2]
+        total_inertia = _Inertia_1 + _Inertia_2 + _Inertia_3    '[kg.m2]
+
+
         inertia_torque = total_inertia * ang_acceleration       '[N.m]
 
         '-------------- aanlooptijd--------------------------------
         C_acc = m_torque_average - (2.5 * fan_load_torque)
-        aanlooptijd = 2 * PI * n_motor * total_inertia / (60 * C_acc)
+        aanlooptijd = 2 * PI * _rpm * total_inertia / (60 * C_acc)
         TextBox39.Text = aanlooptijd.ToString("0") 'Aanlooptijd [s]
-        TextBox73.Text = motor_inertia.ToString("0") 'motor inertia '[kg.m2] 
+
+        TextBox55.Text = _Inertia_1.ToString("0.0") 'Inertia one motor '[kg.m2] 
+        TextBox79.Text = _Inertia_3.ToString("0.0") 'Inertia one motor '[kg.m2] 
+
+        TextBox75.Text = (ins_power1 / 1000).ToString("0")     'Power motor #1
+        TextBox77.Text = (ins_power2 / 1000).ToString("0")     'Power motor #2
+
     End Sub
     ' see http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
     Function Emotor_4P_inert(rpm As Double, kw As Double) As Double
@@ -1176,22 +1185,27 @@ Public Class Form1
     End Function
 
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click, TabPage7.Enter, NumericUpDown2.ValueChanged
-        Dim inertia_beaters As Double
-        Dim inertia_motor As Double
         Dim coupl_stiff As Double
 
-        Double.TryParse(TextBox27.Text, inertia_beaters)  '[kg.m2]
-        Double.TryParse(TextBox73.Text, inertia_motor)    '[kg.m2]
-        coupl_stiff = NumericUpDown31.Value
 
+        '========= stiffness ===========
+        coupl_stiff = NumericUpDown31.Value * 10 ^ 6
+        _Springstiff_1 = coupl_stiff           '[Nm/rad] coupling #1
+        _Springstiff_2 = coupl_stiff           '[Nm/rad] coupling #2
 
+        TextBox71.Text = _Inertia_2.ToString               'Inertia beaters
+        TextBox72.Text = (_Springstiff_1 / 10 ^ 6).ToString("0") 'Stiffness Coupling
+        TextBox76.Text = _rpm
+
+        Label106.Text = _Inertia_1.ToString("0.0")
+        Label111.Text = _Inertia_2.ToString("0.0")
+        Label112.Text = _Inertia_3.ToString("0.0")
+
+        Label115.Text = _Springstiff_1
+        Label114.Text = _Springstiff_2
 
         Torsional_analyses()
         Draw_chart1()
-
-        TextBox55.Text = inertia_motor.ToString         'Inertia motor
-        TextBox71.Text = inertia_beaters.ToString       'Inertia beaters
-        TextBox72.Text = coupl_stiff.ToString           'Stiffness Coupling
 
     End Sub
 
@@ -1199,15 +1213,6 @@ Public Class Form1
         Dim omega, ii As Double
 
         Try
-            Double.TryParse(TextBox55.Text, Inertia_1)             'Motor#1 [kg.m2]
-            Double.TryParse(TextBox71.Text, Inertia_2)             'Beaters [kg.m2]
-            Double.TryParse(TextBox55.Text, Inertia_3)             'Motor#2 [kg.m2]
-
-            Double.TryParse(TextBox72.Text, Springstiff_1)          'stijfheid coupling [kNm/rad]
-            Springstiff_1 *= 10 ^ 6                                 '[Nm/rad]
-            Springstiff_2 = Springstiff_1                           '[Nm/rad]
-
-
             For ii = 0 To 100
                 omega = ii * NumericUpDown2.Value                              'Hoeksnelheid step-range
                 Torsional_point(CInt(ii), 0) = Round(omega * 60 / (2 * PI), 0)  '[rad/s --> rpm]
@@ -1216,10 +1221,13 @@ Public Class Form1
 
             Find_zero_torque()
 
-
         Catch ex As Exception
             MessageBox.Show("Problem torsional calculation")
         End Try
+    End Sub
+
+    Private Sub GroupBox13_Enter(sender As Object, e As EventArgs) Handles GroupBox13.Enter
+
     End Sub
 
     Private Sub Find_zero_torque()
@@ -1249,7 +1257,7 @@ Public Class Form1
         TextBox74.Text = Round((omg3 * 60 / (2 * PI)), 0).ToString        '[rad/s --> rpm]
 
         'Residual torque too big,  problem in choosen bounderies
-        Label106.Text = T3.ToString
+        Label113.Text = T3.ToString
         TextBox74.BackColor = CType(IIf(T3 > 1, Color.Red, SystemColors.Window), Color)
     End Sub
     'Holzer residual torque analyses
@@ -1258,11 +1266,11 @@ Public Class Form1
         Dim Torsion_1, Torsion_2, Torsion_3 As Double
 
         theta_1 = 1                                             'Initial hoek verdraaiiing
-        Torsion_1 = (omega ^ 2) * Inertia_1 * theta_1
-        theta_2 = 1 - Torsion_1 / Springstiff_1                 'theta_1 - (((omega ^ 2) / Springstiff_1) * Inertia_1 * theta_1)
-        Torsion_2 = Torsion_1 + (omega ^ 2) * Inertia_2 * theta_2
-        theta_3 = theta_2 - Torsion_2 / Springstiff_2           'theta_2 - ((omega ^ 2) / Springstiff_2) * (Inertia_1 * theta_1 + Inertia_2 * theta_2)
-        Torsion_3 = Torsion_2 + (omega ^ 2) * Inertia_3 * theta_3
+        Torsion_1 = (omega ^ 2) * _Inertia_1 * theta_1
+        theta_2 = 1 - Torsion_1 / _Springstiff_1                 'theta_1 - (((omega ^ 2) / _Springstiff_1) * _Inertia_1 * theta_1)
+        Torsion_2 = Torsion_1 + (omega ^ 2) * _Inertia_2 * theta_2
+        theta_3 = theta_2 - Torsion_2 / _Springstiff_2           'theta_2 - ((omega ^ 2) / _Springstiff_2) * (_Inertia_1 * theta_1 + _Inertia_2 * theta_2)
+        Torsion_3 = Torsion_2 + (omega ^ 2) * _Inertia_3 * theta_3
 
         Return (Torsion_3)                 '[Nm] enkel trapper
     End Function
