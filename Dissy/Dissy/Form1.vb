@@ -4,13 +4,19 @@ Imports System.Math
 Imports System.Globalization
 Imports System.Threading
 Imports Word = Microsoft.Office.Interop.Word
+Imports System.Windows.Forms.DataVisualization.Charting
 Imports System.Management
 
 Public Class Form1
+    Dim Inertia_1, Inertia_2, Inertia_3 As Double               'Torsional analyses
+    Dim Springstiff_1, Springstiff_2, Springstiff_3 As Double   'Torsional analyses
+    Dim Torsional_point(100, 2) As Double   'For calculation on torsional frequency
 
     Dim dirpath_Eng As String = "N:\Engineering\VBasic\Dissy_input\"
     Dim dirpath_Rap As String = "N:\Engineering\VBasic\Dissy_rapport_copy\"
     Dim dirpath_Home As String = "C:\Temp\"
+
+    Public Shared motor_rpm() As String = {600, 750, 1000, 1500, 3000}
 
     'according to DIN6885-1
     Public Shared shaft_key() As String = {
@@ -44,7 +50,7 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown2.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown29.ValueChanged, NumericUpDown28.ValueChanged, NumericUpDown27.ValueChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown29.ValueChanged, NumericUpDown28.ValueChanged, NumericUpDown27.ValueChanged, ComboBox3.SelectedIndexChanged
         Calc_tab1()
     End Sub
 
@@ -85,7 +91,11 @@ Public Class Form1
 
         tot_Instal_power = NumericUpDown1.Value * 1000    '[kW]
         tot_Instal_power *= no_motors
-        rpm = NumericUpDown2.Value
+        If (ComboBox3.SelectedIndex > -1) Then
+            rpm = motor_rpm(ComboBox3.SelectedIndex)
+        Else
+            rpm = 1000
+        End If
         dia_beater = NumericUpDown8.Value / 1000    '[m]
         lump_dia = NumericUpDown14.Value / 1000     '[m]
         drive_key_radius = NumericUpDown13.Value / 2000     '[m]
@@ -203,17 +213,24 @@ Public Class Form1
         Thread.CurrentThread.CurrentUICulture = New CultureInfo("en-US")
 
         ComboBox1.Items.Clear()                     'Note Combobox1 contains
-        ComboBox2.Items.Clear()                     'Note Combobox1 contains
+        ComboBox2.Items.Clear()                     'Note Combobox2 contains
+        ComboBox3.Items.Clear()                     'Note Combobox3 contains
 
-        For hh = 0 To (shaft_key.Length - 1)  'Fill combobox4 Motor data
+        For hh = 0 To (shaft_key.Length - 1)  'Fill combobox
             words = shaft_key(hh).Split(separators, StringSplitOptions.None)
             ComboBox1.Items.Add(words(0))
             ComboBox2.Items.Add(words(0))
         Next hh
 
+        For hh = 0 To (motor_rpm.Length - 1)  'Fill combobox4 Motor data
+            ComboBox3.Items.Add(motor_rpm(hh))
+        Next hh
+
+
         '----------------- prevent out of bounds------------------
         ComboBox1.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 13, -1)) 'Select ..
-        ComboBox2.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 18, -1)) 'Select ..
+        ComboBox2.SelectedIndex = CInt(IIf(ComboBox2.Items.Count > 0, 18, -1)) 'Select ..
+        ComboBox3.SelectedIndex = CInt(IIf(ComboBox3.Items.Count > 0, 0, -1)) 'Select ..
 
         TextBox69.Text =
         "Factors of Design and Safety" & vbCrLf &
@@ -346,7 +363,7 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "[-]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Speed "
-            oTable.Cell(row, 2).Range.Text = NumericUpDown2.Value.ToString
+            oTable.Cell(row, 2).Range.Text = motor_rpm(ComboBox3.SelectedIndex).ToString
             oTable.Cell(row, 3).Range.Text = "[rpm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Radial speed"
@@ -1109,7 +1126,13 @@ Public Class Form1
 
         Ins_power = NumericUpDown1.Value * 10 ^ 3   'Geinstalleerd vermogen [Watt]
         Ins_power *= NumericUpDown27.Value          'no motors
-        n_motor = NumericUpDown2.Value              '[rpm]
+
+        If (ComboBox3.SelectedIndex > -1) Then
+            n_motor = motor_rpm(ComboBox3.SelectedIndex) '[rpm]
+        Else
+            n_motor = 1000
+        End If
+
         rad = n_motor / 60 * 2 * PI                 'Hoeksnelheid [rad/s]
         fan_load_torque = req_pow_safety / rad      '[N.m]
         m_torque_rated = Ins_power / rad
@@ -1129,24 +1152,153 @@ Public Class Form1
         C_acc = m_torque_average - (2.5 * fan_load_torque)
         aanlooptijd = 2 * PI * n_motor * total_inertia / (60 * C_acc)
         TextBox39.Text = aanlooptijd.ToString("0") 'Aanlooptijd [s]
+        TextBox73.Text = motor_inertia.ToString("0") 'motor inertia '[kg.m2] 
     End Sub
     ' see http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
     Function Emotor_4P_inert(rpm As Double, kw As Double) As Double
         Dim motor_inertia As Double
-        If rpm < 750 Then rpm = 750
+        If rpm < 600 Then rpm = 600
         Select Case True
             Case rpm = 3000
-                motor_inertia = 0.04 * (kw / 1000) ^ 0.9 * 1 ^ 2.5    '2 poles (1 pair) (3000 rpm) [kg.m2]
+                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 1 ^ 2.5    '2 poles (1 pair) (3000 rpm) [kg.m2]
             Case rpm = 1500
-                motor_inertia = 0.04 * (kw / 1000) ^ 0.9 * 2 ^ 2.5    '4 poles (2 pair) (1500 rpm) [kg.m2]
+                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 2 ^ 2.5    '4 poles (2 pair) (1500 rpm) [kg.m2]
             Case rpm = 1000
-                motor_inertia = 0.04 * (kw / 1000) ^ 0.9 * 3 ^ 2.5    '6 poles (3 pair) (1000 rpm) [kg.m2]
+                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 3 ^ 2.5    '6 poles (3 pair) (1000 rpm) [kg.m2]
             Case rpm = 750
-                motor_inertia = 0.04 * (kw / 1000) ^ 0.9 * 4 ^ 2.5    '8 poles (4 pair) (750 rpm) [kg.m2]
+                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 4 ^ 2.5    '8 poles (4 pair) (750 rpm) [kg.m2]
+            Case rpm = 600
+                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 5 ^ 2.5    '10 poles (5 pair) (600 rpm) [kg.m2]
             Case Else
                 MessageBox.Show("Error occured in Motor Inertia calculation ")
         End Select
         Return (motor_inertia)
     End Function
 
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click, TabPage7.Enter, NumericUpDown2.ValueChanged
+        Dim inertia_beaters As Double
+        Dim inertia_motor As Double
+        Dim coupl_stiff As Double
+
+        Double.TryParse(TextBox27.Text, inertia_beaters)  '[kg.m2]
+        Double.TryParse(TextBox73.Text, inertia_motor)    '[kg.m2]
+        coupl_stiff = NumericUpDown31.Value
+
+
+
+        Torsional_analyses()
+        Draw_chart1()
+
+        TextBox55.Text = inertia_motor.ToString         'Inertia motor
+        TextBox71.Text = inertia_beaters.ToString       'Inertia beaters
+        TextBox72.Text = coupl_stiff.ToString           'Stiffness Coupling
+
+    End Sub
+
+    Private Sub Torsional_analyses()
+        Dim omega, ii As Double
+
+        Try
+            Double.TryParse(TextBox55.Text, Inertia_1)             'Motor#1 [kg.m2]
+            Double.TryParse(TextBox71.Text, Inertia_2)             'Beaters [kg.m2]
+            Double.TryParse(TextBox55.Text, Inertia_3)             'Motor#2 [kg.m2]
+
+            Double.TryParse(TextBox72.Text, Springstiff_1)          'stijfheid coupling [kNm/rad]
+            Springstiff_1 *= 10 ^ 6                                 '[Nm/rad]
+            Springstiff_2 = Springstiff_1                           '[Nm/rad]
+
+
+            For ii = 0 To 100
+                omega = ii * NumericUpDown2.Value                              'Hoeksnelheid step-range
+                Torsional_point(CInt(ii), 0) = Round(omega * 60 / (2 * PI), 0)  '[rad/s --> rpm]
+                Torsional_point(CInt(ii), 1) = CDbl(Calc_zeroTorsion_4(omega))  'Residual torque
+            Next
+
+            Find_zero_torque()
+
+
+        Catch ex As Exception
+            MessageBox.Show("Problem torsional calculation")
+        End Try
+    End Sub
+
+    Private Sub Find_zero_torque()
+        Dim T1, T2, T3, omg1, omg2, omg3 As Double
+        Dim jjr As Integer
+
+        omg1 = 1        'Start lower limit [rad/sec]
+        omg2 = 300      'Start upper limit [rad/sec]
+        omg3 = 3        'In the middle [rad/sec]
+
+        T1 = CDbl(Calc_zeroTorsion_4(omg1))
+        T2 = CDbl(Calc_zeroTorsion_4(omg2))
+        T3 = CDbl(Calc_zeroTorsion_4(omg3))
+
+        '-------------Iteratie 30x halveren moet voldoende zijn ---------------
+        For jjr = 0 To 30
+            If T1 * T3 < 0 Then
+                omg2 = omg3
+            Else
+                omg1 = omg3
+            End If
+            omg3 = (omg1 + omg2) / 2
+            T1 = CDbl(Calc_zeroTorsion_4(omg1))
+            T2 = CDbl(Calc_zeroTorsion_4(omg2))
+            T3 = CDbl(Calc_zeroTorsion_4(omg3))
+        Next jjr
+        TextBox74.Text = Round((omg3 * 60 / (2 * PI)), 0).ToString        '[rad/s --> rpm]
+
+        'Residual torque too big,  problem in choosen bounderies
+        Label106.Text = T3.ToString
+        TextBox74.BackColor = CType(IIf(T3 > 1, Color.Red, SystemColors.Window), Color)
+    End Sub
+    'Holzer residual torque analyses
+    Private Function Calc_zeroTorsion_4(omega As Double) As Double
+        Dim theta_1, theta_2, theta_3 As Double
+        Dim Torsion_1, Torsion_2, Torsion_3 As Double
+
+        theta_1 = 1                                             'Initial hoek verdraaiiing
+        Torsion_1 = (omega ^ 2) * Inertia_1 * theta_1
+        theta_2 = 1 - Torsion_1 / Springstiff_1                 'theta_1 - (((omega ^ 2) / Springstiff_1) * Inertia_1 * theta_1)
+        Torsion_2 = Torsion_1 + (omega ^ 2) * Inertia_2 * theta_2
+        theta_3 = theta_2 - Torsion_2 / Springstiff_2           'theta_2 - ((omega ^ 2) / Springstiff_2) * (Inertia_1 * theta_1 + Inertia_2 * theta_2)
+        Torsion_3 = Torsion_2 + (omega ^ 2) * Inertia_3 * theta_3
+
+        Return (Torsion_3)                 '[Nm] enkel trapper
+    End Function
+
+    Private Sub Draw_chart1()
+        Dim hh As Integer
+        Try
+            Chart1.Series.Clear()
+            Chart1.ChartAreas.Clear()
+            Chart1.Titles.Clear()
+
+            Chart1.Series.Add("Residual Torque")
+
+            Chart1.ChartAreas.Add("ChartArea0")
+            Chart1.Series(0).ChartArea = "ChartArea0"
+
+            Chart1.Series(0).ChartType = DataVisualization.Charting.SeriesChartType.Line
+
+            Chart1.Titles.Add("Torsional natural frequency analysis")
+            Chart1.Titles(0).Font = New Font("Arial", 16, System.Drawing.FontStyle.Bold)
+
+            Chart1.Series(0).Name = "Torque"
+            Chart1.Series(0).Color = Color.Black
+            Chart1.Series(0).BorderWidth = 1
+
+            Chart1.ChartAreas("ChartArea0").AxisX.Title = "Speed [rpm]"
+            Chart1.ChartAreas("ChartArea0").AxisY.Title = "Torsion_3 [Nm] * 10^6"
+            Chart1.ChartAreas("ChartArea0").AxisX.Minimum = 0
+            Chart1.ChartAreas("ChartArea0").AlignmentOrientation = DataVisualization.Charting.AreaAlignmentOrientations.Vertical
+            Chart1.Series(0).YAxisType = AxisType.Primary
+
+            For hh = 0 To 100
+                Chart1.Series(0).Points.AddXY(Torsional_point(hh, 0), Torsional_point(hh, 1))
+            Next
+        Catch ex As Exception
+            MessageBox.Show("nnnnnn")
+        End Try
+    End Sub
 End Class
