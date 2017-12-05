@@ -56,7 +56,7 @@ Public Class Form1
     End Sub
 
     Private Sub Calc_tab1()
-        Dim tot_Instal_power, rad, motor_torque, dia_beater As Double
+        Dim tot_Instal_power, rad, dia_beater As Double
         Dim l_wet, l_add, l_tot As Double
         Dim tip_speed, acc, acc_time As Double
         Dim lump_dia, lump_weight, density, f_tip, lump_torque As Double
@@ -67,6 +67,8 @@ Public Class Form1
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
+        Dim power1, power2 As Double
+        Dim motor1_torque As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -88,7 +90,9 @@ Public Class Form1
         Double.TryParse(TextBox13.Text, key_h)      '[mm]
         key_l = NumericUpDown9.Value                '[mm]
 
-        tot_Instal_power = (NumericUpDown1.Value + NumericUpDown30.Value) * 1000    '[kW]
+        power1 = NumericUpDown1.Value * 10 ^ 3
+        power2 = NumericUpDown30.Value * 10 ^ 3
+        tot_Instal_power = power1 + power2        '[W]
 
         If (ComboBox3.SelectedIndex > -1) Then
             _rpm = motor_rpm(ComboBox3.SelectedIndex)
@@ -106,10 +110,11 @@ Public Class Form1
         allowed_σ_stress = σ_yield / service_factor  '[N/mm2]
         allowed_τ_stress = allowed_σ_stress * 0.8   '[N/mm2]
 
-        '-------- motor----------
+        '-------- Motor #1 and #2----------
         rad = _rpm / 60 * 2 * PI
-        motor_torque = tot_Instal_power / rad
-        start_torque = motor_torque * 2.0
+        motor1_torque = power1 / rad    'Motor #1
+
+        start_torque = motor1_torque * 2.0
         tip_speed = dia_beater * _rpm * PI / 60  '[m/s]
 
         '-------- process ------
@@ -169,7 +174,7 @@ Public Class Form1
         '-------- present-------
         TextBox1.Text = l_tot.ToString("0")
         TextBox2.Text = rad.ToString("0.0")
-        TextBox3.Text = (motor_torque / 1000).ToString("0.0") '[kNm]
+        TextBox3.Text = (motor1_torque / 1000).ToString("0.0") '[kNm]
         TextBox4.Text = tip_speed.ToString("0.0")
         TextBox5.Text = lump_weight.ToString("0.00")
         TextBox6.Text = acc.ToString("0")
@@ -301,6 +306,7 @@ Public Class Form1
         Dim oPara1, oPara2 As Word.Paragraph
         Dim row As Integer
         Dim ufilename As String
+        Dim chart_size As Integer = 60  '% of original picture size
 
         Try
             oWord = CType(CreateObject("Word.Application"), Word.Application)
@@ -361,15 +367,15 @@ Public Class Form1
             row = 1
             oTable.Cell(row, 1).Range.Text = "Electric motor "
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Total installed Power"
-            oTable.Cell(row, 2).Range.Text = TextBox35.Text
+            oTable.Cell(row, 1).Range.Text = "Power motor #1"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "No. motors"
-            oTable.Cell(row, 2).Range.Text = "mmm"
-            oTable.Cell(row, 3).Range.Text = "[-]"
+            oTable.Cell(row, 1).Range.Text = "Power motor #2"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown30.Value
+            oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Speed "
+            oTable.Cell(row, 1).Range.Text = "Speed"
             oTable.Cell(row, 2).Range.Text = motor_rpm(ComboBox3.SelectedIndex).ToString
             oTable.Cell(row, 3).Range.Text = "[rpm]"
             row += 1
@@ -476,7 +482,7 @@ Public Class Form1
             row = 1
             oTable.Cell(row, 1).Range.Text = "Coupling key"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Shaft diameter"
+            oTable.Cell(row, 1).Range.Text = "Shaft diameter motor #1"
             oTable.Cell(row, 2).Range.Text = NumericUpDown13.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
@@ -771,6 +777,16 @@ Public Class Form1
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------save Chart1---------------- 
+            Draw_chart1()
+            oPara1 = oDoc.Content.Paragraphs.Add
+            oPara1.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter
+            oPara1.Range.InlineShapes.AddPicture(dirpath_Home & "Torsion_Chart.Jpeg")
+            oPara1.Range.InlineShapes.Item(1).LockAspectRatio = CType(True, Microsoft.Office.Core.MsoTriState)
+            oPara1.Range.InlineShapes.Item(1).ScaleWidth = chart_size       'Size
+            oPara1.Range.InsertParagraphAfter()
+
 
             '------------- store rapport------------------
             ufilename = "Fan_select_report_" & TextBox30.Text & "_" & TextBox31.Text & DateTime.Now.ToString("_yyyy_MM_dd") & ".docx"
@@ -1124,9 +1140,9 @@ Public Class Form1
     Private Sub Calc_emotor_4P()        '
         Dim req_pow_safety, aanlooptijd, rad As Double
         Dim m_torque_inrush, m_torque_max, m_torque_rated, m_torque_average As Double
-        Dim impeller_inertia, total_inertia As Double
         Dim ang_acceleration, C_acc, inertia_torque, fan_load_torque As Double
         Dim ins_power1, ins_power2 As Double
+        Dim total_inertia As Double
 
         '--------- motor torque-------------
         'see http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
@@ -1187,22 +1203,14 @@ Public Class Form1
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click, TabPage7.Enter, NumericUpDown2.ValueChanged
         Dim coupl_stiff As Double
 
-
         '========= stiffness ===========
         coupl_stiff = NumericUpDown31.Value * 10 ^ 6
         _Springstiff_1 = coupl_stiff           '[Nm/rad] coupling #1
         _Springstiff_2 = coupl_stiff           '[Nm/rad] coupling #2
 
-        TextBox71.Text = _Inertia_2.ToString               'Inertia beaters
+        TextBox71.Text = _Inertia_2.ToString  'Inertia beaters
         TextBox72.Text = (_Springstiff_1 / 10 ^ 6).ToString("0") 'Stiffness Coupling
         TextBox76.Text = _rpm
-
-        Label106.Text = _Inertia_1.ToString("0.0")
-        Label111.Text = _Inertia_2.ToString("0.0")
-        Label112.Text = _Inertia_3.ToString("0.0")
-
-        Label115.Text = _Springstiff_1
-        Label114.Text = _Springstiff_2
 
         Torsional_analyses()
         Draw_chart1()
@@ -1276,8 +1284,11 @@ Public Class Form1
     End Function
 
     Private Sub Draw_chart1()
+        Dim file_name As String
         Dim hh As Integer
+
         Try
+            file_name = dirpath_Home & "Torsion_Chart.Jpeg"
             Chart1.Series.Clear()
             Chart1.ChartAreas.Clear()
             Chart1.Titles.Clear()
@@ -1305,6 +1316,7 @@ Public Class Form1
             For hh = 0 To 100
                 Chart1.Series(0).Points.AddXY(Torsional_point(hh, 0), Torsional_point(hh, 1))
             Next
+            Chart1.SaveImage(file_name, System.Drawing.Imaging.ImageFormat.Jpeg)
         Catch ex As Exception
             MessageBox.Show("nnnnnn")
         End Try
