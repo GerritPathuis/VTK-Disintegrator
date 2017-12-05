@@ -1308,7 +1308,7 @@ Public Class Form1
             Chart1.Series(0).BorderWidth = 1
 
             Chart1.ChartAreas("ChartArea0").AxisX.Title = "Speed [rpm]"
-            Chart1.ChartAreas("ChartArea0").AxisY.Title = "Torsion_3 [Nm] * 10^6"
+            Chart1.ChartAreas("ChartArea0").AxisY.Title = "Shaft Torsion [Nm] * 10^6"
             Chart1.ChartAreas("ChartArea0").AxisX.Minimum = 0
             Chart1.ChartAreas("ChartArea0").AlignmentOrientation = DataVisualization.Charting.AreaAlignmentOrientations.Vertical
             Chart1.Series(0).YAxisType = AxisType.Primary
