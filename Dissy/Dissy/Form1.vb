@@ -1265,7 +1265,7 @@ Public Class Form1
             For ii = 0 To 100
                 omega = ii * NumericUpDown2.Value                              'Hoeksnelheid step-range
                 Torsional_point(CInt(ii), 0) = Round(omega * 60 / (2 * PI), 0)  '[rad/s --> rpm]
-                Torsional_point(CInt(ii), 1) = CDbl(Calc_zeroTorsion_4(omega))  'Residual torque
+                Torsional_point(CInt(ii), 1) = CDbl(Calc_zeroTorsion_4(omega) / 10 ^ 6)  'Residual torque
             Next
 
             Find_zero_torque()
