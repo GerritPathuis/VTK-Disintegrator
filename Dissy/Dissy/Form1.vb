@@ -96,8 +96,6 @@ Public Class Form1
 
         If (ComboBox3.SelectedIndex > -1) Then
             _rpm = motor_rpm(ComboBox3.SelectedIndex)
-        Else
-            _rpm = 1000
         End If
         dia_beater = NumericUpDown8.Value / 1000    '[m]
         lump_dia = NumericUpDown14.Value / 1000     '[m]
@@ -376,7 +374,7 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Speed"
-            oTable.Cell(row, 2).Range.Text = motor_rpm(ComboBox3.SelectedIndex).ToString
+            oTable.Cell(row, 2).Range.Text = _rpm.ToString
             oTable.Cell(row, 3).Range.Text = "[rpm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Radial speed"
@@ -771,6 +769,49 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Factor of Safety stress"
             oTable.Cell(row, 2).Range.Text = TextBox45.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------ Torsion ------------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Torsion"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Motor speed"
+            oTable.Cell(row, 2).Range.Text = _rpm.ToString
+            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Power motor #1"
+            oTable.Cell(row, 2).Range.Text = TextBox75.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Power motor #2"
+            oTable.Cell(row, 2).Range.Text = TextBox77.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Inertia motor #1"
+            oTable.Cell(row, 2).Range.Text = TextBox55.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Inertia beaters"
+            oTable.Cell(row, 2).Range.Text = TextBox71.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Inertia Motor #2"
+            oTable.Cell(row, 2).Range.Text = TextBox79.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Coumping stiffness"
+            oTable.Cell(row, 2).Range.Text = TextBox72.Text
+            oTable.Cell(row, 3).Range.Text = "[M.Nm/rad]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
@@ -1262,8 +1303,12 @@ Public Class Form1
             T2 = CDbl(Calc_zeroTorsion_4(omg2))
             T3 = CDbl(Calc_zeroTorsion_4(omg3))
         Next jjr
-        TextBox74.Text = Round((omg3 * 60 / (2 * PI)), 0).ToString        '[rad/s --> rpm]
 
+        If (T3 < 1) Then 'OK Residual torque is small
+            TextBox74.Text = Round((omg3 * 60 / (2 * PI)), 0).ToString        '[rad/s --> rpm]
+        Else
+            TextBox74.Text = "--"
+        End If
         'Residual torque too big,  problem in choosen bounderies
         Label113.Text = T3.ToString
         TextBox74.BackColor = CType(IIf(T3 > 1, Color.Red, SystemColors.Window), Color)
