@@ -51,7 +51,8 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown5.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown29.ValueChanged, NumericUpDown28.ValueChanged, ComboBox3.SelectedIndexChanged, NumericUpDown30.ValueChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown28.ValueChanged, ComboBox3.SelectedIndexChanged, NumericUpDown30.ValueChanged
+        Calc_inertia()
         Calc_tab1()
     End Sub
 
@@ -68,7 +69,7 @@ Public Class Form1
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
         Dim power1, power2 As Double
-        Dim motor1_torque As Double
+        Dim motor1_torque, motor2_torque As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -111,8 +112,15 @@ Public Class Form1
         '-------- Motor #1 and #2----------
         rad = _rpm / 60 * 2 * PI
         motor1_torque = power1 / rad    'Motor #1
+        motor2_torque = power2 / rad    'Motor #2
 
-        start_torque = motor1_torque * 2.0
+        '---- Calculate the highest coupling load ------
+        If (motor1_torque > motor2_torque) Then
+            start_torque = motor1_torque * 1.5  'safety factor 1.5
+        Else
+            start_torque = motor2_torque * 1.5  'safety factor 1.5
+        End If
+
         tip_speed = dia_beater * _rpm * PI / 60  '[m/s]
 
         '-------- process ------
@@ -256,9 +264,10 @@ Public Class Form1
         " " & vbCrLf
     End Sub
     Private Sub Calc_inertia()
-        Dim overall_length, half_beater_weight, I_mass_inert, I_mass_in_tot, thick As Double
+        Dim overall_length, I_mass_inert, I_mass_in_tot, thick As Double
         Dim no_beaters, B, H, H2, tip_width As Double
         Dim tb, th, I_missing_tip, tip_weight As Double
+        Dim half_beater_weight, beater_weight, beaters_weight As Double
 
         '-------- mass moment of --------------
         'see http://www.dtic.mil/dtic/tr/fulltext/u2/274936.pdf
@@ -285,12 +294,16 @@ Public Class Form1
         I_mass_inert *= 2                                   'two triangles is one beater
         half_beater_weight = half_beater_weight - tip_weight
         I_mass_in_tot = I_mass_inert * no_beaters '[kg.m2]
+        beater_weight = half_beater_weight * 2
+        beaters_weight = beater_weight * NumericUpDown7.Value
 
         '----present--------
         TextBox26.Text = I_mass_inert.ToString("0")             '[kg.m2] one beater
         _Inertia_2 = I_mass_in_tot.ToString("0")                '[kg.m2] total beaters
         TextBox27.Text = _Inertia_2                             '[kg.m2] 
-        TextBox28.Text = (half_beater_weight * 2).ToString("0") '[kg]
+        TextBox28.Text = beater_weight.ToString("0")            '[kg]
+        TextBox80.Text = beaters_weight.ToString("0")           '[kg]
+        TextBox81.Text = beaters_weight.ToString("0")           '[kg]
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -500,7 +513,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox21.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Actual force 1 key"
+            oTable.Cell(row, 1).Range.Text = "Nominal key force (x1.5)"
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
             oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
@@ -520,7 +533,7 @@ Public Class Form1
 
             '------------------ Beaters----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 11, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 12, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -564,6 +577,10 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox28.Text
             oTable.Cell(row, 3).Range.Text = "[kg]"
             row += 1
+            oTable.Cell(row, 1).Range.Text = "Beater shaft weight"
+            oTable.Cell(row, 2).Range.Text = TextBox80.Text
+            oTable.Cell(row, 3).Range.Text = "[kg]"
+            row += 1
             oTable.Cell(row, 1).Range.Text = "Beater inertia"
             oTable.Cell(row, 2).Range.Text = TextBox26.Text
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
@@ -578,8 +595,8 @@ Public Class Form1
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
-            '------------------ Beaters shaft ----------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
+            '------------------ Beaters shaft key --------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -595,9 +612,10 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox14.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Working key length"
+            oTable.Cell(row, 1).Range.Text = "Beater plate width"
             oTable.Cell(row, 2).Range.Text = TextBox8.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
+
             row += 1
             oTable.Cell(row, 1).Range.Text = "Allowed σ compression stress"
             oTable.Cell(row, 2).Range.Text = TextBox12.Text
@@ -609,7 +627,7 @@ Public Class Form1
             row += 1
             oTable.Cell(row, 1).Range.Text = "Maximum force 1 key"
             oTable.Cell(row, 2).Range.Text = TextBox11.Text
-            oTable.Cell(row, 3).Range.Text = "[N]"
+            oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Maximum Torque 2 keys"
             oTable.Cell(row, 2).Range.Text = TextBox9.Text
@@ -853,6 +871,7 @@ Public Class Form1
 
     Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click, TabPage2.Enter
         Calc_inertia()
+        Calc_tab1()
     End Sub
     Private Sub Calc_shaft_coupling()
         Dim dia, dia_calc, t1, m1 As Double
@@ -900,16 +919,17 @@ Public Class Form1
         dia_calc = dia - 2 * t1             '[mm]shaft calculation diameter
         f1 = NumericUpDown19.Value * 10 ^ 3 '[N] pulling force
         Double.TryParse(TextBox29.Text, dm1) 'torque locked motor
-        dm1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
+        dm1 *= 10 ^ 6                       '[kN.m]-->[N.mm]
         length_l = NumericUpDown29.Value    '[mm] bearing-bearing length
-        length_b = NumericUpDown20.Value    '[mm] beater shaft key
+        length_b = NumericUpDown20.Value    '[mm] beater shaft key length
         dia_fric = NumericUpDown21.Value    '[mm] spacer plate
 
         service_fac = NumericUpDown25.Value
         σ_yield = NumericUpDown10.Value
         σ_design_shft = σ_yield / service_fac 'σ_design
         τ_design_shft = σ_design_shft * 0.58
-        wght = NumericUpDown5.Value         '[kg]
+
+        Double.TryParse(TextBox81.Text, wght) '[kg] beaters
 
         '--------- Calc Polar Moment of Inertia   -----------
         'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
@@ -974,11 +994,11 @@ Public Class Form1
         TextBox45.BackColor = IIf(FOS_stress > 3.0, Color.LightGreen, Color.Red)
         '--------- beater shaft/key length input wrong--------- 
         If (length_l < length_b) Then
-            NumericUpDown8.BackColor = Color.Red
             NumericUpDown20.BackColor = Color.Red
+            NumericUpDown29.BackColor = Color.Red
         Else
-            NumericUpDown8.BackColor = Color.Yellow
             NumericUpDown20.BackColor = Color.Yellow
+            NumericUpDown29.BackColor = Color.Yellow
         End If
     End Sub
 
@@ -1000,6 +1020,8 @@ Public Class Form1
 
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         Read_file()
+        Calc_inertia()
+        Calc_tab1()
     End Sub
     'Save control settings and case_x_conditions to file
     Private Sub Save_tofile()
@@ -1190,7 +1212,7 @@ Public Class Form1
         'see http://electrical-engineering-portal.com/calculation-of-motor-startin
 
         ins_power1 = NumericUpDown1.Value * 10 ^ 3   'Geinstalleerd vermogen motor #1 [Watt]
-        Ins_power2 = NumericUpDown30.Value * 10 ^ 3   'Geinstalleerd vermogen motor #2 [Watt]
+        ins_power2 = NumericUpDown30.Value * 10 ^ 3   'Geinstalleerd vermogen motor #2 [Watt]
 
         rad = _rpm / 60 * 2 * PI                 'Hoeksnelheid [rad/s]
         fan_load_torque = req_pow_safety / rad      '[N.m]
@@ -1275,8 +1297,9 @@ Public Class Form1
         End Try
     End Sub
 
-    Private Sub GroupBox13_Enter(sender As Object, e As EventArgs) Handles GroupBox13.Enter
-
+    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click, TabControl1.Enter
+        Calc_inertia()
+        Calc_tab1()
     End Sub
 
     Private Sub Find_zero_torque()
