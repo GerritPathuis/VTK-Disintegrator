@@ -116,9 +116,9 @@ Public Class Form1
 
         '---- Calculate the highest coupling load ------
         If (motor1_torque > motor2_torque) Then
-            start_torque = motor1_torque * 1.5  'safety factor 1.5
+            start_torque = motor1_torque * 2.0  '2x Nominaal
         Else
-            start_torque = motor2_torque * 1.5  'safety factor 1.5
+            start_torque = motor2_torque * 2.0  '2x Nominaal
         End If
 
         tip_speed = dia_beater * _rpm * PI / 60  '[m/s]
@@ -398,7 +398,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox3.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Locked Motor torque"
+            oTable.Cell(row, 1).Range.Text = "Break down Motor torque"
             oTable.Cell(row, 2).Range.Text = TextBox29.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
 
@@ -585,7 +585,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox26.Text
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Total inertia"
+            oTable.Cell(row, 1).Range.Text = "Total rotor inertia"
             oTable.Cell(row, 2).Range.Text = TextBox27.Text
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
 
