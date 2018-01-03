@@ -293,6 +293,7 @@ Partial Class Form1
         Me.TabPage8 = New System.Windows.Forms.TabPage()
         Me.PictureBox4 = New System.Windows.Forms.PictureBox()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.Label112 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox19.SuspendLayout()
@@ -1026,6 +1027,7 @@ Partial Class Form1
         '
         'GroupBox2
         '
+        Me.GroupBox2.Controls.Add(Me.Label112)
         Me.GroupBox2.Controls.Add(Me.Label51)
         Me.GroupBox2.Controls.Add(Me.TextBox36)
         Me.GroupBox2.Controls.Add(Me.Label59)
@@ -1040,7 +1042,7 @@ Partial Class Form1
         Me.GroupBox2.Controls.Add(Me.NumericUpDown4)
         Me.GroupBox2.Location = New System.Drawing.Point(3, 326)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(330, 170)
+        Me.GroupBox2.Size = New System.Drawing.Size(330, 200)
         Me.GroupBox2.TabIndex = 13
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Material"
@@ -1140,7 +1142,7 @@ Partial Class Form1
         Me.NumericUpDown3.BackColor = System.Drawing.Color.Yellow
         Me.NumericUpDown3.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         Me.NumericUpDown3.Location = New System.Drawing.Point(246, 17)
-        Me.NumericUpDown3.Maximum = New Decimal(New Integer() {5000, 0, 0, 0})
+        Me.NumericUpDown3.Maximum = New Decimal(New Integer() {9000, 0, 0, 0})
         Me.NumericUpDown3.Minimum = New Decimal(New Integer() {100, 0, 0, 0})
         Me.NumericUpDown3.Name = "NumericUpDown3"
         Me.NumericUpDown3.Size = New System.Drawing.Size(62, 20)
@@ -3266,6 +3268,16 @@ Partial Class Form1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
         '
+        'Label112
+        '
+        Me.Label112.AutoSize = True
+        Me.Label112.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label112.Location = New System.Drawing.Point(17, 172)
+        Me.Label112.Name = "Label112"
+        Me.Label112.Size = New System.Drawing.Size(158, 16)
+        Me.Label112.TabIndex = 60
+        Me.Label112.Text = "Material load 2,93 ton/kW"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3629,4 +3641,5 @@ Partial Class Form1
     Friend WithEvents NumericUpDown29 As NumericUpDown
     Friend WithEvents Label76 As Label
     Friend WithEvents Label111 As Label
+    Friend WithEvents Label112 As Label
 End Class
