@@ -2332,9 +2332,9 @@ Partial Class Form1
         Me.Label11.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label11.Location = New System.Drawing.Point(19, 40)
         Me.Label11.Name = "Label11"
-        Me.Label11.Size = New System.Drawing.Size(148, 16)
+        Me.Label11.Size = New System.Drawing.Size(103, 16)
         Me.Label11.TabIndex = 3
-        Me.Label11.Text = "Overall beater dia [mm]"
+        Me.Label11.Text = "Beater dia [mm]"
         '
         'NumericUpDown8
         '

@@ -317,7 +317,7 @@ Public Class Form1
         Dim oPara1, oPara2 As Word.Paragraph
         Dim row As Integer
         Dim ufilename As String
-        Dim chart_size As Integer = 60  '% of original picture size
+        Dim chart_size As Integer = 55  '% of original picture size
 
         Try
             oWord = CType(CreateObject("Word.Application"), Word.Application)
@@ -732,13 +732,17 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Shaft ----------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 13, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 14, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             row = 1
             oTable.Cell(row, 1).Range.Text = "Shaft"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Bearing-bearing length"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown29.Value.ToString("0")
+            oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Shaft drive diameter"
             oTable.Cell(row, 2).Range.Text = TextBox41.Text
