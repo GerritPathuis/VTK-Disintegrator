@@ -87,6 +87,7 @@ Partial Class Form1
         Me.NumericUpDown13 = New System.Windows.Forms.NumericUpDown()
         Me.Button1 = New System.Windows.Forms.Button()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.Label112 = New System.Windows.Forms.Label()
         Me.Label51 = New System.Windows.Forms.Label()
         Me.TextBox36 = New System.Windows.Forms.TextBox()
         Me.Label59 = New System.Windows.Forms.Label()
@@ -293,7 +294,6 @@ Partial Class Form1
         Me.TabPage8 = New System.Windows.Forms.TabPage()
         Me.PictureBox4 = New System.Windows.Forms.PictureBox()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
-        Me.Label112 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox19.SuspendLayout()
@@ -1046,6 +1046,16 @@ Partial Class Form1
         Me.GroupBox2.TabIndex = 13
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Material"
+        '
+        'Label112
+        '
+        Me.Label112.AutoSize = True
+        Me.Label112.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label112.Location = New System.Drawing.Point(17, 172)
+        Me.Label112.Name = "Label112"
+        Me.Label112.Size = New System.Drawing.Size(158, 16)
+        Me.Label112.TabIndex = 60
+        Me.Label112.Text = "Material load 2,93 ton/kW"
         '
         'Label51
         '
@@ -2106,7 +2116,7 @@ Partial Class Form1
         '
         Me.Label106.AutoSize = True
         Me.Label106.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label106.Location = New System.Drawing.Point(17, 248)
+        Me.Label106.Location = New System.Drawing.Point(19, 248)
         Me.Label106.Name = "Label106"
         Me.Label106.Size = New System.Drawing.Size(149, 16)
         Me.Label106.TabIndex = 45
@@ -2116,7 +2126,7 @@ Partial Class Form1
         '
         Me.Label37.AutoSize = True
         Me.Label37.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label37.Location = New System.Drawing.Point(19, 327)
+        Me.Label37.Location = New System.Drawing.Point(19, 324)
         Me.Label37.Name = "Label37"
         Me.Label37.Size = New System.Drawing.Size(116, 16)
         Me.Label37.TabIndex = 44
@@ -2135,7 +2145,7 @@ Partial Class Form1
         '
         Me.Label89.AutoSize = True
         Me.Label89.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label89.Location = New System.Drawing.Point(15, 64)
+        Me.Label89.Location = New System.Drawing.Point(19, 64)
         Me.Label89.Name = "Label89"
         Me.Label89.Size = New System.Drawing.Size(176, 16)
         Me.Label89.TabIndex = 42
@@ -2176,7 +2186,7 @@ Partial Class Form1
         '
         Me.Label53.AutoSize = True
         Me.Label53.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label53.Location = New System.Drawing.Point(15, 299)
+        Me.Label53.Location = New System.Drawing.Point(19, 299)
         Me.Label53.Name = "Label53"
         Me.Label53.Size = New System.Drawing.Size(174, 16)
         Me.Label53.TabIndex = 38
@@ -2186,7 +2196,7 @@ Partial Class Form1
         '
         Me.Label48.AutoSize = True
         Me.Label48.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label48.Location = New System.Drawing.Point(15, 274)
+        Me.Label48.Location = New System.Drawing.Point(19, 274)
         Me.Label48.Name = "Label48"
         Me.Label48.Size = New System.Drawing.Size(143, 16)
         Me.Label48.TabIndex = 37
@@ -2205,7 +2215,7 @@ Partial Class Form1
         '
         Me.Label54.AutoSize = True
         Me.Label54.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label54.Location = New System.Drawing.Point(15, 221)
+        Me.Label54.Location = New System.Drawing.Point(19, 221)
         Me.Label54.Name = "Label54"
         Me.Label54.Size = New System.Drawing.Size(160, 16)
         Me.Label54.TabIndex = 35
@@ -2225,7 +2235,7 @@ Partial Class Form1
         '
         Me.Label50.AutoSize = True
         Me.Label50.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label50.Location = New System.Drawing.Point(15, 115)
+        Me.Label50.Location = New System.Drawing.Point(19, 115)
         Me.Label50.Name = "Label50"
         Me.Label50.Size = New System.Drawing.Size(98, 16)
         Me.Label50.TabIndex = 29
@@ -2247,7 +2257,7 @@ Partial Class Form1
         '
         Me.Label52.AutoSize = True
         Me.Label52.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label52.Location = New System.Drawing.Point(15, 91)
+        Me.Label52.Location = New System.Drawing.Point(19, 91)
         Me.Label52.Name = "Label52"
         Me.Label52.Size = New System.Drawing.Size(181, 16)
         Me.Label52.TabIndex = 27
@@ -2266,7 +2276,7 @@ Partial Class Form1
         '
         Me.Label15.AutoSize = True
         Me.Label15.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label15.Location = New System.Drawing.Point(15, 197)
+        Me.Label15.Location = New System.Drawing.Point(19, 197)
         Me.Label15.Name = "Label15"
         Me.Label15.Size = New System.Drawing.Size(103, 16)
         Me.Label15.TabIndex = 17
@@ -2288,7 +2298,7 @@ Partial Class Form1
         '
         Me.Label9.AutoSize = True
         Me.Label9.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label9.Location = New System.Drawing.Point(15, 139)
+        Me.Label9.Location = New System.Drawing.Point(19, 139)
         Me.Label9.Name = "Label9"
         Me.Label9.Size = New System.Drawing.Size(173, 16)
         Me.Label9.TabIndex = 13
@@ -2320,7 +2330,7 @@ Partial Class Form1
         '
         Me.Label11.AutoSize = True
         Me.Label11.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label11.Location = New System.Drawing.Point(15, 40)
+        Me.Label11.Location = New System.Drawing.Point(19, 40)
         Me.Label11.Name = "Label11"
         Me.Label11.Size = New System.Drawing.Size(148, 16)
         Me.Label11.TabIndex = 3
@@ -3267,16 +3277,6 @@ Partial Class Form1
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
-        '
-        'Label112
-        '
-        Me.Label112.AutoSize = True
-        Me.Label112.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label112.Location = New System.Drawing.Point(17, 172)
-        Me.Label112.Name = "Label112"
-        Me.Label112.Size = New System.Drawing.Size(158, 16)
-        Me.Label112.TabIndex = 60
-        Me.Label112.Text = "Material load 2,93 ton/kW"
         '
         'Form1
         '
