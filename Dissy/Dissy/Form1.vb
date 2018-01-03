@@ -299,7 +299,7 @@ Public Class Form1
 
         '----present--------
         TextBox26.Text = I_mass_inert.ToString("0")             '[kg.m2] one beater
-        _Inertia_2 = I_mass_in_tot.ToString("0")                '[kg.m2] total beaters
+        _Inertia_2 = I_mass_in_tot.ToString("0.0")              '[kg.m2] total beaters
         TextBox27.Text = _Inertia_2                             '[kg.m2] 
         TextBox28.Text = beater_weight.ToString("0")            '[kg]
         TextBox80.Text = beaters_weight.ToString("0")           '[kg]
@@ -1235,8 +1235,8 @@ Public Class Form1
         aanlooptijd = 2 * PI * _rpm * total_inertia / (60 * C_acc)
         TextBox39.Text = aanlooptijd.ToString("0") 'Aanlooptijd [s]
 
-        TextBox55.Text = _Inertia_1.ToString("0.0") 'Inertia one motor '[kg.m2] 
-        TextBox79.Text = _Inertia_3.ToString("0.0") 'Inertia one motor '[kg.m2] 
+        TextBox55.Text = _Inertia_1.ToString("0") 'Inertia one motor '[kg.m2] 
+        TextBox79.Text = _Inertia_3.ToString("0") 'Inertia one motor '[kg.m2] 
 
         TextBox75.Text = (ins_power1 / 1000).ToString("0")     'Power motor #1
         TextBox77.Text = (ins_power2 / 1000).ToString("0")     'Power motor #2
@@ -1271,8 +1271,8 @@ Public Class Form1
         _Springstiff_1 = coupl_stiff           '[Nm/rad] coupling #1
         _Springstiff_2 = coupl_stiff           '[Nm/rad] coupling #2
 
-        TextBox71.Text = _Inertia_2.ToString  'Inertia beaters
-        TextBox72.Text = (_Springstiff_1 / 10 ^ 6).ToString("0") 'Stiffness Coupling
+        TextBox71.Text = _Inertia_2.ToString("0")  'Inertia beaters
+        TextBox72.Text = (_Springstiff_1 / 10 ^ 6).ToString("0.0") 'Stiffness Coupling
         TextBox76.Text = _rpm
 
         Torsional_analyses()
@@ -1341,7 +1341,7 @@ Public Class Form1
         Dim theta_1, theta_2, theta_3 As Double
         Dim Torsion_1, Torsion_2, Torsion_3 As Double
 
-        theta_1 = 1                                             'Initial hoek verdraaiiing
+        theta_1 = 0.5                                             'Initial hoek verdraaiiing
         Torsion_1 = (omega ^ 2) * _Inertia_1 * theta_1
         theta_2 = 1 - Torsion_1 / _Springstiff_1                 'theta_1 - (((omega ^ 2) / _Springstiff_1) * _Inertia_1 * theta_1)
         Torsion_2 = Torsion_1 + (omega ^ 2) * _Inertia_2 * theta_2
@@ -1371,7 +1371,7 @@ Public Class Form1
             Chart1.Titles.Add("Torsional natural frequency analysis")
             Chart1.Titles(0).Font = New Font("Arial", 16, System.Drawing.FontStyle.Bold)
 
-            Chart1.Series(0).Name = "Torque"
+            Chart1.Series(0).Name = "Residual Torque"
             Chart1.Series(0).Color = Color.Black
             Chart1.Series(0).BorderWidth = 1
 
