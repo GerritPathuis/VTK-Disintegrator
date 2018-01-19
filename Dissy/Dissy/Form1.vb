@@ -1393,4 +1393,52 @@ Public Class Form1
             MessageBox.Show("nnnnnn")
         End Try
     End Sub
+
+    Private Sub Draw_chart3()
+        Dim a, b, c As Double
+        Dim x, y, shaft_torque As Double
+        Try
+            'Clear all series And chart areas so we can re-add them
+            Chart3.Series.Clear()
+            Chart3.ChartAreas.Clear()
+            Chart3.Titles.Clear()
+            Chart3.Series.Add("Series0")
+            Chart3.ChartAreas.Add("ChartArea0")
+            Chart3.Series(0).ChartArea = "ChartArea0"
+            Chart3.Series(0).ChartType = DataVisualization.Charting.SeriesChartType.Line
+            ' Chart3.Titles.Add("Load Torque curve" & vbCrLf & "Inertial impeller " & NumericUpDown016.Value.ToString & " [kg.m2]")
+            Chart3.Titles(0).Font = New Font("Arial", 12, System.Drawing.FontStyle.Bold)
+            Chart3.Series(0).Name = "Koppel[%]"
+            Chart3.Series(0).Color = Color.Blue
+            Chart3.Series(0).IsVisibleInLegend = False
+            Chart3.ChartAreas("ChartArea0").AxisX.Minimum = 0
+            Chart3.ChartAreas("ChartArea0").AxisX.Maximum = 100
+            Chart3.ChartAreas("ChartArea0").AxisX.MinorTickMark.Enabled = True
+            Chart3.ChartAreas("ChartArea0").AxisY.MinorTickMark.Enabled = True
+            Chart3.ChartAreas("ChartArea0").AxisX.MajorGrid.Enabled = True
+            Chart3.ChartAreas("ChartArea0").AxisY.MajorGrid.Enabled = True
+            Chart3.ChartAreas("ChartArea0").AxisY.Title = "Torque [N.m]"
+            Chart3.ChartAreas("ChartArea0").AxisX.Title = "Speed [%]"
+
+            '------------------- Calc fan torque ---------
+            'Xas (N) 0-100% rpm
+            'yas (T) 0-100% torque
+            'y=c.(x-a)^2+b
+
+            c = 0.0135  'Breedte parabool
+            b = 4       'Vertikale verschuiving
+            a = 16      'Horizontale Verschuiving
+
+            Double.TryParse(TextBox3.Text, shaft_torque)
+            For x = 0 To 100
+                y = (c * (x - a) ^ 2 + b) / 100 * shaft_torque
+                Chart3.Series(0).Points.AddXY(x, y)
+            Next x
+
+            Chart3.Refresh()
+        Catch ex As Exception
+            'MessageBox.Show(ex.Message &" Error 4771")  ' Show the exception's message.
+        End Try
+
+    End Sub
 End Class

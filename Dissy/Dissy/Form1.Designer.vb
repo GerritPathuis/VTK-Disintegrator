@@ -26,6 +26,9 @@ Partial Class Form1
         Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
         Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Dim Series1 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea2 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series2 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.Button5 = New System.Windows.Forms.Button()
@@ -294,6 +297,8 @@ Partial Class Form1
         Me.TabPage8 = New System.Windows.Forms.TabPage()
         Me.PictureBox4 = New System.Windows.Forms.PictureBox()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.TabPage9 = New System.Windows.Forms.TabPage()
+        Me.Chart3 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox19.SuspendLayout()
@@ -356,6 +361,8 @@ Partial Class Form1
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage8.SuspendLayout()
         CType(Me.PictureBox4, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage9.SuspendLayout()
+        CType(Me.Chart3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -368,6 +375,7 @@ Partial Class Form1
         Me.TabControl1.Controls.Add(Me.TabPage6)
         Me.TabControl1.Controls.Add(Me.TabPage7)
         Me.TabControl1.Controls.Add(Me.TabPage8)
+        Me.TabControl1.Controls.Add(Me.TabPage9)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
@@ -814,7 +822,7 @@ Partial Class Form1
         Me.GroupBox6.Controls.Add(Me.NumericUpDown13)
         Me.GroupBox6.Location = New System.Drawing.Point(345, 148)
         Me.GroupBox6.Name = "GroupBox6"
-        Me.GroupBox6.Size = New System.Drawing.Size(302, 305)
+        Me.GroupBox6.Size = New System.Drawing.Size(302, 284)
         Me.GroupBox6.TabIndex = 18
         Me.GroupBox6.TabStop = False
         Me.GroupBox6.Text = "Coupling key"
@@ -3278,6 +3286,33 @@ Partial Class Form1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
         '
+        'TabPage9
+        '
+        Me.TabPage9.Controls.Add(Me.Chart3)
+        Me.TabPage9.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage9.Name = "TabPage9"
+        Me.TabPage9.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage9.Size = New System.Drawing.Size(970, 567)
+        Me.TabPage9.TabIndex = 8
+        Me.TabPage9.Text = "E motor"
+        Me.TabPage9.UseVisualStyleBackColor = True
+        '
+        'Chart3
+        '
+        ChartArea2.Name = "ChartArea1"
+        Me.Chart3.ChartAreas.Add(ChartArea2)
+        Legend2.Name = "Legend1"
+        Me.Chart3.Legends.Add(Legend2)
+        Me.Chart3.Location = New System.Drawing.Point(87, 72)
+        Me.Chart3.Name = "Chart3"
+        Series2.ChartArea = "ChartArea1"
+        Series2.Legend = "Legend1"
+        Series2.Name = "Series1"
+        Me.Chart3.Series.Add(Series2)
+        Me.Chart3.Size = New System.Drawing.Size(300, 300)
+        Me.Chart3.TabIndex = 0
+        Me.Chart3.Text = "Chart2"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3370,6 +3405,8 @@ Partial Class Form1
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage8.ResumeLayout(False)
         CType(Me.PictureBox4, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage9.ResumeLayout(False)
+        CType(Me.Chart3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -3642,4 +3679,6 @@ Partial Class Form1
     Friend WithEvents Label76 As Label
     Friend WithEvents Label111 As Label
     Friend WithEvents Label112 As Label
+    Friend WithEvents TabPage9 As TabPage
+    Friend WithEvents Chart3 As DataVisualization.Charting.Chart
 End Class
