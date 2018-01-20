@@ -9,6 +9,7 @@ Imports System.Management
 
 Public Class Form1
     Dim _Inertia_1, _Inertia_2, _Inertia_3 As Double  'Torsional analyses
+    Dim _total_inertia As Double
     Dim _Springstiff_1, _Springstiff_2 As Double      'Torsional analyses
     Dim _rpm As Double
     Dim Torsional_point(100, 2) As Double           'For calculation on torsional frequency
@@ -181,6 +182,7 @@ Public Class Form1
         TextBox1.Text = l_tot.ToString("0")
         TextBox2.Text = rad.ToString("0.0")
         TextBox3.Text = (motor1_torque / 1000).ToString("0.0") '[kNm]
+        TextBox82.Text = (motor2_torque / 1000).ToString("0.0") '[kNm]
         TextBox4.Text = tip_speed.ToString("0.0")
         TextBox5.Text = lump_weight.ToString("0.00")
         TextBox6.Text = acc.ToString("0")
@@ -300,7 +302,7 @@ Public Class Form1
         '----present--------
         TextBox26.Text = I_mass_inert.ToString("0")             '[kg.m2] one beater
         _Inertia_2 = I_mass_in_tot.ToString("0.0")              '[kg.m2] total beaters
-        TextBox27.Text = _Inertia_2                             '[kg.m2] 
+        TextBox27.Text = _Inertia_2.ToString("0")               '[kg.m2] 
         TextBox28.Text = beater_weight.ToString("0")            '[kg]
         TextBox80.Text = beaters_weight.ToString("0")           '[kg]
         TextBox81.Text = beaters_weight.ToString("0")           '[kg]
@@ -852,7 +854,7 @@ Public Class Form1
 
 
             '------------- store rapport------------------
-            ufilename = "Fan_select_report_" & TextBox30.Text & "_" & TextBox31.Text & DateTime.Now.ToString("_yyyy_MM_dd") & ".docx"
+            ufilename = "Dissy_select_report_" & TextBox30.Text & "_" & TextBox31.Text & DateTime.Now.ToString("_yyyy_MM_dd") & ".docx"
 
             '---- if path not exist then create one----------
             Try
@@ -1209,7 +1211,6 @@ Public Class Form1
         Dim m_torque_inrush, m_torque_max, m_torque_rated, m_torque_average As Double
         Dim ang_acceleration, C_acc, inertia_torque, fan_load_torque As Double
         Dim ins_power1, ins_power2 As Double
-        Dim total_inertia As Double
 
         '--------- motor torque-------------
         'see http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
@@ -1227,16 +1228,13 @@ Public Class Form1
         m_torque_max *= 0.8 ^ 2                                     'Starting voltage is 80%
         m_torque_average = 0.45 * (m_torque_inrush + m_torque_max)  'Average torque motor
 
+        _total_inertia = _Inertia_1 + _Inertia_2 + _Inertia_3    '[kg.m2]
 
-        Double.TryParse(TextBox27.Text, _Inertia_2)             '[kg.m2]
-        total_inertia = _Inertia_1 + _Inertia_2 + _Inertia_3    '[kg.m2]
-
-
-        inertia_torque = total_inertia * ang_acceleration       '[N.m]
+        inertia_torque = _total_inertia * ang_acceleration       '[N.m]
 
         '-------------- aanlooptijd--------------------------------
         C_acc = m_torque_average - (2.5 * fan_load_torque)
-        aanlooptijd = 2 * PI * _rpm * total_inertia / (60 * C_acc)
+        aanlooptijd = 2 * PI * _rpm * _total_inertia / (60 * C_acc)
         TextBox39.Text = aanlooptijd.ToString("0") 'Aanlooptijd [s]
 
         TextBox55.Text = _Inertia_1.ToString("0") 'Inertia one motor '[kg.m2] 
@@ -1281,7 +1279,6 @@ Public Class Form1
 
         Torsional_analyses()
         Draw_chart1()
-
     End Sub
 
     Private Sub Torsional_analyses()
@@ -1340,6 +1337,7 @@ Public Class Form1
         Label113.Text = T3.ToString
         TextBox74.BackColor = CType(IIf(T3 > 1, Color.Red, SystemColors.Window), Color)
     End Sub
+
     'Holzer residual torque analyses
     Private Function Calc_zeroTorsion_4(omega As Double) As Double
         Dim theta_1, theta_2, theta_3 As Double
@@ -1397,7 +1395,9 @@ Public Class Form1
     Private Sub Draw_chart3()
         Dim a, b, c As Double
         Dim x, y, shaft_torque As Double
+        Dim file_name As String
         Try
+            file_name = dirpath_Home & "Torque_Chart.Jpeg"
             'Clear all series And chart areas so we can re-add them
             Chart3.Series.Clear()
             Chart3.ChartAreas.Clear()
@@ -1406,7 +1406,7 @@ Public Class Form1
             Chart3.ChartAreas.Add("ChartArea0")
             Chart3.Series(0).ChartArea = "ChartArea0"
             Chart3.Series(0).ChartType = DataVisualization.Charting.SeriesChartType.Line
-            ' Chart3.Titles.Add("Load Torque curve" & vbCrLf & "Inertial impeller " & NumericUpDown016.Value.ToString & " [kg.m2]")
+            Chart3.Titles.Add("Load Torque curve for 1 motor" & vbCrLf & "Inertia Beater shaft " & _Inertia_2.ToString("0") & " [kg.m2]")
             Chart3.Titles(0).Font = New Font("Arial", 12, System.Drawing.FontStyle.Bold)
             Chart3.Series(0).Name = "Koppel[%]"
             Chart3.Series(0).Color = Color.Blue
@@ -1417,28 +1417,213 @@ Public Class Form1
             Chart3.ChartAreas("ChartArea0").AxisY.MinorTickMark.Enabled = True
             Chart3.ChartAreas("ChartArea0").AxisX.MajorGrid.Enabled = True
             Chart3.ChartAreas("ChartArea0").AxisY.MajorGrid.Enabled = True
-            Chart3.ChartAreas("ChartArea0").AxisY.Title = "Torque [N.m]"
+            Chart3.ChartAreas("ChartArea0").AxisY.Title = "Torque [kNm]"
             Chart3.ChartAreas("ChartArea0").AxisX.Title = "Speed [%]"
 
-            '------------------- Calc fan torque ---------
+            '------------------- Calc Dissy torque ---------
             'Xas (N) 0-100% rpm
             'yas (T) 0-100% torque
             'y=c.(x-a)^2+b
 
-            c = 0.0135  'Breedte parabool
+            c = 0.01    'Breedte parabool
             b = 4       'Vertikale verschuiving
-            a = 16      'Horizontale Verschuiving
+            a = 0       'Horizontale Verschuiving   (was 16)
 
             Double.TryParse(TextBox3.Text, shaft_torque)
             For x = 0 To 100
-                y = (c * (x - a) ^ 2 + b) / 100 * shaft_torque
+                y = (c * (x - a) ^ 2 + b) / 104.2 * shaft_torque
                 Chart3.Series(0).Points.AddXY(x, y)
             Next x
 
             Chart3.Refresh()
+            Chart3.SaveImage(file_name, System.Drawing.Imaging.ImageFormat.Jpeg)
         Catch ex As Exception
             'MessageBox.Show(ex.Message &" Error 4771")  ' Show the exception's message.
         End Try
-
     End Sub
+    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click, TabPage9.Enter
+        Draw_chart3()
+    End Sub
+
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        Write_to_word2()
+    End Sub
+
+    Private Sub Write_to_word2()
+        Dim oWord As Word.Application
+        Dim oDoc As Word.Document
+        Dim oTable As Word.Table
+        Dim oPara1, oPara2 As Word.Paragraph
+        Dim row As Integer
+        Dim ufilename As String
+        Dim chart_size As Integer = 75  '% of original picture size
+
+        Try
+            oWord = CType(CreateObject("Word.Application"), Word.Application)
+            oWord.Visible = True
+            oDoc = oWord.Documents.Add
+
+            oDoc.PageSetup.TopMargin = 35
+            oDoc.PageSetup.BottomMargin = 20
+            oDoc.PageSetup.RightMargin = 20
+            oDoc.PageSetup.Orientation = Word.WdOrientation.wdOrientPortrait
+            oDoc.PageSetup.PaperSize = Word.WdPaperSize.wdPaperA4
+            'oDoc.PageSetup.VerticalAlignment = Word.WdVerticalAlignment.wdAlignVerticalCenter
+
+            oPara1 = oDoc.Content.Paragraphs.Add
+            oPara1.Range.Text = "VTK Engineering"
+            oPara1.Range.Font.Name = "Arial"
+            oPara1.Range.Font.Size = 14
+            oPara1.Range.Font.Bold = CInt(True)
+            oPara1.Format.SpaceAfter = 0.5                '24 pt spacing after paragraph. 
+            oPara1.Range.InsertParagraphAfter()
+
+            oPara2 = oDoc.Content.Paragraphs.Add
+            oPara2.Format.SpaceAfter = 1
+            oPara2.Range.Font.Bold = CInt(False)
+            oPara2.Range.Text = "Disintegrator drive data" & vbCrLf
+            oPara2.Range.InsertParagraphAfter()
+
+            '----------------------------------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 4, 2)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 10
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+
+            oTable.Cell(1, 1).Range.Text = "Project Name"
+            oTable.Cell(1, 2).Range.Text = TextBox30.Text
+            oTable.Cell(2, 1).Range.Text = "Item number"
+            oTable.Cell(2, 2).Range.Text = TextBox31.Text
+            oTable.Cell(3, 1).Range.Text = "Author "
+            oTable.Cell(3, 2).Range.Text = Environment.UserName
+            oTable.Cell(4, 1).Range.Text = "Date "
+            oTable.Cell(4, 2).Range.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns 
+            oTable.Columns(2).Width = oWord.InchesToPoints(2)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------ Drive Details----------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 11, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Electric motor "
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Power motor #1"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value
+            oTable.Cell(row, 3).Range.Text = "[kW]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Power motor #2"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown30.Value
+            oTable.Cell(row, 3).Range.Text = "[kW]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Speed"
+            oTable.Cell(row, 2).Range.Text = _rpm.ToString
+            oTable.Cell(row, 3).Range.Text = "[rpm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Nominal Motor torque"
+            oTable.Cell(row, 2).Range.Text = TextBox3.Text
+            oTable.Cell(row, 3).Range.Text = "[kNm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Voltage"
+            oTable.Cell(row, 2).Range.Text = ".."
+            oTable.Cell(row, 3).Range.Text = "[kV]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Frequency"
+            oTable.Cell(row, 2).Range.Text = "50"
+            oTable.Cell(row, 3).Range.Text = "[Hz]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Mounting style"
+            oTable.Cell(row, 2).Range.Text = "B3"
+            oTable.Cell(row, 3).Range.Text = ""
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Starting method"
+            oTable.Cell(row, 2).Range.Text = "VSD"
+            oTable.Cell(row, 3).Range.Text = ""
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Maximum ambient temp"
+            oTable.Cell(row, 2).Range.Text = "40"
+            oTable.Cell(row, 3).Range.Text = "Celsius"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Inertia Beater shaft"
+            oTable.Cell(row, 2).Range.Text = TextBox27.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------ Foundation Details----------------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 2, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Foundation details "
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Maximum Foundation Torque"
+            oTable.Cell(row, 2).Range.Text = TextBox29.Text
+            oTable.Cell(row, 3).Range.Text = "[kNm]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------------save Chart3---------------- 
+            Draw_chart3()
+            oPara1 = oDoc.Content.Paragraphs.Add
+            oPara1.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter
+            oPara1.Range.InlineShapes.AddPicture(dirpath_Home & "Torque_Chart.Jpeg")
+            oPara1.Range.InlineShapes.Item(1).LockAspectRatio = CType(True, Microsoft.Office.Core.MsoTriState)
+            oPara1.Range.InlineShapes.Item(1).ScaleWidth = chart_size       'Size
+            oPara1.Range.InsertParagraphAfter()
+
+            '------------------ Remarks ----------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 2, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "The above chart is for 1 motor, with 2 motors the inertia is divided proportionally "
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(5)   'Change width of columns
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+            '------------- store rapport------------------
+            ufilename = "Dissy_motor_select_report_" & TextBox30.Text & "_" & TextBox31.Text & DateTime.Now.ToString("_yyyy_MM_dd") & ".docx"
+
+            '---- if path not exist then create one----------
+            Try
+                If (Not System.IO.Directory.Exists(dirpath_Home)) Then System.IO.Directory.CreateDirectory(dirpath_Home)
+                If (Not System.IO.Directory.Exists(dirpath_Eng)) Then System.IO.Directory.CreateDirectory(dirpath_Eng)
+                If (Not System.IO.Directory.Exists(dirpath_Rap)) Then System.IO.Directory.CreateDirectory(dirpath_Rap)
+            Catch ex As Exception
+            End Try
+
+            If Directory.Exists(dirpath_Rap) Then
+                ufilename = dirpath_Rap & ufilename
+            Else
+                ufilename = dirpath_Home & ufilename
+            End If
+            oWord.ActiveDocument.SaveAs(ufilename.ToString)
+        Catch ex As Exception
+            MessageBox.Show(ex.Message & " Problem storing file to " & dirpath_Rap)  ' Show the exception's message.
+        End Try
+    End Sub
+
 End Class
