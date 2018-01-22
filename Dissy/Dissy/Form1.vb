@@ -1501,7 +1501,7 @@ Public Class Form1
             oTable.Cell(4, 1).Range.Text = "Date "
             oTable.Cell(4, 2).Range.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns 
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns 
             oTable.Columns(2).Width = oWord.InchesToPoints(2)
 
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -1557,8 +1557,8 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox27.Text
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
-            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(0.8)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
 
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -1572,14 +1572,14 @@ Public Class Form1
             oTable.Range.Font.Bold = CInt(False)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             row = 1
-            oTable.Cell(row, 1).Range.Text = "Foundation details "
+            oTable.Cell(row, 1).Range.Text = "Foundation details"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Maximum Foundation Torque"
+            oTable.Cell(row, 1).Range.Text = "Maximum Foundation motor Torque"
             oTable.Cell(row, 2).Range.Text = TextBox29.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
-            oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(0.8)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
 
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -1599,9 +1599,9 @@ Public Class Form1
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             row = 1
-            oTable.Cell(row, 1).Range.Text = "The above chart is for 1 motor, with 2 motors the inertia is divided proportionally "
+            oTable.Cell(row, 1).Range.Text = "The above chart is for 1 motor, with 2 motors the inertia must be divided proportionally "
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(5)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(7)   'Change width of columns
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------- store rapport------------------
