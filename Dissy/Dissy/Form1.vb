@@ -1546,7 +1546,7 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = ""
             row += 1
             oTable.Cell(row, 1).Range.Text = "Starting method"
-            oTable.Cell(row, 2).Range.Text = "VSD"
+            oTable.Cell(row, 2).Range.Text = "DOL"
             oTable.Cell(row, 3).Range.Text = ""
             row += 1
             oTable.Cell(row, 1).Range.Text = "Maximum ambient temp"
