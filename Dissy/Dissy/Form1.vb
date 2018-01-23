@@ -22,32 +22,32 @@ Public Class Form1
 
     'according to DIN6885-1
     Public Shared shaft_key() As String = {
-    "6;8;2x2;1.2;1.0",
-    "8;10;3x3;1.8;1.4",
-    "10;12;4x4;2.5;1.8",
-    "12;17;5x5;3.0;2.3",
-    "17;22;6x6;3.5;2.8",
-    "22;30;8x7;4.0;3.3",
-    "30;38;10x8;5.0;3.3",
-    "38;44;12x8;5.0;3.3",
-    "44;50;14x9;5.5;3.8",
-    "50;58;16x10;6;4.3",
-    "58;65;18x11;7;4.4",
-    "65;75;20x12;7.5;4.9",
-    "75;85;22x14;9;5.4",
-    "85;95;25x14;9;5.4",
-    "95;110;28x16;10;6.4",
-    "110;130;32x18;11;7.4",
-    "130;150;36x20;12;8.4",
-    "150;170;40x22;13;9.4",
-    "170;200;45x25;15;10.4",
-    "200;230;50x28;17;11.4",
-    "230;260;56x32;20;12.4",
-    "260;290;63x32;20;12.4",
-    "290;330;70x36;22;14.4",
-    "330;380;80x40;25;15.4",
-    "380;440;90x45;28;17.4",
-    "440;550;100x50;31;19.5"}
+    "6;8;2;2;1.2;1.0",
+    "8;10;3;3;1.8;1.4",
+    "10;12;4;4;2.5;1.8",
+    "12;17;5;5;3.0;2.3",
+    "17;22;6;6;3.5;2.8",
+    "22;30;8;7;4.0;3.3",
+    "30;38;10;8;5.0;3.3",
+    "38;44;12;8;5.0;3.3",
+    "44;50;14;9;5.5;3.8",
+    "50;58;16;10;6;4.3",
+    "58;65;18;11;7;4.4",
+    "65;75;20;12;7.5;4.9",
+    "75;85;22;14;9;5.4",
+    "85;95;25;14;9;5.4",
+    "95;110;28;16;10;6.4",
+    "110;130;32;18;11;7.4",
+    "130;150;36;20;12;8.4",
+    "150;170;40;22;13;9.4",     '40x22
+    "170;200;45;25;15;10.4",    '45x22
+    "200;230;50;28;17;11.4",
+    "230;260;56;32;20;12.4",
+    "260;290;63;32;20;12.4",
+    "290;330;70;36;22;14.4",
+    "330;380;80;40;25;15.4",
+    "380;440;90;45;28;17.4",
+    "440;550;100;50;31;19.5"}
 
     Public words() As String
     Public separators() As String = {";"}
@@ -82,9 +82,11 @@ Public Class Form1
 
         If ComboBox2.SelectedIndex > -1 Then
             words = shaft_key(ComboBox2.SelectedIndex).Split(separators, StringSplitOptions.None)
-            TextBox17.Text = words(1)       'Max shaft diameter [mm]
-            TextBox18.Text = words(2)       'Key sizeallowed_σ_stress
-            TextBox21.Text = words(3)       '(t1) Key depth in shaft
+            TextBox17.Text = words(1)               'Max shaft diameter [mm]
+            TextBox18.Text = words(3)               'Key height
+            TextBox85.Text = words(2)               'Key width
+            TextBox21.Text = words(4)               '(t1) Key depth in shaft
+            TextBox84.Text = words(3) - words(4)    '(t2) Key depth in coupling
         End If
 
         service_factor = NumericUpDown24.Value
@@ -148,16 +150,27 @@ Public Class Form1
 
         FOS_lump_key = max_key_torque / lump_torque
 
-        '--------- max Allowed power on coupling key --
-        Dim actual_drive_key_force, drive_l, drive_b As Double
-        Dim actual_drive_key_stress, FOS_coupling_key As Double
+        '----------------------------------------------
+        Dim actual_drive_key_force, drive_l, drive_w, drive_t2 As Double
+        Dim actual_drive_key_τ_stress As Double 'Shear stress
+        Dim actual_drive_key_σ_stress As Double 'Compression stress
+        Dim FOS_coupling_key_τ, FOS_coupling_key_σ As Double
 
-        Double.TryParse(TextBox21.Text, drive_b)            '[mm] key t1
+        Double.TryParse(TextBox84.Text, drive_t2)           '[mm] key t2
+        Double.TryParse(TextBox85.Text, drive_w)            '[mm] key width
+
         drive_l = NumericUpDown17.Value                     '[mm] key length
 
+        '--------- max Allowed power on coupling key --
+        'see http://www.roymech.co.uk/Useful_Tables/Keyways/key_strength.html
+
         actual_drive_key_force = start_torque / drive_key_radius       '[kN]
-        actual_drive_key_stress = actual_drive_key_force / (drive_b * drive_l)   '[N/mm2]
-        FOS_coupling_key = σ_yield / actual_drive_key_stress      '[-]
+
+        actual_drive_key_σ_stress = actual_drive_key_force / (drive_t2 * drive_l)  '[N/mm2] compression
+        actual_drive_key_τ_stress = actual_drive_key_force / (drive_w * drive_l)   '[N/mm2] shear
+
+        FOS_coupling_key_τ = σ_yield / actual_drive_key_τ_stress      '[-] shear
+        FOS_coupling_key_σ = σ_yield / actual_drive_key_σ_stress      '[-] compression
 
         '--------- Hydraulic nut (spacer = friction disk) --
         Dim spacer_od, spacer_id, spacer_radius, fric As Double
@@ -193,13 +206,16 @@ Public Class Form1
         TextBox11.Text = (max_key_force / 1000).ToString("0")   '[kN]
         TextBox12.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
         TextBox19.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
-        TextBox20.Text = (actual_drive_key_stress).ToString("0") '[kNm]
+        TextBox20.Text = actual_drive_key_τ_stress.ToString("0") '[N/mm2] shear stress
+        TextBox83.Text = actual_drive_key_σ_stress.ToString("0") '[N/mm2] compress stress
+
         TextBox22.Text = (actual_drive_key_force / 10 ^ 3).ToString("0") '[km]
         TextBox23.Text = spacer_id.ToString("0")                '[mm]
         TextBox24.Text = spacer_radius.ToString("0")            '[mm]
         TextBox25.Text = max_torque_nut.ToString("0")           '[kNm]
         TextBox29.Text = (start_torque / 1000).ToString("0.0")  '[kNm]
-        TextBox32.Text = FOS_coupling_key.ToString("0.0")       '[-]
+        TextBox32.Text = FOS_coupling_key_τ.ToString("0.0")     '[-] shear
+        TextBox86.Text = FOS_coupling_key_σ.ToString("0.0")     '[-] compression
         TextBox33.Text = specific_load.ToString("0.00")         '[]
         TextBox34.Text = delta_l.ToString("0.00")               '[mm]
         TextBox35.Text = (tot_Instal_power / 1000).ToString("0") '[kW]
@@ -213,9 +229,9 @@ Public Class Form1
         TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
         TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
 
-
         '------- checks---------
-        TextBox32.BackColor = IIf(FOS_coupling_key > 3, Color.LightGreen, Color.Red)
+        TextBox32.BackColor = IIf(FOS_coupling_key_τ > 3, Color.LightGreen, Color.Red)
+        TextBox86.BackColor = IIf(FOS_coupling_key_σ > 3, Color.LightGreen, Color.Red)
         TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
         TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
         Calc_inertia()
@@ -487,7 +503,7 @@ Public Class Form1
 
             '------------------ Coupling key----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 11, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -519,13 +535,22 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
             oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Actual key stress"
+            oTable.Cell(row, 1).Range.Text = "Locked motor τ Key shear stress "
             oTable.Cell(row, 2).Range.Text = TextBox20.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
             oTable.Cell(row, 2).Range.Text = TextBox32.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Locked motor (σ) compr. stress"
+            oTable.Cell(row, 2).Range.Text = TextBox83.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
+            oTable.Cell(row, 2).Range.Text = TextBox86.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
+
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
