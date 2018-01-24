@@ -66,6 +66,7 @@ Public Class Form1
         Dim key_h, key_l, beater_shaft_radius, max_key_torque, max_key_force As Double
         Dim start_torque, service_factor As Double
         Dim σ_yield, allowed_σ_stress, allowed_τ_stress As Double
+        Dim τ_yield As Double
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
@@ -107,9 +108,10 @@ Public Class Form1
         acc_time = NumericUpDown15.Value
         density = NumericUpDown16.Value
         σ_yield = NumericUpDown18.Value
+        τ_yield = σ_yield * 0.8
 
         beater_shaft_radius = NumericUpDown12.Value / 2000   '[mm]
-        allowed_σ_stress = σ_yield / service_factor  '[N/mm2]
+        allowed_σ_stress = τ_yield / service_factor  '[N/mm2]
         allowed_τ_stress = allowed_σ_stress * 0.8   '[N/mm2]
 
         '-------- Motor #1 and #2----------
@@ -154,7 +156,7 @@ Public Class Form1
         Dim actual_drive_key_force, drive_l, drive_w, drive_t2 As Double
         Dim actual_drive_key_τ_stress As Double 'Shear stress
         Dim actual_drive_key_σ_stress As Double 'Compression stress
-        Dim FOS_coupling_key_τ, FOS_coupling_key_σ As Double
+        Dim FOS_coupling_key_τ As Double
 
         Double.TryParse(TextBox84.Text, drive_t2)           '[mm] key t2
         Double.TryParse(TextBox85.Text, drive_w)            '[mm] key width
@@ -169,8 +171,8 @@ Public Class Form1
         actual_drive_key_σ_stress = actual_drive_key_force / (drive_t2 * drive_l)  '[N/mm2] compression
         actual_drive_key_τ_stress = actual_drive_key_force / (drive_w * drive_l)   '[N/mm2] shear
 
-        FOS_coupling_key_τ = σ_yield / actual_drive_key_τ_stress      '[-] shear
-        FOS_coupling_key_σ = σ_yield / actual_drive_key_σ_stress      '[-] compression
+        FOS_coupling_key_τ = τ_yield / actual_drive_key_τ_stress      '[-] shear
+
 
         '--------- Hydraulic nut (spacer = friction disk) --
         Dim spacer_od, spacer_id, spacer_radius, fric As Double
@@ -215,7 +217,6 @@ Public Class Form1
         TextBox25.Text = max_torque_nut.ToString("0")           '[kNm]
         TextBox29.Text = (start_torque / 1000).ToString("0.0")  '[kNm]
         TextBox32.Text = FOS_coupling_key_τ.ToString("0.0")     '[-] shear
-        TextBox86.Text = FOS_coupling_key_σ.ToString("0.0")     '[-] compression
         TextBox33.Text = specific_load.ToString("0.00")         '[]
         TextBox34.Text = delta_l.ToString("0.00")               '[mm]
         TextBox35.Text = (tot_Instal_power / 1000).ToString("0") '[kW]
@@ -231,7 +232,6 @@ Public Class Form1
 
         '------- checks---------
         TextBox32.BackColor = IIf(FOS_coupling_key_τ > 3, Color.LightGreen, Color.Red)
-        TextBox86.BackColor = IIf(FOS_coupling_key_σ > 3, Color.LightGreen, Color.Red)
         TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
         TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
         Calc_inertia()
@@ -503,7 +503,7 @@ Public Class Form1
 
             '------------------ Coupling key----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 11, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -542,15 +542,6 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
             oTable.Cell(row, 2).Range.Text = TextBox32.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Locked motor (σ) compr. stress"
-            oTable.Cell(row, 2).Range.Text = TextBox83.Text
-            oTable.Cell(row, 3).Range.Text = "[N/mm]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
-            oTable.Cell(row, 2).Range.Text = TextBox86.Text
-            oTable.Cell(row, 3).Range.Text = "[-]"
-
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
@@ -870,7 +861,6 @@ Public Class Form1
 
             '------------------save Chart1---------------- 
             Draw_chart1()
-            oPara1 = oDoc.Content.Paragraphs.Add
             oPara1.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter
             oPara1.Range.InlineShapes.AddPicture(dirpath_Home & "Torsion_Chart.Jpeg")
             oPara1.Range.InlineShapes.Item(1).LockAspectRatio = CType(True, Microsoft.Office.Core.MsoTriState)
