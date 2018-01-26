@@ -52,7 +52,7 @@ Public Class Form1
     Public words() As String
     Public separators() As String = {";"}
 
-    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown24.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown25.ValueChanged, NumericUpDown26.ValueChanged, NumericUpDown28.ValueChanged, ComboBox3.SelectedIndexChanged, NumericUpDown30.ValueChanged, NumericUpDown29.ValueChanged
+    Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown28.ValueChanged, ComboBox3.SelectedIndexChanged, NumericUpDown30.ValueChanged, NumericUpDown29.ValueChanged
         Calc_inertia()
         Calc_tab1()
     End Sub
@@ -64,9 +64,8 @@ Public Class Form1
         Dim lump_dia, lump_weight, density, f_tip, lump_torque As Double
         Dim FOS_lump_key, FOS_lump_nut As Double
         Dim key_h, key_l, beater_shaft_radius, max_key_torque, max_key_force As Double
-        Dim start_torque, service_factor As Double
-        Dim σ_yield, allowed_σ_stress, allowed_τ_stress As Double
-        Dim τ_yield As Double
+        Dim start_torque As Double
+        Dim σ_yield, τ_yield As Double
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
@@ -75,22 +74,22 @@ Public Class Form1
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
-            TextBox13.Text = words(3)       '(t1) Key depth in shaft
-            TextBox15.Text = words(4)       '(t2) Key above shaft
-            TextBox16.Text = words(1)       'Max shaft diameter [mm]
-            TextBox14.Text = words(2)       'Key size
+            TextBox16.Text = words(1)               'Max shaft diameter [mm]
+            TextBox48.Text = words(2)               'Key width
+            TextBox14.Text = words(3)               'Key height
+            TextBox13.Text = words(4)               '(t1) Key depth in shaft
+            TextBox15.Text = words(3) - words(4)    '(t2) Key above shaft
         End If
 
         If ComboBox2.SelectedIndex > -1 Then
             words = shaft_key(ComboBox2.SelectedIndex).Split(separators, StringSplitOptions.None)
             TextBox17.Text = words(1)               'Max shaft diameter [mm]
-            TextBox18.Text = words(3)               'Key height
             TextBox85.Text = words(2)               'Key width
+            TextBox18.Text = words(3)               'Key height
             TextBox21.Text = words(4)               '(t1) Key depth in shaft
             TextBox84.Text = words(3) - words(4)    '(t2) Key depth in coupling
         End If
 
-        service_factor = NumericUpDown24.Value
         no_beaters = NumericUpDown7.Value
         Double.TryParse(TextBox13.Text, key_h)      '[mm]
         key_l = NumericUpDown9.Value                '[mm]
@@ -108,11 +107,9 @@ Public Class Form1
         acc_time = NumericUpDown15.Value
         density = NumericUpDown16.Value
         σ_yield = NumericUpDown18.Value
-        τ_yield = σ_yield * 0.8
+        τ_yield = σ_yield * 0.577   'According von Mises
 
         beater_shaft_radius = NumericUpDown12.Value / 2000   '[mm]
-        allowed_σ_stress = τ_yield / service_factor  '[N/mm2]
-        allowed_τ_stress = allowed_σ_stress * 0.8   '[N/mm2]
 
         '-------- Motor #1 and #2----------
         rad = _rpm / 60 * 2 * PI
@@ -146,7 +143,7 @@ Public Class Form1
         actual_egg_key_force = lump_torque / beater_shaft_radius
         actual_egg_key_force /= 2    'two keys 
 
-        max_key_force = key_h * key_l * allowed_σ_stress
+        max_key_force = key_h * key_l * τ_yield     'Shear stress
         max_key_torque = max_key_force * beater_shaft_radius
         max_key_torque *= 2     'two keys 
 
@@ -206,8 +203,8 @@ Public Class Form1
         TextBox9.Text = (max_key_torque / 1000).ToString("0.0") '[kNm]
         TextBox10.Text = (lump_torque / 1000).ToString("0.0")   '[kNm]
         TextBox11.Text = (max_key_force / 1000).ToString("0")   '[kN]
-        TextBox12.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
-        TextBox19.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
+        'TextBox12.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
+        TextBox19.Text = τ_yield.ToString("0")         '[N/mm2]
         TextBox20.Text = actual_drive_key_τ_stress.ToString("0") '[N/mm2] shear stress
         TextBox83.Text = actual_drive_key_σ_stress.ToString("0") '[N/mm2] compress stress
 
@@ -224,7 +221,7 @@ Public Class Form1
         TextBox37.Text = spacer_od.ToString("0")                '[mm]
         TextBox40.Text = FOS_lump_key.ToString("0.0")           '[-]
         TextBox65.Text = FOS_lump_nut.ToString("0.0")           '[-]
-        TextBox67.Text = allowed_τ_stress.ToString("0")         '[N/mm2]
+        TextBox67.Text = τ_yield.ToString("0")                  '[N/mm2]
         TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
 
         TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
@@ -272,7 +269,8 @@ Public Class Form1
         "FOS= Yield stress/Working stress" & vbCrLf &
         "FOS must be bigger than 3.0" & vbCrLf &
         "Design load is maximum load of part the part will ever see in service" & vbCrLf &
-        "Note Yield not Ultimate strength is used" & vbCrLf
+        "Note Yield not Ultimate strength is used" & vbCrLf &
+        "Relation Shear and Tensile strength is acc. von Mises 0.577" & vbCrLf
 
         TextBox49.Text =
         "Projects" & vbCrLf &
@@ -380,8 +378,8 @@ Public Class Form1
             oTable.Cell(4, 1).Range.Text = "Date "
             oTable.Cell(4, 2).Range.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns 
-            oTable.Columns(2).Width = oWord.InchesToPoints(2)
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns 
+            oTable.Columns(2).Width = oWord.InchesToPoints(2.5)
 
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
@@ -420,7 +418,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox29.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
 
@@ -429,7 +427,7 @@ Public Class Form1
 
             '------------------ Selected Steel ----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 5, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -437,24 +435,32 @@ Public Class Form1
             row = 1
             oTable.Cell(row, 1).Range.Text = "Selected steel"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Key,σ design compression stress"
-            oTable.Cell(row, 2).Range.Text = TextBox12.Text
+            oTable.Cell(row, 1).Range.Text = "Key, σ yield o.2 tensile strength"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown18.Value.ToString("0")
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Key,τ design shear stress"
+            oTable.Cell(row, 1).Range.Text = "Key, τ shear strength"
             oTable.Cell(row, 2).Range.Text = TextBox67.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Shaft,σ design compr.stress"
-            oTable.Cell(row, 2).Range.Text = TextBox48.Text
+            oTable.Cell(row, 1).Range.Text = "Beaters, σ yield o.2 tensile strength"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown23.Value.ToString("0")
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Shaft,τ design shear stress"
+            oTable.Cell(row, 1).Range.Text = "Beaters, τ shear strength"
+            oTable.Cell(row, 2).Range.Text = TextBox66.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft, σ yield o.2 tensile strength"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString("0")
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft, τ shear strength"
             oTable.Cell(row, 2).Range.Text = TextBox68.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
 
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
 
@@ -495,7 +501,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox36.Text
             oTable.Cell(row, 3).Range.Text = "[kg]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -503,7 +509,7 @@ Public Class Form1
 
             '------------------ Coupling key----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -516,22 +522,18 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Key size"
-            oTable.Cell(row, 2).Range.Text = TextBox18.Text
+            oTable.Cell(row, 2).Range.Text = TextBox85.Text & "x" & TextBox18.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Key length"
             oTable.Cell(row, 2).Range.Text = TextBox17.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Design σ stress"
-            oTable.Cell(row, 2).Range.Text = TextBox19.Text
-            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Key t1"
-            oTable.Cell(row, 2).Range.Text = TextBox21.Text
+            oTable.Cell(row, 1).Range.Text = "Key t2"
+            oTable.Cell(row, 2).Range.Text = TextBox84.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Nominal key force (x1.5)"
+            oTable.Cell(row, 1).Range.Text = "Locked motor key force"
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
             oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
@@ -543,7 +545,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox32.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -607,14 +609,14 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox27.Text
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Beaters shaft key --------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -627,17 +629,12 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Key size"
-            oTable.Cell(row, 2).Range.Text = TextBox14.Text
+            oTable.Cell(row, 2).Range.Text = TextBox48.Text & "x" & TextBox14.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Beater plate width"
             oTable.Cell(row, 2).Range.Text = TextBox8.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
-
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Allowed σ compression stress"
-            oTable.Cell(row, 2).Range.Text = TextBox12.Text
-            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Key t1"
             oTable.Cell(row, 2).Range.Text = TextBox13.Text
@@ -651,7 +648,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox9.Text
             oTable.Cell(row, 3).Range.Text = "[kN.m]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -699,7 +696,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox65.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -743,7 +740,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox34.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -756,7 +753,7 @@ Public Class Form1
             oTable.Range.Font.Bold = CInt(False)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             row = 1
-            oTable.Cell(row, 1).Range.Text = "Shaft"
+            oTable.Cell(row, 1).Range.Text = "Shaft at beaters"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Bearing-bearing length"
             oTable.Cell(row, 2).Range.Text = NumericUpDown29.Value.ToString("0")
@@ -766,11 +763,11 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox41.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Key depth t1"
+            oTable.Cell(row, 1).Range.Text = "Drive Key depth t1 (in shaft)"
             oTable.Cell(row, 2).Range.Text = TextBox42.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Calc diameter"
+            oTable.Cell(row, 1).Range.Text = "Calc drive diameter"
             oTable.Cell(row, 2).Range.Text = TextBox43.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
@@ -782,11 +779,11 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox56.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Key depth"
+            oTable.Cell(row, 1).Range.Text = "Beater Key shaft depth"
             oTable.Cell(row, 2).Range.Text = TextBox57.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Calc diameter"
+            oTable.Cell(row, 1).Range.Text = "Beater calc. diameter"
             oTable.Cell(row, 2).Range.Text = TextBox58.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
@@ -810,7 +807,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox45.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -853,7 +850,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox72.Text
             oTable.Cell(row, 3).Range.Text = "[M.Nm/rad]"
 
-            oTable.Columns(1).Width = oWord.InchesToPoints(2)   'Change width of columns
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -896,14 +893,14 @@ Public Class Form1
     End Sub
     Private Sub Calc_shaft_coupling()
         Dim dia, dia_calc, t1, m1 As Double
-        Dim j, τ, σ_design_cpl As Double
+        Dim j, τ, τ_yield_cpl As Double
 
         dia = NumericUpDown13.Value         'dia shaft
         Double.TryParse(TextBox21.Text, t1) 'depth key
         dia_calc = dia - t1                 'shaft calculation diameter
         Double.TryParse(TextBox29.Text, m1) 'torque locked motor
         m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
-        Double.TryParse(TextBox12.Text, σ_design_cpl) 'desing stress
+        Double.TryParse(TextBox68.Text, τ_yield_cpl) 'design stress
 
 
         '--------- Calc Polar Moment of Inertia of Area   -----------
@@ -923,14 +920,14 @@ Public Class Form1
 
         TextBox60.Text = j.ToString("0")
         '--------- checks ---------
-        TextBox46.BackColor = IIf(τ < σ_design_cpl, Color.LightGreen, Color.Red)
+        TextBox46.BackColor = IIf(τ < τ_yield_cpl, Color.LightGreen, Color.Red)
     End Sub
     Private Sub Calc_shaft()
         Dim dia, dia_calc, t1, f1, dm1, dm2 As Double
         Dim length_l, length_a, length_b, R1 As Double
         Dim J, I, area As Double
         Dim σd, σb, τ, FOS_stress As Double
-        Dim σ_design_shft, σ_yield, τ_design_shft, service_fac As Double
+        Dim σ_yield_shft, τ_yield_shft As Double
         Dim σ12 As Double
         Dim dia_fric As Double
         Dim wght, w As Double
@@ -945,10 +942,8 @@ Public Class Form1
         length_b = NumericUpDown20.Value    '[mm] beater shaft key length
         dia_fric = NumericUpDown21.Value    '[mm] spacer plate
 
-        service_fac = NumericUpDown25.Value
-        σ_yield = NumericUpDown10.Value
-        σ_design_shft = σ_yield / service_fac 'σ_design
-        τ_design_shft = σ_design_shft * 0.58
+        σ_yield_shft = NumericUpDown10.Value
+        τ_yield_shft = σ_yield_shft * 0.577 'According von Mises
 
         Double.TryParse(TextBox81.Text, wght) '[kg] beaters
 
@@ -981,11 +976,9 @@ Public Class Form1
 
         '--------- calc combined principle stress -----------
         '---- Stress and Strain formula (2.3-23)-------------
-        'τmax = 0.5 * Sqrt(((σd - σb) * 0.5) ^ 2 + 4 * τ ^ 2)
-        'σ12 = ((σd + σb) * 0.5) + Sqrt(((σd - σb) * 0.5) ^ 2 + τ ^ 2)  'max priciple stress
         σ12 = Sqrt((σd + σb) ^ 2 + 3 * τ ^ 2)  'Huber and Hencky
 
-        FOS_stress = σ_yield / σ12
+        FOS_stress = σ_yield_shft / σ12
 
         '---------- present --------------
         TextBox47.Text = (dm2 / 1000).ToString("0")     '[Nm]
@@ -1003,16 +996,15 @@ Public Class Form1
         TextBox63.Text = area.ToString("0")
         TextBox64.Text = dia_fric.ToString("0")
         TextBox45.Text = FOS_stress.ToString("0.0")
-
-        TextBox48.Text = σ_design_shft.ToString("0")  'allowed stress
-        TextBox68.Text = τ_design_shft.ToString("0")  'allowed stress
+        TextBox68.Text = τ_yield_shft.ToString("0")  'yield stress
 
         '--------- checks ---------
-        TextBox50.BackColor = IIf(σ12 < σ_design_shft, Color.LightGreen, Color.Red)
-        TextBox52.BackColor = IIf(σd < σ_design_shft, Color.LightGreen, Color.Red)
-        TextBox51.BackColor = IIf(τ < τ_design_shft, Color.LightGreen, Color.Red)
-        TextBox59.BackColor = IIf(σb < σ_design_shft, Color.LightGreen, Color.Red)
+        TextBox50.BackColor = IIf(σ12 < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
+        TextBox52.BackColor = IIf(σd < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
+        TextBox51.BackColor = IIf(τ < (τ_yield_shft / 3), Color.LightGreen, Color.Red)
+        TextBox59.BackColor = IIf(σb < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
         TextBox45.BackColor = IIf(FOS_stress > 3.0, Color.LightGreen, Color.Red)
+
         '--------- beater shaft/key length input wrong--------- 
         If (length_l < length_b) Then
             NumericUpDown20.BackColor = Color.Red
@@ -1024,11 +1016,12 @@ Public Class Form1
     End Sub
 
     Private Sub Calc_beater()
-        Dim service_fac, σ_design_beat As Double
-        service_fac = NumericUpDown26.Value
+        Dim σ_yield, τ_yield As Double
 
-        σ_design_beat = NumericUpDown10.Value / service_fac 'σ_design
-        TextBox66.Text = σ_design_beat.ToString("0")  'allowed stress
+        σ_yield = NumericUpDown23.Value
+        τ_yield = σ_yield * 0.577   'N/mm2, According von Mises
+
+        TextBox66.Text = τ_yield.ToString("0")  'Yield stress
     End Sub
 
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
@@ -1456,6 +1449,8 @@ Public Class Form1
             'MessageBox.Show(ex.Message &" Error 4771")  ' Show the exception's message.
         End Try
     End Sub
+
+
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click, TabPage9.Enter
         Draw_chart3()
     End Sub
