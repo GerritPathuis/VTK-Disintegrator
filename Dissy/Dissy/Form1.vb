@@ -107,7 +107,11 @@ Public Class Form1
         acc_time = NumericUpDown15.Value
         density = NumericUpDown16.Value
         σ_yield = NumericUpDown18.Value
-        pressure_yield = σ_yield * 0.577   'According von Mises
+
+        'Application Factors Ka According to DIN 3990-1:  1987-12
+        'Uniform (electric motor) light shocks 1.5
+        pressure_yield = σ_yield / 1.5   'Surface pressure
+        If pressure_yield > 200 Then pressure_yield = 200   'Pracical number from Dubbel
 
         beater_shaft_radius = NumericUpDown12.Value / 2000   '[mm]
 
@@ -1022,15 +1026,12 @@ Public Class Form1
     End Sub
 
     Private Sub Calc_beater()
-        Dim σ_yield, pressure_yield As Double
+        Dim σ_yield, τ_yield As Double
 
         σ_yield = NumericUpDown23.Value
-        pressure_yield = σ_yield / 1.5   'N/mm2 
+        τ_yield = σ_yield * 0.577   'N/mm2 ωον μισεσ 
 
-        'Application Factors Ka According to DIN 3990-1:  1987-12
-        'Uniform (electric motor) light shocks 1.5
-
-        TextBox66.Text = pressure_yield.ToString("0")  'Yield stress
+        TextBox66.Text = τ_yield.ToString("0")  'Yield stress
     End Sub
 
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
