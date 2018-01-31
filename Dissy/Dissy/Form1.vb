@@ -65,7 +65,7 @@ Public Class Form1
         Dim FOS_lump_key, FOS_lump_nut As Double
         Dim key_h, key_l, beater_shaft_radius, max_key_torque, max_key_force As Double
         Dim start_torque As Double
-        Dim σ_yield, τ_yield As Double
+        Dim σ_yield, pressure_yield As Double
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
@@ -107,7 +107,7 @@ Public Class Form1
         acc_time = NumericUpDown15.Value
         density = NumericUpDown16.Value
         σ_yield = NumericUpDown18.Value
-        τ_yield = σ_yield * 0.577   'According von Mises
+        pressure_yield = σ_yield * 0.577   'According von Mises
 
         beater_shaft_radius = NumericUpDown12.Value / 2000   '[mm]
 
@@ -143,18 +143,19 @@ Public Class Form1
         actual_egg_key_force = lump_torque / beater_shaft_radius
         actual_egg_key_force /= 2    'two keys 
 
-        max_key_force = key_h * key_l * τ_yield     'Shear stress
+        max_key_force = key_h * key_l * pressure_yield     'Shear stress
         max_key_torque = max_key_force * beater_shaft_radius
         max_key_torque *= 2     'two keys 
 
         FOS_lump_key = max_key_torque / lump_torque
 
         '----------------------------------------------
-        Dim actual_drive_key_force, drive_l, drive_w, drive_t2 As Double
-        Dim actual_drive_key_τ_stress As Double 'Shear stress
+        Dim actual_drive_key_force, drive_l, drive_w, drive_t1, drive_t2 As Double
+        Dim actual_drive_key_pressure As Double 'Compression stress
         Dim actual_drive_key_σ_stress As Double 'Compression stress
-        Dim FOS_coupling_key_τ As Double
+        Dim FOS_coupling_key_press As Double
 
+        Double.TryParse(TextBox21.Text, drive_t1)           '[mm] key t1
         Double.TryParse(TextBox84.Text, drive_t2)           '[mm] key t2
         Double.TryParse(TextBox85.Text, drive_w)            '[mm] key width
 
@@ -162,13 +163,14 @@ Public Class Form1
 
         '--------- max Allowed power on coupling key --
         'see http://www.roymech.co.uk/Useful_Tables/Keyways/key_strength.html
+        'see https://www.eassistant.eu/fileadmin/dokumente/eassistant/etc/HTMLHandbuch_en/eAssistantHandb_HTML_ench11.html#x13-55400011.4
 
         actual_drive_key_force = start_torque / drive_key_radius       '[kN]
 
         actual_drive_key_σ_stress = actual_drive_key_force / (drive_t2 * drive_l)  '[N/mm2] compression
-        actual_drive_key_τ_stress = actual_drive_key_force / (drive_w * drive_l)   '[N/mm2] shear
+        actual_drive_key_pressure = actual_drive_key_force / (drive_t2 * drive_l)   '[N/mm2] pressure
 
-        FOS_coupling_key_τ = τ_yield / actual_drive_key_τ_stress      '[-] shear
+        FOS_coupling_key_press = pressure_yield / actual_drive_key_pressure      '[-] shear
 
 
         '--------- Hydraulic nut (spacer = friction disk) --
@@ -203,9 +205,6 @@ Public Class Form1
         TextBox9.Text = (max_key_torque / 1000).ToString("0.0") '[kNm]
         TextBox10.Text = (lump_torque / 1000).ToString("0.0")   '[kNm]
         TextBox11.Text = (max_key_force / 1000).ToString("0")   '[kN]
-        'TextBox12.Text = allowed_σ_stress.ToString("0")         '[N/mm2]
-        TextBox19.Text = τ_yield.ToString("0")         '[N/mm2]
-        TextBox20.Text = actual_drive_key_τ_stress.ToString("0") '[N/mm2] shear stress
         TextBox83.Text = actual_drive_key_σ_stress.ToString("0") '[N/mm2] compress stress
 
         TextBox22.Text = (actual_drive_key_force / 10 ^ 3).ToString("0") '[km]
@@ -213,7 +212,7 @@ Public Class Form1
         TextBox24.Text = spacer_radius.ToString("0")            '[mm]
         TextBox25.Text = max_torque_nut.ToString("0")           '[kNm]
         TextBox29.Text = (start_torque / 1000).ToString("0.0")  '[kNm]
-        TextBox32.Text = FOS_coupling_key_τ.ToString("0.0")     '[-] shear
+        TextBox32.Text = FOS_coupling_key_press.ToString("0.0") '[-] surface pressure
         TextBox33.Text = specific_load.ToString("0.00")         '[]
         TextBox34.Text = delta_l.ToString("0.00")               '[mm]
         TextBox35.Text = (tot_Instal_power / 1000).ToString("0") '[kW]
@@ -221,14 +220,16 @@ Public Class Form1
         TextBox37.Text = spacer_od.ToString("0")                '[mm]
         TextBox40.Text = FOS_lump_key.ToString("0.0")           '[-]
         TextBox65.Text = FOS_lump_nut.ToString("0.0")           '[-]
-        TextBox67.Text = τ_yield.ToString("0")                  '[N/mm2]
+        TextBox67.Text = pressure_yield.ToString("0")                  '[N/mm2]
         TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
 
         TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
         TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
 
         '------- checks---------
-        TextBox32.BackColor = IIf(FOS_coupling_key_τ > 3, Color.LightGreen, Color.Red)
+        TextBox32.BackColor = IIf(FOS_coupling_key_press > 2, Color.LightGreen, Color.Red)
+        Label35.Visible = IIf(FOS_coupling_key_press > 2, False, True)
+
         TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
         TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
         Calc_inertia()
@@ -278,6 +279,11 @@ Public Class Form1
         "12.1010 Cerestar, Sas van Gent" & vbCrLf &
         " " & vbCrLf &
         " " & vbCrLf
+
+        TextBox12.Text =
+       "Key calculation" & vbCrLf &
+       "www.brammer.nl/Downloads/270450-INLEGSPIEEN-DIN-6885A.pdf "
+
     End Sub
     Private Sub Calc_inertia()
         Dim overall_length, I_mass_inert, I_mass_in_tot, thick As Double
@@ -537,8 +543,8 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
             oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Locked motor τ Key shear stress "
-            oTable.Cell(row, 2).Range.Text = TextBox20.Text
+            oTable.Cell(row, 1).Range.Text = "Locked motor Key compression stress "
+            oTable.Cell(row, 2).Range.Text = TextBox83.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
@@ -893,14 +899,14 @@ Public Class Form1
     End Sub
     Private Sub Calc_shaft_coupling()
         Dim dia, dia_calc, t1, m1 As Double
-        Dim j, τ, τ_yield_cpl As Double
+        Dim j, τ, pressure_yield_cpl As Double
 
         dia = NumericUpDown13.Value         'dia shaft
         Double.TryParse(TextBox21.Text, t1) 'depth key
         dia_calc = dia - t1                 'shaft calculation diameter
         Double.TryParse(TextBox29.Text, m1) 'torque locked motor
         m1 *= 10 ^ 6                        '[kN.m]-->[N.mm]
-        Double.TryParse(TextBox68.Text, τ_yield_cpl) 'design stress
+        Double.TryParse(TextBox68.Text, pressure_yield_cpl) 'design stress
 
 
         '--------- Calc Polar Moment of Inertia of Area   -----------
@@ -920,14 +926,14 @@ Public Class Form1
 
         TextBox60.Text = j.ToString("0")
         '--------- checks ---------
-        TextBox46.BackColor = IIf(τ < τ_yield_cpl, Color.LightGreen, Color.Red)
+        TextBox46.BackColor = IIf(τ < pressure_yield_cpl, Color.LightGreen, Color.Red)
     End Sub
     Private Sub Calc_shaft()
         Dim dia, dia_calc, t1, f1, dm1, dm2 As Double
         Dim length_l, length_a, length_b, R1 As Double
         Dim J, I, area As Double
         Dim σd, σb, τ, FOS_stress As Double
-        Dim σ_yield_shft, τ_yield_shft As Double
+        Dim σ_yield_shft, pressure_yield_shft As Double
         Dim σ12 As Double
         Dim dia_fric As Double
         Dim wght, w As Double
@@ -943,7 +949,7 @@ Public Class Form1
         dia_fric = NumericUpDown21.Value    '[mm] spacer plate
 
         σ_yield_shft = NumericUpDown10.Value
-        τ_yield_shft = σ_yield_shft * 0.577 'According von Mises
+        pressure_yield_shft = σ_yield_shft * 0.577 'According von Mises
 
         Double.TryParse(TextBox81.Text, wght) '[kg] beaters
 
@@ -996,12 +1002,12 @@ Public Class Form1
         TextBox63.Text = area.ToString("0")
         TextBox64.Text = dia_fric.ToString("0")
         TextBox45.Text = FOS_stress.ToString("0.0")
-        TextBox68.Text = τ_yield_shft.ToString("0")  'yield stress
+        TextBox68.Text = pressure_yield_shft.ToString("0")  'yield stress
 
         '--------- checks ---------
         TextBox50.BackColor = IIf(σ12 < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
         TextBox52.BackColor = IIf(σd < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
-        TextBox51.BackColor = IIf(τ < (τ_yield_shft / 3), Color.LightGreen, Color.Red)
+        TextBox51.BackColor = IIf(τ < (pressure_yield_shft / 3), Color.LightGreen, Color.Red)
         TextBox59.BackColor = IIf(σb < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
         TextBox45.BackColor = IIf(FOS_stress > 3.0, Color.LightGreen, Color.Red)
 
@@ -1016,12 +1022,15 @@ Public Class Form1
     End Sub
 
     Private Sub Calc_beater()
-        Dim σ_yield, τ_yield As Double
+        Dim σ_yield, pressure_yield As Double
 
         σ_yield = NumericUpDown23.Value
-        τ_yield = σ_yield * 0.577   'N/mm2, According von Mises
+        pressure_yield = σ_yield / 1.5   'N/mm2 
 
-        TextBox66.Text = τ_yield.ToString("0")  'Yield stress
+        'Application Factors Ka According to DIN 3990-1:  1987-12
+        'Uniform (electric motor) light shocks 1.5
+
+        TextBox66.Text = pressure_yield.ToString("0")  'Yield stress
     End Sub
 
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click

@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Dissy.exe" size="567736">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Dissy.exe" size="568248">
       <assemblyIdentity name="Dissy" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>EsgZPRlGVwNxis/vwLMSGdpEshlArWVl1t43rEPYVwk=</dsig:DigestValue>
+        <dsig:DigestValue>EXMJgL5vatU6P2k0VsFFJ9kXGAT+9tpxBRMMLakbh3k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
