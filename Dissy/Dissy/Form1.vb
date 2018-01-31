@@ -65,7 +65,7 @@ Public Class Form1
         Dim FOS_lump_key, FOS_lump_nut As Double
         Dim key_h, key_l, beater_shaft_radius, max_key_torque, max_key_force As Double
         Dim start_torque As Double
-        Dim σ_yield, pressure_yield As Double
+        Dim key_σ_yield, key_pr_yield, key_τ_yield As Double    'Drive key
         Dim specific_load, load_beater_tip As Double
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
@@ -106,12 +106,13 @@ Public Class Form1
         drive_key_radius = NumericUpDown13.Value / 2000     '[m]
         acc_time = NumericUpDown15.Value
         density = NumericUpDown16.Value
-        σ_yield = NumericUpDown18.Value
+        key_σ_yield = NumericUpDown18.Value
 
         'Application Factors Ka According to DIN 3990-1:  1987-12
         'Uniform (electric motor) light shocks 1.5
-        pressure_yield = σ_yield / 1.5   'Surface pressure
-        If pressure_yield > 200 Then pressure_yield = 200   'Pracical number from Dubbel
+        key_pr_yield = key_σ_yield / 1.5   'Surface pressure
+        key_τ_yield = key_σ_yield * 0.577   'Von Misses
+        If key_pr_yield > 200 Then key_pr_yield = 200   'Pracical number from Dubbel
 
         beater_shaft_radius = NumericUpDown12.Value / 2000   '[mm]
 
@@ -147,7 +148,7 @@ Public Class Form1
         actual_egg_key_force = lump_torque / beater_shaft_radius
         actual_egg_key_force /= 2    'two keys 
 
-        max_key_force = key_h * key_l * pressure_yield     'Shear stress
+        max_key_force = key_h * key_l * key_pr_yield     'Surface pressure
         max_key_torque = max_key_force * beater_shaft_radius
         max_key_torque *= 2     'two keys 
 
@@ -156,7 +157,8 @@ Public Class Form1
         '----------------------------------------------
         Dim actual_drive_key_force, drive_l, drive_w, drive_t1, drive_t2 As Double
         Dim actual_drive_key_pressure As Double 'Compression stress
-        Dim actual_drive_key_σ_stress As Double 'Compression stress
+        Dim actual_drive_key_τ_stress As Double 'Compression stress
+
         Dim FOS_coupling_key_press As Double
 
         Double.TryParse(TextBox21.Text, drive_t1)           '[mm] key t1
@@ -171,10 +173,10 @@ Public Class Form1
 
         actual_drive_key_force = start_torque / drive_key_radius       '[kN]
 
-        actual_drive_key_σ_stress = actual_drive_key_force / (drive_t2 * drive_l)  '[N/mm2] compression
-        actual_drive_key_pressure = actual_drive_key_force / (drive_t2 * drive_l)   '[N/mm2] pressure
+        actual_drive_key_τ_stress = actual_drive_key_force / (drive_w * drive_l)  '[N/mm2] shear stress
+        actual_drive_key_pressure = actual_drive_key_force / (drive_t1 * drive_l)   '[N/mm2] pressure
 
-        FOS_coupling_key_press = pressure_yield / actual_drive_key_pressure      '[-] shear
+        FOS_coupling_key_press = key_pr_yield / actual_drive_key_pressure      '[-] shear
 
 
         '--------- Hydraulic nut (spacer = friction disk) --
@@ -209,7 +211,8 @@ Public Class Form1
         TextBox9.Text = (max_key_torque / 1000).ToString("0.0") '[kNm]
         TextBox10.Text = (lump_torque / 1000).ToString("0.0")   '[kNm]
         TextBox11.Text = (max_key_force / 1000).ToString("0")   '[kN]
-        TextBox83.Text = actual_drive_key_σ_stress.ToString("0") '[N/mm2] compress stress
+        TextBox20.Text = actual_drive_key_τ_stress.ToString("0") '[N/mm2] shear stress
+        TextBox83.Text = actual_drive_key_pressure.ToString("0") '[N/mm2] compress stress
 
         TextBox22.Text = (actual_drive_key_force / 10 ^ 3).ToString("0") '[km]
         TextBox23.Text = spacer_id.ToString("0")                '[mm]
@@ -224,15 +227,16 @@ Public Class Form1
         TextBox37.Text = spacer_od.ToString("0")                '[mm]
         TextBox40.Text = FOS_lump_key.ToString("0.0")           '[-]
         TextBox65.Text = FOS_lump_nut.ToString("0.0")           '[-]
-        TextBox67.Text = pressure_yield.ToString("0")                  '[N/mm2]
+        TextBox67.Text = key_pr_yield.ToString("0")             '[N/mm2] pressure yield
+        TextBox19.Text = key_τ_yield.ToString("0")              '[N/mm2] τ shear yield
         TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
 
         TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
         TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
 
         '------- checks---------
-        TextBox32.BackColor = IIf(FOS_coupling_key_press > 2, Color.LightGreen, Color.Red)
-        Label35.Visible = IIf(FOS_coupling_key_press > 2, False, True)
+        TextBox32.BackColor = IIf(FOS_coupling_key_press > 1.5, Color.LightGreen, Color.Red)
+        Label35.Visible = IIf(FOS_coupling_key_press > 1.5, False, True)
 
         TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
         TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
@@ -262,7 +266,6 @@ Public Class Form1
         For hh = 0 To (motor_rpm.Length - 1)  'Fill combobox4 Motor data
             ComboBox3.Items.Add(motor_rpm(hh))
         Next hh
-
 
         '----------------- prevent out of bounds------------------
         ComboBox1.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 13, -1)) 'Select ..
@@ -445,30 +448,19 @@ Public Class Form1
             row = 1
             oTable.Cell(row, 1).Range.Text = "Selected steel"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Key, σ yield o.2 tensile strength"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown18.Value.ToString("0")
-            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Key, τ shear strength"
-            oTable.Cell(row, 2).Range.Text = TextBox67.Text
-            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Beaters, σ yield o.2 tensile strength"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown23.Value.ToString("0")
-            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Beaters, τ shear strength"
-            oTable.Cell(row, 2).Range.Text = TextBox66.Text
-            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Shaft, σ yield o.2 tensile strength"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString("0")
-            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Shaft, τ shear strength"
-            oTable.Cell(row, 2).Range.Text = TextBox68.Text
+            oTable.Cell(row, 1).Range.Text = "Key, σ_o2, τ, pr yield"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown18.Value.ToString("0") & ", " & TextBox19.Text & ", " & TextBox67.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
 
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Beaters, σ_o2, τ yield"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown23.Value.ToString("0") & ", " & TextBox66.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft,  σ_o2, τ yield"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString("0") & ", " & TextBox68.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
