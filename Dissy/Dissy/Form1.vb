@@ -110,9 +110,10 @@ Public Class Form1
 
         'Application Factors Ka According to DIN 3990-1:  1987-12
         'Uniform (electric motor) light shocks 1.5
-        key_pr_yield = key_σ_yield / 1.5   'Surface pressure
+        key_pr_yield = key_σ_yield          'Surface pressure yield
         key_τ_yield = key_σ_yield * 0.577   'Von Misses
-        If key_pr_yield > 200 Then key_pr_yield = 200   'Pracical number from Dubbel
+
+        'For ductile materials pressure yield= tensile yield
 
         beater_shaft_radius = NumericUpDown12.Value / 2000   '[mm]
 
@@ -159,7 +160,7 @@ Public Class Form1
         Dim actual_drive_key_pressure As Double 'Compression stress
         Dim actual_drive_key_τ_stress As Double 'Compression stress
 
-        Dim FOS_coupling_key_press As Double
+        Dim FOS_coupling_key_press, FOS_coupling_key_shear As Double
 
         Double.TryParse(TextBox21.Text, drive_t1)           '[mm] key t1
         Double.TryParse(TextBox84.Text, drive_t2)           '[mm] key t2
@@ -174,10 +175,10 @@ Public Class Form1
         actual_drive_key_force = start_torque / drive_key_radius       '[kN]
 
         actual_drive_key_τ_stress = actual_drive_key_force / (drive_w * drive_l)  '[N/mm2] shear stress
-        actual_drive_key_pressure = actual_drive_key_force / (drive_t1 * drive_l)   '[N/mm2] pressure
+        actual_drive_key_pressure = actual_drive_key_force / (drive_t1 * drive_l) '[N/mm2] pressure
 
-        FOS_coupling_key_press = key_pr_yield / actual_drive_key_pressure      '[-] shear
-
+        FOS_coupling_key_press = key_pr_yield / actual_drive_key_pressure       '[-] surface pressure
+        FOS_coupling_key_shear = key_τ_yield / actual_drive_key_τ_stress        '[-] shear
 
         '--------- Hydraulic nut (spacer = friction disk) --
         Dim spacer_od, spacer_id, spacer_radius, fric As Double
@@ -220,6 +221,9 @@ Public Class Form1
         TextBox25.Text = max_torque_nut.ToString("0")           '[kNm]
         TextBox29.Text = (start_torque / 1000).ToString("0.0")  '[kNm]
         TextBox32.Text = FOS_coupling_key_press.ToString("0.0") '[-] surface pressure
+
+        TextBox86.Text = FOS_coupling_key_shear.ToString("0.0") '[-] surface pressure
+
         TextBox33.Text = specific_load.ToString("0.00")         '[]
         TextBox34.Text = delta_l.ToString("0.00")               '[mm]
         TextBox35.Text = (tot_Instal_power / 1000).ToString("0") '[kW]
@@ -235,8 +239,9 @@ Public Class Form1
         TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
 
         '------- checks---------
-        TextBox32.BackColor = IIf(FOS_coupling_key_press > 1.5, Color.LightGreen, Color.Red)
-        Label35.Visible = IIf(FOS_coupling_key_press > 1.5, False, True)
+        TextBox32.BackColor = IIf(FOS_coupling_key_press > 3, Color.LightGreen, Color.Red)
+        Label35.Visible = IIf(FOS_coupling_key_press > 3, False, True)
+        TextBox86.BackColor = IIf(FOS_coupling_key_shear > 3, Color.LightGreen, Color.Red)
 
         TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
         TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
@@ -289,8 +294,8 @@ Public Class Form1
 
         TextBox12.Text =
        "Key calculation" & vbCrLf &
-       "www.brammer.nl/Downloads/270450-INLEGSPIEEN-DIN-6885A.pdf "
-
+       "www.brammer.nl/Downloads/270450-INLEGSPIEEN-DIN-6885A.pdf" & vbCrLf &
+       "Ductile materials compression yield = tensile yield"
     End Sub
     Private Sub Calc_inertia()
         Dim overall_length, I_mass_inert, I_mass_in_tot, thick As Double
