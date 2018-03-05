@@ -9,6 +9,7 @@ Imports System.Management
 
 Public Class Form1
     Dim _Inertia_1, _Inertia_2, _Inertia_3 As Double  'Torsional analyses
+    Dim _inertia_motor1, _inertia_motor2, _inertia_beaters, _inertia_coupling As Double
     Dim _total_inertia As Double
     Dim _Springstiff_1, _Springstiff_2 As Double      'Torsional analyses
     Dim _rpm As Double
@@ -71,6 +72,8 @@ Public Class Form1
         Dim drive_key_radius As Double
         Dim power1, power2 As Double
         Dim motor1_torque, motor2_torque, tot_motor_torque As Double
+
+        'If NumericUpDown30.Value = 0 Then NumericUpDown24.Value = 0
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -202,9 +205,10 @@ Public Class Form1
         dt = (tot_motor_torque / 1000) / no_beaters                     '[KN.m]
         dt_FOS = max_key_torque / (tot_motor_torque / no_beaters)       '[-]
 
-        '------------- inertia motor -------------------
-        _Inertia_1 = CDbl(Emotor_4P_inert(_rpm, NumericUpDown1.Value * 10 ^ 3))  'Motor #1
-        _Inertia_3 = CDbl(Emotor_4P_inert(_rpm, NumericUpDown30.Value * 10 ^ 3)) 'Motor #2
+        '------------- inertia's  -------------------
+        _inertia_motor1 = NumericUpDown5.Value      'Motor #1
+        _inertia_motor2 = NumericUpDown24.Value     'Motor #2
+        _inertia_coupling = NumericUpDown25.Value   'Coupling
 
         '-------- present-------
         TextBox1.Text = l_tot.ToString("0")
@@ -246,8 +250,8 @@ Public Class Form1
         TextBox19.Text = key_τ_yield.ToString("0")              '[N/mm2] τ shear yield
         TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
 
-        TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
-        TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
+        'TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
+        'TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
 
         '------- checks---------
         TextBox32.BackColor = IIf(FOS_coupling_key_press > 3, Color.LightGreen, Color.Red)
@@ -311,7 +315,7 @@ Public Class Form1
        "Ductile materials compression yield = tensile yield"
     End Sub
     Private Sub Calc_inertia()
-        Dim overall_length, I_mass_inert, I_mass_in_tot, thick As Double
+        Dim overall_length, I_mass_inert, thick As Double
         Dim no_beaters, B, H, H2, tip_width As Double
         Dim tb, th, I_missing_tip, tip_weight As Double
         Dim half_beater_weight, beater_weight, beaters_weight As Double
@@ -340,14 +344,14 @@ Public Class Form1
         I_mass_inert = I_mass_inert - I_missing_tip
         I_mass_inert *= 2                                   'two triangles is one beater
         half_beater_weight = half_beater_weight - tip_weight
-        I_mass_in_tot = I_mass_inert * no_beaters '[kg.m2]
+        _inertia_beaters = I_mass_inert * no_beaters        '[kg.m2]
+
         beater_weight = half_beater_weight * 2
         beaters_weight = beater_weight * NumericUpDown7.Value
 
         '----present--------
         TextBox26.Text = I_mass_inert.ToString("0")             '[kg.m2] one beater
-        _Inertia_2 = I_mass_in_tot.ToString("0.0")              '[kg.m2] total beaters
-        TextBox27.Text = _Inertia_2.ToString("0")               '[kg.m2] 
+        TextBox27.Text = _inertia_beaters.ToString("0")         '[kg.m2] total beaters
         TextBox28.Text = beater_weight.ToString("0")            '[kg]
         TextBox80.Text = beaters_weight.ToString("0")           '[kg]
         TextBox81.Text = beaters_weight.ToString("0")           '[kg]
@@ -864,7 +868,7 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Torsion ------------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 6, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -876,27 +880,19 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = _rpm.ToString
             oTable.Cell(row, 3).Range.Text = "[rpm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Power motor #1"
-            oTable.Cell(row, 2).Range.Text = TextBox75.Text
-            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Power motor #2"
-            oTable.Cell(row, 2).Range.Text = TextBox77.Text
-            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Inertia motor #1"
-            oTable.Cell(row, 2).Range.Text = TextBox55.Text
-            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Inertia beaters"
+            oTable.Cell(row, 1).Range.Text = "Inertia #1"
             oTable.Cell(row, 2).Range.Text = TextBox71.Text
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Inertia Motor #2"
+            oTable.Cell(row, 1).Range.Text = "Inertia #2"
+            oTable.Cell(row, 2).Range.Text = TextBox55.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Inertia #3"
             oTable.Cell(row, 2).Range.Text = TextBox79.Text
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Coumping stiffness"
+            oTable.Cell(row, 1).Range.Text = "Coupling stiffness"
             oTable.Cell(row, 2).Range.Text = TextBox72.Text
             oTable.Cell(row, 3).Range.Text = "[M.Nm/rad]"
 
@@ -1286,7 +1282,9 @@ Public Class Form1
         m_torque_max *= 0.8 ^ 2                                     'Starting voltage is 80%
         m_torque_average = 0.45 * (m_torque_inrush + m_torque_max)  'Average torque motor
 
-        _total_inertia = _Inertia_1 + _Inertia_2 + _Inertia_3    '[kg.m2]
+        _total_inertia = _inertia_motor1        '[kg.m2]
+        _total_inertia += _inertia_beaters
+        _total_inertia += _inertia_motor2
 
         inertia_torque = _total_inertia * ang_acceleration       '[N.m]
 
@@ -1295,45 +1293,62 @@ Public Class Form1
         aanlooptijd = 2 * PI * _rpm * _total_inertia / (60 * C_acc)
         TextBox39.Text = aanlooptijd.ToString("0") 'Aanlooptijd [s]
 
-        TextBox55.Text = _Inertia_1.ToString("0") 'Inertia one motor '[kg.m2] 
-        TextBox79.Text = _Inertia_3.ToString("0") 'Inertia one motor '[kg.m2] 
 
         TextBox75.Text = (ins_power1 / 1000).ToString("0")     'Power motor #1
         TextBox77.Text = (ins_power2 / 1000).ToString("0")     'Power motor #2
 
     End Sub
-    ' see http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
-    Function Emotor_4P_inert(rpm As Double, kw As Double) As Double
-        Dim motor_inertia As Double
-        If rpm < 600 Then rpm = 600
-        Select Case True
-            Case rpm = 3000
-                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 1 ^ 2.5    '2 poles (1 pair) (3000 rpm) [kg.m2]
-            Case rpm = 1500
-                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 2 ^ 2.5    '4 poles (2 pair) (1500 rpm) [kg.m2]
-            Case rpm = 1000
-                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 3 ^ 2.5    '6 poles (3 pair) (1000 rpm) [kg.m2]
-            Case rpm = 750
-                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 4 ^ 2.5    '8 poles (4 pair) (750 rpm) [kg.m2]
-            Case rpm = 600
-                motor_inertia = 0.042 * (kw / 1000) ^ 0.9 * 5 ^ 2.5    '10 poles (5 pair) (600 rpm) [kg.m2]
-            Case Else
-                MessageBox.Show("Error occured in Motor Inertia calculation ")
-        End Select
-        Return (motor_inertia)
-    End Function
+    ' see page 29 http://ecatalog.weg.net/files/wegnet/WEG-specification-of-electric-motors-50039409-manual-english.pdf
+    'Function Emotor_4P_inert(rpm As Double, kw As Double) As Double
+    '    Dim motor_inertia As Double
+    '    If rpm < 600 Then rpm = 600
+    '    Select Case True
+    '        Case rpm = 3000
+    '            motor_inertia = 0.042 * kw ^ 0.9 * 1 ^ 2.5    '2 poles (1 pair) (3000 rpm) [kg.m2]
+    '        Case rpm = 1500
+    '            motor_inertia = 0.042 * kw ^ 0.9 * 2 ^ 2.5    '4 poles (2 pair) (1500 rpm) [kg.m2]
+    '        Case rpm = 1000
+    '            motor_inertia = 0.042 * kw ^ 0.9 * 3 ^ 2.5    '6 poles (3 pair) (1000 rpm) [kg.m2]
+    '        Case rpm = 750
+    '            motor_inertia = 0.042 * kw ^ 0.9 * 4 ^ 2.5    '8 poles (4 pair) (750 rpm) [kg.m2]
+    '        Case rpm = 600
+    '            ' motor_inertia = 0.042 * kw ^ 0.9 * 5 ^ 2.5    '10 poles(5 pair) (600 rpm) [kg.m2]
+    '            motor_inertia = 0.00003 * kw ^ 2 + 0.0405 * kw + 5.96
+    '        Case Else
+    '            MessageBox.Show("Error occured in Motor Inertia calculation ")
+    '    End Select
+    '    'MessageBox.Show(motor_inertia.ToString)
+    '    Return (motor_inertia)
+    'End Function
 
-    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click, TabPage7.Enter, NumericUpDown2.ValueChanged
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click, TabPage7.Enter, NumericUpDown2.ValueChanged, GroupBox15.Enter, Chart1.Enter
         Dim coupl_stiff As Double
+
+        Calc_tab1()
 
         '========= stiffness ===========
         coupl_stiff = NumericUpDown31.Value * 10 ^ 6
         _Springstiff_1 = coupl_stiff           '[Nm/rad] coupling #1
         _Springstiff_2 = coupl_stiff           '[Nm/rad] coupling #2
 
-        TextBox71.Text = _Inertia_2.ToString("0")  'Inertia beaters
         TextBox72.Text = (_Springstiff_1 / 10 ^ 6).ToString("0.0") 'Stiffness Coupling
         TextBox76.Text = _rpm
+
+        '------------- One or two motors-----------------
+        If NumericUpDown30.Value = 0 Then
+            _Inertia_1 = _inertia_motor1
+            _Inertia_2 = _inertia_coupling
+            _Inertia_3 = _inertia_beaters
+        Else
+            _Inertia_1 = _inertia_motor1
+            _Inertia_2 = _inertia_beaters
+            _Inertia_3 = _inertia_motor2
+        End If
+
+        '----------- present data on torsion chart -----------
+        TextBox71.Text = _Inertia_1.ToString("0.0")  'Inertia beaters
+        TextBox55.Text = _Inertia_2.ToString("0.0")
+        TextBox79.Text = _Inertia_3.ToString("0.0")
 
         Torsional_analyses()
         Draw_chart1()
@@ -1464,7 +1479,7 @@ Public Class Form1
             Chart3.ChartAreas.Add("ChartArea0")
             Chart3.Series(0).ChartArea = "ChartArea0"
             Chart3.Series(0).ChartType = DataVisualization.Charting.SeriesChartType.Line
-            Chart3.Titles.Add("Load Torque curve for 1 motor" & vbCrLf & "Inertia Beater shaft " & _Inertia_2.ToString("0") & " [kg.m2]")
+            Chart3.Titles.Add("Load Torque curve for 1 motor" & vbCrLf & "Inertia Beater shaft " & _inertia_beaters.ToString("0") & " [kg.m2]")
             Chart3.Titles(0).Font = New Font("Arial", 12, System.Drawing.FontStyle.Bold)
             Chart3.Series(0).Name = "Koppel[%]"
             Chart3.Series(0).Color = Color.Blue
