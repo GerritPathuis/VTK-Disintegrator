@@ -432,7 +432,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox3.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Break down Motor torque"
+            oTable.Cell(row, 1).Range.Text = "Locked Motor torque"
             oTable.Cell(row, 2).Range.Text = TextBox29.Text
             oTable.Cell(row, 3).Range.Text = "[kNm]"
 
@@ -445,26 +445,46 @@ Public Class Form1
 
             '------------------ Selected Steel ----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             row = 1
-            oTable.Cell(row, 1).Range.Text = "Selected steel"
+            oTable.Cell(row, 1).Range.Text = "Selected steel properties"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Key, σ_o2, τ, pr yield"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown18.Value.ToString("0") & ", " & TextBox19.Text & ", " & TextBox67.Text
+            oTable.Cell(row, 1).Range.Text = "Key C45K, σ_o2 yield tensile strength"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown18.Value.ToString("0")
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
 
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Beaters, σ_o2, τ yield"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown23.Value.ToString("0") & ", " & TextBox66.Text
+            oTable.Cell(row, 1).Range.Text = "Key C45K, τ yield shear strength"
+            oTable.Cell(row, 2).Range.Text = TextBox19.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
 
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Shaft,  σ_o2, τ yield"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString("0") & ", " & TextBox68.Text
+            oTable.Cell(row, 1).Range.Text = "Key C45K, pr yield surface pressure"
+            oTable.Cell(row, 2).Range.Text = TextBox67.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Beaters S690QL, σ_o2 yield tensile strength"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown23.Value.ToString("0")
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Beaters S690QL, τ yield shear strength"
+            oTable.Cell(row, 2).Range.Text = TextBox66.Text
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft 1.7225,  σ_o2 yield tensile strength"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown10.Value.ToString("0")
+            oTable.Cell(row, 3).Range.Text = "[N/mm2]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Shaft 1.7225,  τ yield shear strength"
+            oTable.Cell(row, 2).Range.Text = TextBox68.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm2]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
@@ -623,7 +643,7 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Beaters shaft key --------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -1457,6 +1477,9 @@ Public Class Form1
         End Try
     End Sub
 
+    Private Sub GroupBox2_Enter(sender As Object, e As EventArgs) Handles GroupBox2.Enter
+
+    End Sub
 
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click, TabPage9.Enter
         Draw_chart3()
