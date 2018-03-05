@@ -807,9 +807,9 @@ Partial Class Form1
         Me.Label122.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label122.Location = New System.Drawing.Point(15, 256)
         Me.Label122.Name = "Label122"
-        Me.Label122.Size = New System.Drawing.Size(166, 16)
+        Me.Label122.Size = New System.Drawing.Size(175, 16)
         Me.Label122.TabIndex = 67
-        Me.Label122.Text = "FOS key sher stress [-]"
+        Me.Label122.Text = "FOS key shear stress [-]"
         '
         'TextBox20
         '
