@@ -70,7 +70,7 @@ Public Class Form1
         Dim no_beaters, actual_egg_key_force As Double
         Dim drive_key_radius As Double
         Dim power1, power2 As Double
-        Dim motor1_torque, motor2_torque As Double
+        Dim motor1_torque, motor2_torque, tot_motor_torque As Double
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -96,7 +96,7 @@ Public Class Form1
 
         power1 = NumericUpDown1.Value * 10 ^ 3
         power2 = NumericUpDown30.Value * 10 ^ 3
-        tot_Instal_power = power1 + power2        '[W]
+        tot_Instal_power = power1 + power2          '[W]
 
         If (ComboBox3.SelectedIndex > -1) Then
             _rpm = motor_rpm(ComboBox3.SelectedIndex)
@@ -121,6 +121,7 @@ Public Class Form1
         rad = _rpm / 60 * 2 * PI
         motor1_torque = power1 / rad    'Motor #1
         motor2_torque = power2 / rad    'Motor #2
+        tot_motor_torque = tot_Instal_power / rad   'Motor #1 + #2
 
         '---- Calculate the highest coupling load ------
         If (motor1_torque > motor2_torque) Then
@@ -128,6 +129,8 @@ Public Class Form1
         Else
             start_torque = motor2_torque * 2.0  '2x Nominaal
         End If
+
+        tot_motor_torque *= 2.0                 '2x Nominaal
 
         tip_speed = dia_beater * _rpm * PI / 60  '[m/s]
 
@@ -137,7 +140,6 @@ Public Class Form1
         l_tot = (l_add + l_wet) * 1000 / 3600   '[kg/s]
         specific_load = 3600 * l_tot / tot_Instal_power  '[ton/(kW.hr)]
         load_beater_tip = l_tot / (_rpm / 60 * no_beaters * 2)
-
 
         '---- Lump calculation--------
         lump_weight = 4 / 3 * PI * (lump_dia / 2) ^ 3 * density
@@ -195,6 +197,11 @@ Public Class Form1
         delta_l = pull_force * 10 ^ 3 * shaft_l / (215000 * area)       '[mm]
         FOS_lump_nut = max_torque_nut * 10 ^ 3 / lump_torque
 
+        '------Drive torque per beater
+        Dim dt, dt_FOS As Double
+        dt = (tot_motor_torque / 1000) / no_beaters                     '[KN.m]
+        dt_FOS = max_key_torque / (tot_motor_torque / no_beaters)       '[-]
+
         '------------- inertia motor -------------------
         _Inertia_1 = CDbl(Emotor_4P_inert(_rpm, NumericUpDown1.Value * 10 ^ 3))  'Motor #1
         _Inertia_3 = CDbl(Emotor_4P_inert(_rpm, NumericUpDown30.Value * 10 ^ 3)) 'Motor #2
@@ -210,6 +217,10 @@ Public Class Form1
         TextBox7.Text = f_tip.ToString("0")
         TextBox8.Text = key_l.ToString("0")
         TextBox9.Text = (max_key_torque / 1000).ToString("0.0") '[kNm]
+
+        TextBox87.Text = (dt).ToString("0.0") '[kNm] drive troque / beater
+        TextBox88.Text = (dt_FOS).ToString("0.0") '[-] FOS
+
         TextBox10.Text = (lump_torque / 1000).ToString("0.0")   '[kNm]
         TextBox11.Text = (max_key_force / 1000).ToString("0")   '[kN]
         TextBox20.Text = actual_drive_key_τ_stress.ToString("0") '[N/mm2] shear stress
@@ -245,6 +256,8 @@ Public Class Form1
 
         TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
         TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
+        TextBox88.BackColor = IIf(dt_FOS > 3, Color.LightGreen, Color.Red)
+
         Calc_inertia()
         Calc_shaft_coupling()
         Calc_shaft()
@@ -536,7 +549,7 @@ Public Class Form1
 
             '------------------ Coupling key----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 9, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -564,11 +577,17 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox22.Text
             oTable.Cell(row, 3).Range.Text = "[kN]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Locked motor Key compression stress "
+            oTable.Cell(row, 1).Range.Text = "Locked motor Key surface pressure "
             oTable.Cell(row, 2).Range.Text = TextBox83.Text
             oTable.Cell(row, 3).Range.Text = "[N/mm]"
+
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Factor of Safety (locked motor)"
+            oTable.Cell(row, 1).Range.Text = "FOS surface pressure"
+            oTable.Cell(row, 2).Range.Text = TextBox86.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "FOS shear stress"
             oTable.Cell(row, 2).Range.Text = TextBox32.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
@@ -643,7 +662,7 @@ Public Class Form1
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
             '------------------ Beaters shaft key --------------------
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 7, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 8, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -674,6 +693,10 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Maximum Torque 2 keys"
             oTable.Cell(row, 2).Range.Text = TextBox9.Text
             oTable.Cell(row, 3).Range.Text = "[kN.m]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "FOS drive torqee per beater"
+            oTable.Cell(row, 2).Range.Text = TextBox88.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(1.55)
