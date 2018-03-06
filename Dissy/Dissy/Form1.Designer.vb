@@ -108,6 +108,10 @@ Partial Class Form1
         Me.Label4 = New System.Windows.Forms.Label()
         Me.NumericUpDown4 = New System.Windows.Forms.NumericUpDown()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Label125 = New System.Windows.Forms.Label()
+        Me.NumericUpDown25 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown24 = New System.Windows.Forms.NumericUpDown()
+        Me.NumericUpDown5 = New System.Windows.Forms.NumericUpDown()
         Me.Label114 = New System.Windows.Forms.Label()
         Me.TextBox82 = New System.Windows.Forms.TextBox()
         Me.Label98 = New System.Windows.Forms.Label()
@@ -286,10 +290,10 @@ Partial Class Form1
         Me.GroupBox15 = New System.Windows.Forms.GroupBox()
         Me.Label113 = New System.Windows.Forms.Label()
         Me.Label110 = New System.Windows.Forms.Label()
+        Me.Button6 = New System.Windows.Forms.Button()
         Me.TextBox79 = New System.Windows.Forms.TextBox()
         Me.Label108 = New System.Windows.Forms.Label()
         Me.TextBox77 = New System.Windows.Forms.TextBox()
-        Me.Button6 = New System.Windows.Forms.Button()
         Me.Label107 = New System.Windows.Forms.Label()
         Me.TextBox76 = New System.Windows.Forms.TextBox()
         Me.TextBox75 = New System.Windows.Forms.TextBox()
@@ -316,10 +320,6 @@ Partial Class Form1
         Me.Chart3 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.Button8 = New System.Windows.Forms.Button()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
-        Me.NumericUpDown5 = New System.Windows.Forms.NumericUpDown()
-        Me.NumericUpDown24 = New System.Windows.Forms.NumericUpDown()
-        Me.Label125 = New System.Windows.Forms.Label()
-        Me.NumericUpDown25 = New System.Windows.Forms.NumericUpDown()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox20.SuspendLayout()
@@ -338,6 +338,9 @@ Partial Class Form1
         CType(Me.NumericUpDown3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox1.SuspendLayout()
+        CType(Me.NumericUpDown25, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown24, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown30, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown31, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -383,9 +386,6 @@ Partial Class Form1
         Me.TabPage9.SuspendLayout()
         CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Chart3, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown24, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown25, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -1271,6 +1271,52 @@ Partial Class Form1
         Me.GroupBox1.TabIndex = 12
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "Drive"
+        '
+        'Label125
+        '
+        Me.Label125.AutoSize = True
+        Me.Label125.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label125.Location = New System.Drawing.Point(15, 275)
+        Me.Label125.Name = "Label125"
+        Me.Label125.Size = New System.Drawing.Size(144, 16)
+        Me.Label125.TabIndex = 53
+        Me.Label125.Text = "Coupling Inertia [kgm2]"
+        '
+        'NumericUpDown25
+        '
+        Me.NumericUpDown25.BackColor = System.Drawing.Color.Yellow
+        Me.NumericUpDown25.DecimalPlaces = 1
+        Me.NumericUpDown25.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
+        Me.NumericUpDown25.Location = New System.Drawing.Point(224, 276)
+        Me.NumericUpDown25.Minimum = New Decimal(New Integer() {10, 0, 0, 131072})
+        Me.NumericUpDown25.Name = "NumericUpDown25"
+        Me.NumericUpDown25.Size = New System.Drawing.Size(62, 20)
+        Me.NumericUpDown25.TabIndex = 54
+        Me.NumericUpDown25.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.NumericUpDown25.Value = New Decimal(New Integer() {28, 0, 0, 65536})
+        '
+        'NumericUpDown24
+        '
+        Me.NumericUpDown24.BackColor = System.Drawing.Color.Yellow
+        Me.NumericUpDown24.Increment = New Decimal(New Integer() {100, 0, 0, 0})
+        Me.NumericUpDown24.Location = New System.Drawing.Point(224, 225)
+        Me.NumericUpDown24.Maximum = New Decimal(New Integer() {2000, 0, 0, 0})
+        Me.NumericUpDown24.Name = "NumericUpDown24"
+        Me.NumericUpDown24.Size = New System.Drawing.Size(62, 20)
+        Me.NumericUpDown24.TabIndex = 52
+        Me.NumericUpDown24.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'NumericUpDown5
+        '
+        Me.NumericUpDown5.BackColor = System.Drawing.Color.Yellow
+        Me.NumericUpDown5.Increment = New Decimal(New Integer() {100, 0, 0, 0})
+        Me.NumericUpDown5.Location = New System.Drawing.Point(224, 200)
+        Me.NumericUpDown5.Maximum = New Decimal(New Integer() {2000, 0, 0, 0})
+        Me.NumericUpDown5.Name = "NumericUpDown5"
+        Me.NumericUpDown5.Size = New System.Drawing.Size(62, 20)
+        Me.NumericUpDown5.TabIndex = 51
+        Me.NumericUpDown5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        Me.NumericUpDown5.Value = New Decimal(New Integer() {200, 0, 0, 0})
         '
         'Label114
         '
@@ -3204,6 +3250,15 @@ Partial Class Form1
         Me.Label110.TabIndex = 96
         Me.Label110.Text = "Inertia #3 [kgm2]"
         '
+        'Button6
+        '
+        Me.Button6.Location = New System.Drawing.Point(904, 52)
+        Me.Button6.Name = "Button6"
+        Me.Button6.Size = New System.Drawing.Size(62, 64)
+        Me.Button6.TabIndex = 1
+        Me.Button6.Text = "Button6"
+        Me.Button6.UseVisualStyleBackColor = True
+        '
         'TextBox79
         '
         Me.TextBox79.Enabled = False
@@ -3231,15 +3286,6 @@ Partial Class Form1
         Me.TextBox77.Size = New System.Drawing.Size(62, 20)
         Me.TextBox77.TabIndex = 93
         Me.TextBox77.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'Button6
-        '
-        Me.Button6.Location = New System.Drawing.Point(904, 52)
-        Me.Button6.Name = "Button6"
-        Me.Button6.Size = New System.Drawing.Size(62, 64)
-        Me.Button6.TabIndex = 1
-        Me.Button6.Text = "Button6"
-        Me.Button6.UseVisualStyleBackColor = True
         '
         'Label107
         '
@@ -3509,53 +3555,6 @@ Partial Class Form1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
         '
-        'NumericUpDown5
-        '
-        Me.NumericUpDown5.BackColor = System.Drawing.Color.Yellow
-        Me.NumericUpDown5.Increment = New Decimal(New Integer() {100, 0, 0, 0})
-        Me.NumericUpDown5.Location = New System.Drawing.Point(224, 200)
-        Me.NumericUpDown5.Maximum = New Decimal(New Integer() {2000, 0, 0, 0})
-        Me.NumericUpDown5.Name = "NumericUpDown5"
-        Me.NumericUpDown5.Size = New System.Drawing.Size(62, 20)
-        Me.NumericUpDown5.TabIndex = 51
-        Me.NumericUpDown5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.NumericUpDown5.Value = New Decimal(New Integer() {200, 0, 0, 0})
-        '
-        'NumericUpDown24
-        '
-        Me.NumericUpDown24.BackColor = System.Drawing.Color.Yellow
-        Me.NumericUpDown24.Increment = New Decimal(New Integer() {100, 0, 0, 0})
-        Me.NumericUpDown24.Location = New System.Drawing.Point(224, 225)
-        Me.NumericUpDown24.Maximum = New Decimal(New Integer() {2000, 0, 0, 0})
-        Me.NumericUpDown24.Name = "NumericUpDown24"
-        Me.NumericUpDown24.Size = New System.Drawing.Size(62, 20)
-        Me.NumericUpDown24.TabIndex = 52
-        Me.NumericUpDown24.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
-        'Label125
-        '
-        Me.Label125.AutoSize = True
-        Me.Label125.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label125.Location = New System.Drawing.Point(15, 275)
-        Me.Label125.Name = "Label125"
-        Me.Label125.Size = New System.Drawing.Size(144, 16)
-        Me.Label125.TabIndex = 53
-        Me.Label125.Text = "Coupling Inertia [kgm2]"
-        '
-        'NumericUpDown25
-        '
-        Me.NumericUpDown25.BackColor = System.Drawing.Color.Yellow
-        Me.NumericUpDown25.DecimalPlaces = 1
-        Me.NumericUpDown25.Increment = New Decimal(New Integer() {1, 0, 0, 65536})
-        Me.NumericUpDown25.Location = New System.Drawing.Point(224, 276)
-        Me.NumericUpDown25.Maximum = New Decimal(New Integer() {30, 0, 0, 0})
-        Me.NumericUpDown25.Minimum = New Decimal(New Integer() {10, 0, 0, 131072})
-        Me.NumericUpDown25.Name = "NumericUpDown25"
-        Me.NumericUpDown25.Size = New System.Drawing.Size(62, 20)
-        Me.NumericUpDown25.TabIndex = 54
-        Me.NumericUpDown25.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.NumericUpDown25.Value = New Decimal(New Integer() {28, 0, 0, 65536})
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3591,6 +3590,9 @@ Partial Class Form1
         CType(Me.NumericUpDown4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
+        CType(Me.NumericUpDown25, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown24, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown30, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown31, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).EndInit()
@@ -3651,9 +3653,6 @@ Partial Class Form1
         Me.TabPage9.PerformLayout()
         CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Chart3, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown24, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown25, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
