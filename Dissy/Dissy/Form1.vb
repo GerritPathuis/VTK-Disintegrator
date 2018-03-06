@@ -1065,7 +1065,7 @@ Public Class Form1
         Dim σ_yield, τ_yield As Double
 
         σ_yield = NumericUpDown23.Value
-        τ_yield = σ_yield * 0.577   'N/mm2 ωον μισεσ 
+        τ_yield = σ_yield * 0.577   'N/mm2  
 
         TextBox66.Text = τ_yield.ToString("0")  'Yield stress
     End Sub
@@ -1469,6 +1469,18 @@ Public Class Form1
         Dim a, b, c As Double
         Dim x, y, shaft_torque As Double
         Dim file_name As String
+        Dim inertia_beater_1motor As Double
+        Dim pow_m1, pow_m2 As Double
+
+        '---------- the beaters inertia is distributed over the motors-----
+        pow_m1 = NumericUpDown1.Value
+        pow_m2 = NumericUpDown30.Value
+        If pow_m1 > pow_m2 Then
+            inertia_beater_1motor = _inertia_beaters * pow_m1 / (pow_m1 + pow_m2)
+        Else
+            inertia_beater_1motor = _inertia_beaters * pow_m2 / (pow_m1 + pow_m2)
+        End If
+
         Try
             file_name = dirpath_Home & "Torque_Chart.Jpeg"
             'Clear all series And chart areas so we can re-add them
@@ -1479,7 +1491,7 @@ Public Class Form1
             Chart3.ChartAreas.Add("ChartArea0")
             Chart3.Series(0).ChartArea = "ChartArea0"
             Chart3.Series(0).ChartType = DataVisualization.Charting.SeriesChartType.Line
-            Chart3.Titles.Add("Load Torque curve for 1 motor" & vbCrLf & "Inertia Beater shaft " & _inertia_beaters.ToString("0") & " [kg.m2]")
+            Chart3.Titles.Add("Load Torque curve for 1 motor" & vbCrLf & "Inertia Beater shaft " & inertia_beater_1motor.ToString("0") & " [kg.m2]")
             Chart3.Titles(0).Font = New Font("Arial", 12, System.Drawing.FontStyle.Bold)
             Chart3.Series(0).Name = "Koppel[%]"
             Chart3.Series(0).Color = Color.Blue
@@ -1513,10 +1525,6 @@ Public Class Form1
         Catch ex As Exception
             'MessageBox.Show(ex.Message &" Error 4771")  ' Show the exception's message.
         End Try
-    End Sub
-
-    Private Sub GroupBox2_Enter(sender As Object, e As EventArgs) Handles GroupBox2.Enter
-
     End Sub
 
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click, TabPage9.Enter
