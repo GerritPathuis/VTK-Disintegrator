@@ -1394,7 +1394,6 @@ Partial Class Form1
         Me.NumericUpDown31.DecimalPlaces = 2
         Me.NumericUpDown31.Increment = New Decimal(New Integer() {1, 0, 0, 131072})
         Me.NumericUpDown31.Location = New System.Drawing.Point(224, 250)
-        Me.NumericUpDown31.Maximum = New Decimal(New Integer() {30, 0, 0, 0})
         Me.NumericUpDown31.Minimum = New Decimal(New Integer() {10, 0, 0, 196608})
         Me.NumericUpDown31.Name = "NumericUpDown31"
         Me.NumericUpDown31.Size = New System.Drawing.Size(62, 20)

@@ -358,6 +358,9 @@ Public Class Form1
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+        Calc_inertia()
+        Calc_tab1()
+        Calc_Torsional_analyses()
         Write_to_word()
     End Sub
 
@@ -1322,10 +1325,12 @@ Public Class Form1
     'End Function
 
     Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click, TabPage7.Enter, NumericUpDown2.ValueChanged, GroupBox15.Enter, Chart1.Enter
-        Dim coupl_stiff As Double
-
         Calc_tab1()
+        Calc_Torsional_analyses()
+    End Sub
 
+    Private Sub Calc_Torsional_analyses()
+        Dim coupl_stiff As Double
         '========= stiffness ===========
         coupl_stiff = NumericUpDown31.Value * 10 ^ 6
         _Springstiff_1 = coupl_stiff           '[Nm/rad] coupling #1
@@ -1353,6 +1358,7 @@ Public Class Form1
         Torsional_analyses()
         Draw_chart1()
     End Sub
+
 
     Private Sub Torsional_analyses()
         Dim omega, ii As Double
