@@ -701,7 +701,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox9.Text
             oTable.Cell(row, 3).Range.Text = "[kN.m]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "FOS drive torqee per beater"
+            oTable.Cell(row, 1).Range.Text = "FOS drive torque per beater"
             oTable.Cell(row, 2).Range.Text = TextBox88.Text
             oTable.Cell(row, 3).Range.Text = "[-]"
 
