@@ -1599,9 +1599,36 @@ Public Class Form1
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
 
+            '------------------ Dissy details -----------------
+            'Insert a table, fill it with data and change the column widths.
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 3, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Disintegrator details"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "No of beaters"
+            oTable.Cell(row, 2).Range.Text = NumericUpDown7.Value.ToString
+            oTable.Cell(row, 3).Range.Text = "[-]"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Inertia Beater shaft"
+            oTable.Cell(row, 2).Range.Text = TextBox27.Text
+            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(0.8)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+
             '------------------ Drive Details----------------------
             'Insert a table, fill it with data and change the column widths.
-            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 11, 3)
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 10, 3)
             oTable.Range.ParagraphFormat.SpaceAfter = 1
             oTable.Range.Font.Size = 9
             oTable.Range.Font.Bold = CInt(False)
@@ -1644,10 +1671,6 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Maximum ambient temp"
             oTable.Cell(row, 2).Range.Text = "40"
             oTable.Cell(row, 3).Range.Text = "Celsius"
-            row += 1
-            oTable.Cell(row, 1).Range.Text = "Inertia Beater shaft"
-            oTable.Cell(row, 2).Range.Text = TextBox27.Text
-            oTable.Cell(row, 3).Range.Text = "[kg.m2]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
             oTable.Columns(2).Width = oWord.InchesToPoints(0.8)

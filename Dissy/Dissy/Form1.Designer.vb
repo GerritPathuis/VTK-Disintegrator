@@ -2448,14 +2448,15 @@ Partial Class Form1
         'NumericUpDown9
         '
         Me.NumericUpDown9.BackColor = System.Drawing.Color.Yellow
+        Me.NumericUpDown9.Increment = New Decimal(New Integer() {12, 0, 0, 0})
         Me.NumericUpDown9.Location = New System.Drawing.Point(223, 140)
-        Me.NumericUpDown9.Maximum = New Decimal(New Integer() {45, 0, 0, 0})
-        Me.NumericUpDown9.Minimum = New Decimal(New Integer() {40, 0, 0, 0})
+        Me.NumericUpDown9.Maximum = New Decimal(New Integer() {42, 0, 0, 0})
+        Me.NumericUpDown9.Minimum = New Decimal(New Integer() {30, 0, 0, 0})
         Me.NumericUpDown9.Name = "NumericUpDown9"
         Me.NumericUpDown9.Size = New System.Drawing.Size(62, 20)
         Me.NumericUpDown9.TabIndex = 16
         Me.NumericUpDown9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.NumericUpDown9.Value = New Decimal(New Integer() {42, 0, 0, 0})
+        Me.NumericUpDown9.Value = New Decimal(New Integer() {30, 0, 0, 0})
         '
         'Label9
         '
