@@ -781,7 +781,7 @@ Public Class Form1
             oTable.Cell(row, 2).Range.Text = TextBox24.Text
             oTable.Cell(row, 3).Range.Text = "[mm]"
             row += 1
-            oTable.Cell(row, 1).Range.Text = "Friction coef."
+            oTable.Cell(row, 1).Range.Text = "Friction (coef. dry-clean)"
             oTable.Cell(row, 2).Range.Text = NumericUpDown6.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[-]"
             row += 1
