@@ -56,6 +56,7 @@ Public Class Form1
     Private Sub Button1_Click(sender As Object, E As EventArgs) Handles Button1.Click, TabPage1.Enter, NumericUpDown4.ValueChanged, NumericUpDown3.ValueChanged, NumericUpDown16.ValueChanged, NumericUpDown1.ValueChanged, ComboBox2.SelectedIndexChanged, NumericUpDown17.ValueChanged, NumericUpDown13.ValueChanged, NumericUpDown6.ValueChanged, NumericUpDown19.ValueChanged, NumericUpDown15.ValueChanged, NumericUpDown14.ValueChanged, NumericUpDown9.ValueChanged, NumericUpDown8.ValueChanged, NumericUpDown7.ValueChanged, NumericUpDown12.ValueChanged, NumericUpDown11.ValueChanged, ComboBox1.SelectedIndexChanged, NumericUpDown22.ValueChanged, NumericUpDown21.ValueChanged, NumericUpDown20.ValueChanged, NumericUpDown23.ValueChanged, NumericUpDown18.ValueChanged, NumericUpDown10.ValueChanged, NumericUpDown28.ValueChanged, ComboBox3.SelectedIndexChanged, NumericUpDown30.ValueChanged, NumericUpDown29.ValueChanged
         Calc_inertia()
         Calc_tab1()
+        Calc_frequency()
     End Sub
 
     Private Sub Calc_tab1()
@@ -939,7 +940,30 @@ Public Class Form1
     Private Sub Button2_Click_1(sender As Object, e As EventArgs) Handles Button2.Click, TabPage2.Enter
         Calc_inertia()
         Calc_tab1()
+        Calc_frequency()
     End Sub
+    Private Sub Calc_frequency()
+        'Stress and strain table 8th edition 16.2
+        Dim Cn As Double = 6.6 * 2.54
+        Dim fn As Double
+        Dim dia, spacer, h, a As Double
+        Dim motor_hz, ratio As Double
+
+        dia = NumericUpDown8.Value / 10         'beater diameter [cm]
+        spacer = NumericUpDown21.Value / 10     'spacer diameter [cm]
+
+        a = (NumericUpDown8.Value - NumericUpDown21.Value) / (2 * 10)  'base width [cm]
+        h = NumericUpDown9.Value / 10           'plate thickness [cm]
+
+        fn = Cn * h * 10 ^ 4 / a ^ 2
+        motor_hz = _rpm / 60
+        TextBox73.Text = fn.ToString("0")        'Frequency half beater     
+        TextBox78.Text = motor_hz.ToString("0")  'Motor frequency
+        '---------- Checks -----------------
+        ratio = fn / motor_hz
+        TextBox73.BackColor = CType(IIf(ratio < 1.2, Color.Red, Color.LightGreen), Color)
+    End Sub
+
     Private Sub Calc_shaft_coupling()
         Dim dia, dia_calc, t1, m1 As Double
         Dim j, τ, pressure_yield_cpl As Double

@@ -23,12 +23,12 @@ Partial Class Form1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
-        Dim ChartArea3 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series3 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim ChartArea4 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend4 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series4 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea9 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend9 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series9 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea10 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend10 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series10 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.GroupBox20 = New System.Windows.Forms.GroupBox()
@@ -320,6 +320,13 @@ Partial Class Form1
         Me.Chart3 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.Button8 = New System.Windows.Forms.Button()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.GroupBox21 = New System.Windows.Forms.GroupBox()
+        Me.Label126 = New System.Windows.Forms.Label()
+        Me.Label127 = New System.Windows.Forms.Label()
+        Me.TextBox73 = New System.Windows.Forms.TextBox()
+        Me.Label128 = New System.Windows.Forms.Label()
+        Me.TextBox78 = New System.Windows.Forms.TextBox()
+        Me.Label129 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox20.SuspendLayout()
@@ -386,6 +393,7 @@ Partial Class Form1
         Me.TabPage9.SuspendLayout()
         CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Chart3, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.GroupBox21.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -1503,6 +1511,7 @@ Partial Class Form1
         '
         'TabPage2
         '
+        Me.TabPage2.Controls.Add(Me.GroupBox21)
         Me.TabPage2.Controls.Add(Me.Button2)
         Me.TabPage2.Controls.Add(Me.Button3)
         Me.TabPage2.Controls.Add(Me.GroupBox7)
@@ -1519,7 +1528,7 @@ Partial Class Form1
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(770, 362)
+        Me.Button2.Location = New System.Drawing.Point(780, 368)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(83, 26)
         Me.Button2.TabIndex = 22
@@ -3188,17 +3197,17 @@ Partial Class Form1
         '
         'Chart1
         '
-        ChartArea3.Name = "ChartArea1"
-        Me.Chart1.ChartAreas.Add(ChartArea3)
+        ChartArea9.Name = "ChartArea1"
+        Me.Chart1.ChartAreas.Add(ChartArea9)
         Me.Chart1.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend3.Name = "Legend1"
-        Me.Chart1.Legends.Add(Legend3)
+        Legend9.Name = "Legend1"
+        Me.Chart1.Legends.Add(Legend9)
         Me.Chart1.Location = New System.Drawing.Point(3, 133)
         Me.Chart1.Name = "Chart1"
-        Series3.ChartArea = "ChartArea1"
-        Series3.Legend = "Legend1"
-        Series3.Name = "Series1"
-        Me.Chart1.Series.Add(Series3)
+        Series9.ChartArea = "ChartArea1"
+        Series9.Legend = "Legend1"
+        Series9.Name = "Series1"
+        Me.Chart1.Series.Add(Series9)
         Me.Chart1.Size = New System.Drawing.Size(992, 431)
         Me.Chart1.TabIndex = 3
         Me.Chart1.Text = "Chart1"
@@ -3529,17 +3538,17 @@ Partial Class Form1
         '
         'Chart3
         '
-        ChartArea4.Name = "ChartArea1"
-        Me.Chart3.ChartAreas.Add(ChartArea4)
+        ChartArea10.Name = "ChartArea1"
+        Me.Chart3.ChartAreas.Add(ChartArea10)
         Me.Chart3.Dock = System.Windows.Forms.DockStyle.Left
-        Legend4.Name = "Legend1"
-        Me.Chart3.Legends.Add(Legend4)
+        Legend10.Name = "Legend1"
+        Me.Chart3.Legends.Add(Legend10)
         Me.Chart3.Location = New System.Drawing.Point(3, 3)
         Me.Chart3.Name = "Chart3"
-        Series4.ChartArea = "ChartArea1"
-        Series4.Legend = "Legend1"
-        Series4.Name = "Series1"
-        Me.Chart3.Series.Add(Series4)
+        Series10.ChartArea = "ChartArea1"
+        Series10.Legend = "Legend1"
+        Series10.Name = "Series1"
+        Me.Chart3.Series.Add(Series10)
         Me.Chart3.Size = New System.Drawing.Size(486, 561)
         Me.Chart3.TabIndex = 24
         Me.Chart3.Text = "Chart2"
@@ -3557,6 +3566,77 @@ Partial Class Form1
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
+        '
+        'GroupBox21
+        '
+        Me.GroupBox21.Controls.Add(Me.Label129)
+        Me.GroupBox21.Controls.Add(Me.Label128)
+        Me.GroupBox21.Controls.Add(Me.TextBox78)
+        Me.GroupBox21.Controls.Add(Me.Label127)
+        Me.GroupBox21.Controls.Add(Me.TextBox73)
+        Me.GroupBox21.Controls.Add(Me.Label126)
+        Me.GroupBox21.Location = New System.Drawing.Point(8, 388)
+        Me.GroupBox21.Name = "GroupBox21"
+        Me.GroupBox21.Size = New System.Drawing.Size(302, 132)
+        Me.GroupBox21.TabIndex = 23
+        Me.GroupBox21.TabStop = False
+        Me.GroupBox21.Text = "Natural frequency beater half"
+        '
+        'Label126
+        '
+        Me.Label126.AutoSize = True
+        Me.Label126.Location = New System.Drawing.Point(9, 19)
+        Me.Label126.Name = "Label126"
+        Me.Label126.Size = New System.Drawing.Size(247, 13)
+        Me.Label126.TabIndex = 24
+        Me.Label126.Text = "Based on Stress and Strain  8th edition, Table 16.2"
+        '
+        'Label127
+        '
+        Me.Label127.AutoSize = True
+        Me.Label127.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label127.Location = New System.Drawing.Point(9, 49)
+        Me.Label127.Name = "Label127"
+        Me.Label127.Size = New System.Drawing.Size(182, 16)
+        Me.Label127.TabIndex = 50
+        Me.Label127.Text = "Natural frequency beater [Hz]"
+        '
+        'TextBox73
+        '
+        Me.TextBox73.Enabled = False
+        Me.TextBox73.Location = New System.Drawing.Point(223, 49)
+        Me.TextBox73.Name = "TextBox73"
+        Me.TextBox73.Size = New System.Drawing.Size(62, 20)
+        Me.TextBox73.TabIndex = 49
+        Me.TextBox73.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'Label128
+        '
+        Me.Label128.AutoSize = True
+        Me.Label128.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label128.Location = New System.Drawing.Point(9, 75)
+        Me.Label128.Name = "Label128"
+        Me.Label128.Size = New System.Drawing.Size(131, 16)
+        Me.Label128.TabIndex = 52
+        Me.Label128.Text = "Motor frequency [Hz]"
+        '
+        'TextBox78
+        '
+        Me.TextBox78.Enabled = False
+        Me.TextBox78.Location = New System.Drawing.Point(223, 75)
+        Me.TextBox78.Name = "TextBox78"
+        Me.TextBox78.Size = New System.Drawing.Size(62, 20)
+        Me.TextBox78.TabIndex = 51
+        Me.TextBox78.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'Label129
+        '
+        Me.Label129.AutoSize = True
+        Me.Label129.Location = New System.Drawing.Point(9, 107)
+        Me.Label129.Name = "Label129"
+        Me.Label129.Size = New System.Drawing.Size(186, 13)
+        Me.Label129.TabIndex = 53
+        Me.Label129.Text = "Beater frequency must be 20% higher "
         '
         'Form1
         '
@@ -3656,6 +3736,8 @@ Partial Class Form1
         Me.TabPage9.PerformLayout()
         CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Chart3, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.GroupBox21.ResumeLayout(False)
+        Me.GroupBox21.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -3951,4 +4033,11 @@ Partial Class Form1
     Friend WithEvents NumericUpDown5 As NumericUpDown
     Friend WithEvents Label125 As Label
     Friend WithEvents NumericUpDown25 As NumericUpDown
+    Friend WithEvents GroupBox21 As GroupBox
+    Friend WithEvents Label127 As Label
+    Friend WithEvents TextBox73 As TextBox
+    Friend WithEvents Label126 As Label
+    Friend WithEvents Label128 As Label
+    Friend WithEvents TextBox78 As TextBox
+    Friend WithEvents Label129 As Label
 End Class
