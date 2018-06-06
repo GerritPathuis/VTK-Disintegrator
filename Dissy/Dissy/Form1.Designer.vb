@@ -23,12 +23,12 @@ Partial Class Form1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
-        Dim ChartArea6 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend6 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series6 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
-        Dim ChartArea5 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
-        Dim Legend5 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
-        Dim Series5 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea3 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series3 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
+        Dim ChartArea4 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim Legend4 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Series4 As System.Windows.Forms.DataVisualization.Charting.Series = New System.Windows.Forms.DataVisualization.Charting.Series()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
         Me.GroupBox20 = New System.Windows.Forms.GroupBox()
@@ -318,6 +318,10 @@ Partial Class Form1
         Me.TabPage8 = New System.Windows.Forms.TabPage()
         Me.PictureBox4 = New System.Windows.Forms.PictureBox()
         Me.TabPage9 = New System.Windows.Forms.TabPage()
+        Me.GroupBox22 = New System.Windows.Forms.GroupBox()
+        Me.Label132 = New System.Windows.Forms.Label()
+        Me.Label131 = New System.Windows.Forms.Label()
+        Me.Label130 = New System.Windows.Forms.Label()
         Me.Label58 = New System.Windows.Forms.Label()
         Me.Label118 = New System.Windows.Forms.Label()
         Me.Label117 = New System.Windows.Forms.Label()
@@ -327,10 +331,6 @@ Partial Class Form1
         Me.Chart3 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.Button8 = New System.Windows.Forms.Button()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
-        Me.GroupBox22 = New System.Windows.Forms.GroupBox()
-        Me.Label131 = New System.Windows.Forms.Label()
-        Me.Label130 = New System.Windows.Forms.Label()
-        Me.Label132 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox20.SuspendLayout()
@@ -396,9 +396,9 @@ Partial Class Form1
         Me.TabPage8.SuspendLayout()
         CType(Me.PictureBox4, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage9.SuspendLayout()
+        Me.GroupBox22.SuspendLayout()
         CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Chart3, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.GroupBox22.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -565,7 +565,7 @@ Partial Class Form1
         Me.NumericUpDown10.Size = New System.Drawing.Size(62, 20)
         Me.NumericUpDown10.TabIndex = 50
         Me.NumericUpDown10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        Me.NumericUpDown10.Value = New Decimal(New Integer() {650, 0, 0, 0})
+        Me.NumericUpDown10.Value = New Decimal(New Integer() {775, 0, 0, 0})
         '
         'Label82
         '
@@ -573,9 +573,9 @@ Partial Class Form1
         Me.Label82.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label82.Location = New System.Drawing.Point(8, 77)
         Me.Label82.Name = "Label82"
-        Me.Label82.Size = New System.Drawing.Size(193, 16)
+        Me.Label82.Size = New System.Drawing.Size(290, 16)
         Me.Label82.TabIndex = 49
-        Me.Label82.Text = "Material 1.7225 (42 Cr Mo4 -TQ)"
+        Me.Label82.Text = "Material 1.7225 (42 Cr Mo4 -TQ)  (d=100-160mm)"
         '
         'GroupBox18
         '
@@ -3273,17 +3273,17 @@ Partial Class Form1
         '
         'Chart1
         '
-        ChartArea6.Name = "ChartArea1"
-        Me.Chart1.ChartAreas.Add(ChartArea6)
+        ChartArea3.Name = "ChartArea1"
+        Me.Chart1.ChartAreas.Add(ChartArea3)
         Me.Chart1.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend6.Name = "Legend1"
-        Me.Chart1.Legends.Add(Legend6)
+        Legend3.Name = "Legend1"
+        Me.Chart1.Legends.Add(Legend3)
         Me.Chart1.Location = New System.Drawing.Point(3, 133)
         Me.Chart1.Name = "Chart1"
-        Series6.ChartArea = "ChartArea1"
-        Series6.Legend = "Legend1"
-        Series6.Name = "Series1"
-        Me.Chart1.Series.Add(Series6)
+        Series3.ChartArea = "ChartArea1"
+        Series3.Legend = "Legend1"
+        Series3.Name = "Series1"
+        Me.Chart1.Series.Add(Series3)
         Me.Chart1.Size = New System.Drawing.Size(992, 431)
         Me.Chart1.TabIndex = 3
         Me.Chart1.Text = "Chart1"
@@ -3554,6 +3554,48 @@ Partial Class Form1
         Me.TabPage9.Text = "E motor + coupling"
         Me.TabPage9.UseVisualStyleBackColor = True
         '
+        'GroupBox22
+        '
+        Me.GroupBox22.Controls.Add(Me.Label132)
+        Me.GroupBox22.Controls.Add(Me.Label131)
+        Me.GroupBox22.Controls.Add(Me.Label130)
+        Me.GroupBox22.Location = New System.Drawing.Point(516, 353)
+        Me.GroupBox22.Name = "GroupBox22"
+        Me.GroupBox22.Size = New System.Drawing.Size(414, 103)
+        Me.GroupBox22.TabIndex = 68
+        Me.GroupBox22.TabStop = False
+        Me.GroupBox22.Text = "Coupling"
+        '
+        'Label132
+        '
+        Me.Label132.AutoSize = True
+        Me.Label132.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label132.Location = New System.Drawing.Point(6, 78)
+        Me.Label132.Name = "Label132"
+        Me.Label132.Size = New System.Drawing.Size(370, 13)
+        Me.Label132.TabIndex = 70
+        Me.Label132.Text = "For 2000 kW use Flender Rigid all steel coupling, ARPEX-6 series, size 487-6"
+        '
+        'Label131
+        '
+        Me.Label131.AutoSize = True
+        Me.Label131.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label131.Location = New System.Drawing.Point(6, 34)
+        Me.Label131.Name = "Label131"
+        Me.Label131.Size = New System.Drawing.Size(268, 13)
+        Me.Label131.TabIndex = 69
+        Me.Label131.Text = "Note: a fast regulating VSD can damage the coupling !!"
+        '
+        'Label130
+        '
+        Me.Label130.AutoSize = True
+        Me.Label130.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label130.Location = New System.Drawing.Point(6, 16)
+        Me.Label130.Name = "Label130"
+        Me.Label130.Size = New System.Drawing.Size(166, 13)
+        Me.Label130.TabIndex = 68
+        Me.Label130.Text = "Use coupling safety factor of 1.75"
+        '
         'Label58
         '
         Me.Label58.AutoSize = True
@@ -3615,17 +3657,17 @@ Partial Class Form1
         '
         'Chart3
         '
-        ChartArea5.Name = "ChartArea1"
-        Me.Chart3.ChartAreas.Add(ChartArea5)
+        ChartArea4.Name = "ChartArea1"
+        Me.Chart3.ChartAreas.Add(ChartArea4)
         Me.Chart3.Dock = System.Windows.Forms.DockStyle.Left
-        Legend5.Name = "Legend1"
-        Me.Chart3.Legends.Add(Legend5)
+        Legend4.Name = "Legend1"
+        Me.Chart3.Legends.Add(Legend4)
         Me.Chart3.Location = New System.Drawing.Point(3, 3)
         Me.Chart3.Name = "Chart3"
-        Series5.ChartArea = "ChartArea1"
-        Series5.Legend = "Legend1"
-        Series5.Name = "Series1"
-        Me.Chart3.Series.Add(Series5)
+        Series4.ChartArea = "ChartArea1"
+        Series4.Legend = "Legend1"
+        Series4.Name = "Series1"
+        Me.Chart3.Series.Add(Series4)
         Me.Chart3.Size = New System.Drawing.Size(486, 561)
         Me.Chart3.TabIndex = 24
         Me.Chart3.Text = "Chart2"
@@ -3643,48 +3685,6 @@ Partial Class Form1
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
-        '
-        'GroupBox22
-        '
-        Me.GroupBox22.Controls.Add(Me.Label132)
-        Me.GroupBox22.Controls.Add(Me.Label131)
-        Me.GroupBox22.Controls.Add(Me.Label130)
-        Me.GroupBox22.Location = New System.Drawing.Point(516, 353)
-        Me.GroupBox22.Name = "GroupBox22"
-        Me.GroupBox22.Size = New System.Drawing.Size(414, 103)
-        Me.GroupBox22.TabIndex = 68
-        Me.GroupBox22.TabStop = False
-        Me.GroupBox22.Text = "Coupling"
-        '
-        'Label131
-        '
-        Me.Label131.AutoSize = True
-        Me.Label131.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label131.Location = New System.Drawing.Point(6, 34)
-        Me.Label131.Name = "Label131"
-        Me.Label131.Size = New System.Drawing.Size(268, 13)
-        Me.Label131.TabIndex = 69
-        Me.Label131.Text = "Note: a fast regulating VSD can damage the coupling !!"
-        '
-        'Label130
-        '
-        Me.Label130.AutoSize = True
-        Me.Label130.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label130.Location = New System.Drawing.Point(6, 16)
-        Me.Label130.Name = "Label130"
-        Me.Label130.Size = New System.Drawing.Size(166, 13)
-        Me.Label130.TabIndex = 68
-        Me.Label130.Text = "Use coupling safety factor of 1.75"
-        '
-        'Label132
-        '
-        Me.Label132.AutoSize = True
-        Me.Label132.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label132.Location = New System.Drawing.Point(6, 78)
-        Me.Label132.Name = "Label132"
-        Me.Label132.Size = New System.Drawing.Size(370, 13)
-        Me.Label132.TabIndex = 70
-        Me.Label132.Text = "For 2000 kW use Flender Rigid all steel coupling, ARPEX-6 series, size 487-6"
         '
         'Form1
         '
@@ -3784,10 +3784,10 @@ Partial Class Form1
         CType(Me.PictureBox4, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage9.ResumeLayout(False)
         Me.TabPage9.PerformLayout()
-        CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.Chart3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox22.ResumeLayout(False)
         Me.GroupBox22.PerformLayout()
+        CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.Chart3, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
