@@ -50,6 +50,21 @@ Public Class Form1
     "380;440;90;45;28;17.4",
     "440;550;100;50;31;19.5"}
 
+    'Couplings Flender-Siemens (all metal)
+    '"Type;Rated torque[Nm];Max torque[Nm];Stiffnes [MNm/rad]"
+    Public Shared Arpex() As String = {
+    "Arpex 240-6 NEN;5700;10800;1.24",
+    "Arpex 255-6 NEN;7600;14400;1.39",
+    "Arpex 280-6 NEN;10000;19000;1.55",
+    "Arpex 305-6 NEN;12000;21000;2.83",
+    "Arpex 335-6 NEN;18000;32000;3.85",
+    "Arpex 372-6 NEN;24000;43000;5.72",
+    "Arpex 407-6 NEN;34000;61000;7.25",
+    "Arpex 442-6 NEN;43000;77000;10.0",
+    "Arpex 487-6 NEN;55000;99000;11.7",
+    "Arpex 522-6 NEN;69000;124000;14.0",
+    "Arpex 572-6 NEN;92000;166000;17.9"}
+
     Public words() As String
     Public separators() As String = {";"}
 
@@ -93,6 +108,7 @@ Public Class Form1
             TextBox21.Text = words(4)               '(t1) Key depth in shaft
             TextBox84.Text = words(3) - words(4)    '(t2) Key depth in coupling
         End If
+
 
         no_beaters = NumericUpDown7.Value
         Double.TryParse(TextBox13.Text, key_h)      '[mm]
@@ -286,14 +302,20 @@ Public Class Form1
             ComboBox2.Items.Add(words(0))
         Next hh
 
-        For hh = 0 To (motor_rpm.Length - 1)  'Fill combobox4 Motor data
+        For hh = 0 To (motor_rpm.Length - 1)  'Fill combobox3 Motor data
             ComboBox3.Items.Add(motor_rpm(hh))
+        Next hh
+
+        For hh = 0 To (Arpex.Length - 1)  'Fill combobox4 Coupling data
+            words = Arpex(hh).Split(separators, StringSplitOptions.None)
+            ComboBox4.Items.Add(words(0))
         Next hh
 
         '----------------- prevent out of bounds------------------
         ComboBox1.SelectedIndex = CInt(IIf(ComboBox1.Items.Count > 0, 13, -1)) 'Select ..
         ComboBox2.SelectedIndex = CInt(IIf(ComboBox2.Items.Count > 0, 18, -1)) 'Select ..
         ComboBox3.SelectedIndex = CInt(IIf(ComboBox3.Items.Count > 0, 0, -1)) 'Select ..
+        ComboBox4.SelectedIndex = CInt(IIf(ComboBox3.Items.Count > 0, 3, -1)) 'Select ..
 
         TextBox69.Text =
         "Factors of Design and Safety" & vbCrLf &
@@ -1355,8 +1377,10 @@ Public Class Form1
 
     Private Sub Calc_Torsional_analyses()
         Dim coupl_stiff As Double
+
         '========= stiffness ===========
-        coupl_stiff = NumericUpDown31.Value * 10 ^ 6
+        Double.TryParse(TextBox92.Text, coupl_stiff)
+        coupl_stiff *= 10 ^ 6
         _Springstiff_1 = coupl_stiff           '[Nm/rad] coupling #1
         _Springstiff_2 = coupl_stiff           '[Nm/rad] coupling #2
 
@@ -1439,6 +1463,24 @@ Public Class Form1
         'Residual torque too big,  problem in choosen bounderies
         Label113.Text = T3.ToString
         TextBox74.BackColor = CType(IIf(T3 > 1, Color.Red, SystemColors.Window), Color)
+    End Sub
+
+    Private Sub ComboBox4_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox4.SelectedIndexChanged
+        Dim T_nom, T_rated, fos As Double
+        If ComboBox4.SelectedIndex > -1 Then
+            words = Arpex(ComboBox4.SelectedIndex).Split(separators, StringSplitOptions.None)
+            TextBox89.Text = words(1)               'Rated torque[ Nm]
+            TextBox90.Text = words(3)               'Stiffness [MNm/rad]
+            TextBox92.Text = TextBox90.Text
+        End If
+
+        'Factor of safety Couplings
+        Double.TryParse(TextBox3.Text, T_nom)
+        Double.TryParse(TextBox89.Text, T_rated)
+        fos = T_rated / (T_nom * 1000)
+
+        TextBox91.Text = fos.ToString("0.00")
+        TextBox91.BackColor = CType(IIf(fos < 1.4, Color.Red, Color.LightGreen), Color)
     End Sub
 
     'Holzer residual torque analyses
@@ -1643,7 +1685,7 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "[kg.m2]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
-            oTable.Columns(2).Width = oWord.InchesToPoints(0.8)
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.2)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
 
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
@@ -1697,11 +1739,44 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "Celsius"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
-            oTable.Columns(2).Width = oWord.InchesToPoints(0.8)
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.2)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
 
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
             oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
+
+            '------------------ Coupling Details----------------------
+            oTable = oDoc.Tables.Add(oDoc.Bookmarks.Item("\endofdoc").Range, 4, 3)
+            oTable.Range.ParagraphFormat.SpaceAfter = 1
+            oTable.Range.Font.Size = 9
+            oTable.Range.Font.Bold = CInt(False)
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            row = 1
+            oTable.Cell(row, 1).Range.Text = "Coupling details"
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Selected Coupling"
+            oTable.Cell(row, 2).Range.Text = ComboBox4.Text.ToString
+            oTable.Cell(row, 3).Range.Text = ""
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Rated Coupling torque Torque"
+            oTable.Cell(row, 2).Range.Text = TextBox89.Text
+            oTable.Cell(row, 3).Range.Text = "[Nm]"
+
+            row += 1
+            oTable.Cell(row, 1).Range.Text = "Factor of safety"
+            oTable.Cell(row, 2).Range.Text = TextBox91.Text
+            oTable.Cell(row, 3).Range.Text = "[-]"
+
+
+            oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.2)
+            oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
+
+            oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
+            oDoc.Bookmarks.Item("\endofdoc").Range.InsertParagraphAfter()
+
 
             '------------------ Foundation Details----------------------
             'Insert a table, fill it with data and change the column widths.
@@ -1718,7 +1793,7 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = "[kNm]"
 
             oTable.Columns(1).Width = oWord.InchesToPoints(2.5)   'Change width of columns
-            oTable.Columns(2).Width = oWord.InchesToPoints(0.8)
+            oTable.Columns(2).Width = oWord.InchesToPoints(1.2)
             oTable.Columns(3).Width = oWord.InchesToPoints(0.8)
 
             oTable.Rows.Item(1).Range.Font.Bold = CInt(True)
