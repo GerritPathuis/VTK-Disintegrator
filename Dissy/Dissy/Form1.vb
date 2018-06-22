@@ -1480,7 +1480,7 @@ Public Class Form1
         fos = T_rated / (T_nom * 1000)
 
         TextBox91.Text = fos.ToString("0.00")
-        TextBox91.BackColor = CType(IIf(fos < 1.4, Color.Red, Color.LightGreen), Color)
+        TextBox91.BackColor = CType(IIf(fos < 1.75, Color.Red, Color.LightGreen), Color)
     End Sub
 
     'Holzer residual torque analyses
@@ -1731,7 +1731,8 @@ Public Class Form1
             oTable.Cell(row, 3).Range.Text = ""
             row += 1
             oTable.Cell(row, 1).Range.Text = "Starting method"
-            oTable.Cell(row, 2).Range.Text = "DOL"
+            If RadioButton2.Checked Then oTable.Cell(row, 2).Range.Text = "DOL"
+            If RadioButton3.Checked Then oTable.Cell(row, 2).Range.Text = "VSD"
             oTable.Cell(row, 3).Range.Text = ""
             row += 1
             oTable.Cell(row, 1).Range.Text = "Maximum ambient temp"
