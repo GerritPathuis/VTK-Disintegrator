@@ -22,6 +22,7 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
         Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
         Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
@@ -341,6 +342,14 @@ Partial Class Form1
         Me.Chart3 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.Button8 = New System.Windows.Forms.Button()
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
+        Me.TabPage10 = New System.Windows.Forms.TabPage()
+        Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.ContextMenuStrip2 = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.Label137 = New System.Windows.Forms.Label()
+        Me.Label138 = New System.Windows.Forms.Label()
+        Me.Label139 = New System.Windows.Forms.Label()
+        Me.Label140 = New System.Windows.Forms.Label()
+        Me.Label141 = New System.Windows.Forms.Label()
         Me.TabControl1.SuspendLayout()
         Me.TabPage1.SuspendLayout()
         Me.GroupBox20.SuspendLayout()
@@ -408,6 +417,7 @@ Partial Class Form1
         Me.GroupBox22.SuspendLayout()
         CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.Chart3, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage10.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -421,6 +431,7 @@ Partial Class Form1
         Me.TabControl1.Controls.Add(Me.TabPage7)
         Me.TabControl1.Controls.Add(Me.TabPage8)
         Me.TabControl1.Controls.Add(Me.TabPage9)
+        Me.TabControl1.Controls.Add(Me.TabPage10)
         Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
@@ -3798,6 +3809,82 @@ Partial Class Form1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
         '
+        'TabPage10
+        '
+        Me.TabPage10.Controls.Add(Me.Label141)
+        Me.TabPage10.Controls.Add(Me.Label140)
+        Me.TabPage10.Controls.Add(Me.Label139)
+        Me.TabPage10.Controls.Add(Me.Label138)
+        Me.TabPage10.Controls.Add(Me.Label137)
+        Me.TabPage10.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage10.Name = "TabPage10"
+        Me.TabPage10.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage10.Size = New System.Drawing.Size(998, 567)
+        Me.TabPage10.TabIndex = 9
+        Me.TabPage10.Text = "Onbalans"
+        Me.TabPage10.UseVisualStyleBackColor = True
+        '
+        'ContextMenuStrip1
+        '
+        Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
+        Me.ContextMenuStrip1.Size = New System.Drawing.Size(61, 4)
+        '
+        'ContextMenuStrip2
+        '
+        Me.ContextMenuStrip2.Name = "ContextMenuStrip2"
+        Me.ContextMenuStrip2.Size = New System.Drawing.Size(61, 4)
+        '
+        'Label137
+        '
+        Me.Label137.AutoSize = True
+        Me.Label137.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label137.Location = New System.Drawing.Point(83, 89)
+        Me.Label137.Name = "Label137"
+        Me.Label137.Size = New System.Drawing.Size(557, 16)
+        Me.Label137.TabIndex = 0
+        Me.Label137.Text = "Onbalans kracht [N]= gewicht [kg] * hoeksnelheid[rad/s] * vibratie snelheid[m/s]"
+        '
+        'Label138
+        '
+        Me.Label138.AutoSize = True
+        Me.Label138.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label138.Location = New System.Drawing.Point(83, 167)
+        Me.Label138.Name = "Label138"
+        Me.Label138.Size = New System.Drawing.Size(569, 16)
+        Me.Label138.TabIndex = 1
+        Me.Label138.Text = "Maximale trillings kracht mag niet groter zijn dan 75% van het gewicht van de rot" &
+    "or"
+        '
+        'Label139
+        '
+        Me.Label139.AutoSize = True
+        Me.Label139.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label139.Location = New System.Drawing.Point(83, 183)
+        Me.Label139.Name = "Label139"
+        Me.Label139.Size = New System.Drawing.Size(318, 16)
+        Me.Label139.TabIndex = 2
+        Me.Label139.Text = "Belaste trillingswaarde beperken tot 12 mm/s"
+        '
+        'Label140
+        '
+        Me.Label140.AutoSize = True
+        Me.Label140.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label140.Location = New System.Drawing.Point(83, 56)
+        Me.Label140.Name = "Label140"
+        Me.Label140.Size = New System.Drawing.Size(298, 16)
+        Me.Label140.TabIndex = 3
+        Me.Label140.Text = "Onbelast maximale trillingswaarde 2 mm/s"
+        '
+        'Label141
+        '
+        Me.Label141.AutoSize = True
+        Me.Label141.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label141.Location = New System.Drawing.Point(83, 229)
+        Me.Label141.Name = "Label141"
+        Me.Label141.Size = New System.Drawing.Size(372, 16)
+        Me.Label141.TabIndex = 4
+        Me.Label141.Text = "Nooit negatieve krachten op plummer block toestaan"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -3899,6 +3986,8 @@ Partial Class Form1
         Me.GroupBox22.PerformLayout()
         CType(Me.PictureBox5, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.Chart3, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage10.ResumeLayout(False)
+        Me.TabPage10.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -4215,4 +4304,12 @@ Partial Class Form1
     Friend WithEvents TextBox92 As TextBox
     Friend WithEvents RadioButton3 As RadioButton
     Friend WithEvents RadioButton2 As RadioButton
+    Friend WithEvents TabPage10 As TabPage
+    Friend WithEvents Label141 As Label
+    Friend WithEvents Label140 As Label
+    Friend WithEvents Label139 As Label
+    Friend WithEvents Label138 As Label
+    Friend WithEvents Label137 As Label
+    Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
+    Friend WithEvents ContextMenuStrip2 As ContextMenuStrip
 End Class
