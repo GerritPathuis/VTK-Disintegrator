@@ -335,7 +335,9 @@ Public Class Form1
         TextBox12.Text =
        "Key calculation" & vbCrLf &
        "www.brammer.nl/Downloads/270450-INLEGSPIEEN-DIN-6885A.pdf" & vbCrLf &
-       "Ductile materials compression yield = tensile yield"
+       "Ductile materials compression yield = tensile yield" & vbCrLf & vbCrLf &
+       "Afstand rotor-tip tot insert is 5mm"
+
     End Sub
     Private Sub Calc_inertia()
         Dim overall_length, I_mass_inert, thick As Double
