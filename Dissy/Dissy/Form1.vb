@@ -329,6 +329,7 @@ Public Class Form1
         "Projects" & vbCrLf &
         "14.1020 Zeitz" & vbCrLf &
         "12.1010 Cerestar, Sas van Gent" & vbCrLf &
+        "17.1117 Treros" & vbCrLf &
         " " & vbCrLf &
         " " & vbCrLf
 
@@ -336,7 +337,19 @@ Public Class Form1
        "Key calculation" & vbCrLf &
        "www.brammer.nl/Downloads/270450-INLEGSPIEEN-DIN-6885A.pdf" & vbCrLf &
        "Ductile materials compression yield = tensile yield" & vbCrLf & vbCrLf &
-       "Afstand rotor-tip tot insert is 5mm"
+       " "
+
+        TextBox99.Text =
+        "Bearings" & vbCrLf &
+        "Bearing house SNL3144" & vbCrLf &
+        "Bearing 23144 CCK/W33" & vbCrLf &
+        " " & vbCrLf &
+        " "
+
+        TextBox100.Text =
+       "Beater tip clearance" & vbCrLf &
+       "Distance rotor-tip to insert is 5mm for all models" & vbCrLf &
+       " "
 
     End Sub
     Private Sub Calc_inertia()
@@ -1483,6 +1496,25 @@ Public Class Form1
 
         TextBox91.Text = fos.ToString("0.00")
         TextBox91.BackColor = CType(IIf(fos < 1.75, Color.Red, Color.LightGreen), Color)
+    End Sub
+
+    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click, NumericUpDown26.ValueChanged, TabPage10.Enter
+        Dim weight_r As Double
+        Dim un_bal_speed, ang_speed As Double
+        Dim un_bal_force, force_1_bearing As Double
+        Double.TryParse(TextBox80.Text, weight_r)   '[kg]
+        ang_speed = _rpm * 2 * PI / 60
+        un_bal_speed = NumericUpDown26.Value / 1000       '[mm/s]-->[m/s]
+
+        un_bal_force = weight_r * ang_speed * un_bal_speed
+        force_1_bearing = un_bal_force / 2
+
+        TextBox93.Text = weight_r.ToString("0")
+        TextBox94.Text = _rpm.ToString("0")
+        TextBox96.Text = ang_speed.ToString("0.0")
+        TextBox95.Text = un_bal_force.ToString("0")
+        TextBox97.Text = force_1_bearing.ToString("0")
+        TextBox98.Text = (force_1_bearing / 10).ToString("0")
     End Sub
 
     'Holzer residual torque analyses
