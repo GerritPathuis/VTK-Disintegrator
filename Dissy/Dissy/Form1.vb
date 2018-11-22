@@ -88,8 +88,7 @@ Public Class Form1
         Dim drive_key_radius As Double
         Dim power1, power2 As Double
         Dim motor1_torque, motor2_torque, tot_motor_torque As Double
-
-        'If NumericUpDown30.Value = 0 Then NumericUpDown24.Value = 0
+        Dim young As Double = 210000
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -214,7 +213,7 @@ Public Class Form1
 
         area = PI / 4 * spacer_id ^ 2                                   '[mm2]
         shaft_l = NumericUpDown28.Value                                 '[mm] stretch indicator
-        delta_l = pull_force * 10 ^ 3 * shaft_l / (215000 * area)       '[mm]
+        delta_l = pull_force * 10 ^ 3 * shaft_l / (young * area)        '[mm]
         FOS_lump_nut = max_torque_nut * 10 ^ 3 / lump_torque
 
         '------Drive torque per beater
@@ -266,9 +265,6 @@ Public Class Form1
         TextBox67.Text = key_pr_yield.ToString("0")             '[N/mm2] pressure yield
         TextBox19.Text = key_τ_yield.ToString("0")              '[N/mm2] τ shear yield
         TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
-
-        'TextBox73.Text = _Inertia_1.ToString("0.0")  '[kg.m2] Motor #1 [kg.m2]
-        'TextBox78.Text = _Inertia_3.ToString("0.0")  '[kg.m2] Motor #2 [kg.m2]
 
         '------- checks---------
         TextBox32.BackColor = IIf(FOS_coupling_key_press > 3, Color.LightGreen, Color.Red)
@@ -357,14 +353,16 @@ Public Class Form1
         Dim no_beaters, B, H, H2, tip_width As Double
         Dim tb, th, I_missing_tip, tip_weight As Double
         Dim half_beater_weight, beater_weight, beaters_weight As Double
+        Dim fn As Double
+        Dim young As Double = 210000 '[N/mm2]
 
         '-------- mass moment of --------------
         'see http://www.dtic.mil/dtic/tr/fulltext/u2/274936.pdf
         no_beaters = NumericUpDown7.Value
         overall_length = NumericUpDown8.Value / 1000
-        H = overall_length / 2     '[m]
+        H = overall_length / 2                  '[m]
         B = NumericUpDown21.Value / 1000
-        thick = NumericUpDown9.Value / 1000
+        thick = NumericUpDown9.Value / 1000     'Beather plate thickness
         tip_width = NumericUpDown22.Value / 1000
 
         '---- top triangle is cut off------------
@@ -387,12 +385,36 @@ Public Class Form1
         beater_weight = half_beater_weight * 2
         beaters_weight = beater_weight * NumericUpDown7.Value
 
-        '----present--------
+        '------ calc  shaft natural frequency -----
+        '------ Stress and strain table 8th edition 16.2
+        'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
+
+        Dim kn, w, L_shaft, I_shaft, dia_s As Double
+
+        kn = 22.4
+        dia_s = NumericUpDown21.Value   'shaft diameter [mm]
+
+        '--------- Calc Area Moment of Inertia    -----------
+        I_shaft = PI * dia_s ^ 4 / 64         '[mm4] Solid shaft
+        L_shaft = NumericUpDown29.Value       'shaft length [mm]
+        w = beaters_weight / L_shaft          '[kg/mm]
+        fn = kn / (2 * PI)
+        fn *= Sqrt((young * I_shaft * 9.81) / (w * L_shaft ^ 4))
+
+        '----- present--------
         TextBox26.Text = I_mass_inert.ToString("0")             '[kg.m2] one beater
         TextBox27.Text = _inertia_beaters.ToString("0")         '[kg.m2] total beaters
         TextBox28.Text = beater_weight.ToString("0")            '[kg]
         TextBox80.Text = beaters_weight.ToString("0")           '[kg]
         TextBox81.Text = beaters_weight.ToString("0")           '[kg]
+        TextBox101.Text = (fn * 60).ToString("0")               '[hz]-->[rpm]
+        TextBox102.Text = dia_s.ToString("0")                   '[mm]
+        TextBox103.Text = w.ToString("0.00")                    '[kg/mm]
+        TextBox104.Text = L_shaft.ToString("0")                 '[mm]
+        TextBox105.Text = beaters_weight.ToString("0")          '[kg]
+
+        '------ Check natural speed shaft -----
+        TextBox101.BackColor = IIf(_rpm > (fn * 60 * 1.2), Color.Red, Color.LightGreen)
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -983,19 +1005,23 @@ Public Class Form1
         'Stress and strain table 8th edition 16.2
         Dim Cn As Double = 6.6 * 2.54
         Dim fn As Double
-        Dim dia, spacer, h, a As Double
+        Dim dia, spacer, hp, abw As Double
         Dim motor_hz, ratio As Double
 
+        '--------- Half of the beater -------------------
         dia = NumericUpDown8.Value / 10         'beater diameter [cm]
         spacer = NumericUpDown21.Value / 10     'spacer diameter [cm]
 
-        a = (NumericUpDown8.Value - NumericUpDown21.Value) / (2 * 10)  'base width [cm]
-        h = NumericUpDown9.Value / 10           'plate thickness [cm]
+        abw = (NumericUpDown8.Value - NumericUpDown21.Value) / (2 * 10)  'base width [cm]
+        hp = NumericUpDown9.Value / 10           'plate thickness [cm]
 
-        fn = Cn * h * 10 ^ 4 / a ^ 2
+        fn = Cn * hp * 10 ^ 4 / abw ^ 2
         motor_hz = _rpm / 60
+
+        '---------- present data ----------
         TextBox73.Text = fn.ToString("0")        'Frequency half beater     
         TextBox78.Text = motor_hz.ToString("0")  'Motor frequency
+
         '---------- Checks -----------------
         ratio = fn / motor_hz
         TextBox73.BackColor = CType(IIf(ratio < 1.2, Color.Red, Color.LightGreen), Color)
