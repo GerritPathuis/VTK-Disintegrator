@@ -346,7 +346,18 @@ Public Class Form1
        "Beater tip clearance" & vbCrLf &
        "Distance rotor-tip to insert is 5mm for all models" & vbCrLf &
        " "
-
+        TextBox106.Text =
+        "Concrete slab foundation" & vbCrLf &
+        "Concrete slab adjacent shall be spaced by a minimum of 15 mm" & vbCrLf &
+        "Rigid block foundation slab for machinery thickness shall be no less then" & vbCrLf &
+        "0.6 + L/30 Where L [m] is the greater of the length or breadth " & vbCrLf &
+        "Minimum Concrete reinforcement for slabs shall be 30 kg/m3 " & vbCrLf & vbCrLf &
+        "Static design" & vbCrLf &
+        "Vertical impact 50% of machine dead weight" & vbCrLf &
+        "Lateral force 25% dead weight applied between bearings" & vbCrLf &
+        "Longitudinal force 25% dead weight applied along axis" & vbCrLf &
+        "Lateral and Longitudinal force do not work concurrently" & vbCrLf &
+          ""
     End Sub
     Private Sub Calc_inertia()
         Dim overall_length, I_mass_inert, thick As Double
@@ -1532,15 +1543,16 @@ Public Class Form1
         ang_speed = _rpm * 2 * PI / 60
         un_bal_speed = NumericUpDown26.Value / 1000       '[mm/s]-->[m/s]
 
-        un_bal_force = weight_r * ang_speed * un_bal_speed
+        un_bal_force = weight_r * ang_speed * un_bal_speed  '[N]
+
         force_1_bearing = un_bal_force / 2
 
-        TextBox93.Text = weight_r.ToString("0")
-        TextBox94.Text = _rpm.ToString("0")
-        TextBox96.Text = ang_speed.ToString("0.0")
-        TextBox95.Text = un_bal_force.ToString("0")
-        TextBox97.Text = force_1_bearing.ToString("0")
-        TextBox98.Text = (force_1_bearing / 10).ToString("0")
+        TextBox93.Text = weight_r.ToString("0")             '[kg]
+        TextBox94.Text = _rpm.ToString("0")                 '[rpm]
+        TextBox96.Text = ang_speed.ToString("0.0")          '[rad/s]
+        TextBox95.Text = un_bal_force.ToString("0")         '[N]
+        TextBox97.Text = force_1_bearing.ToString("0")      '[N]
+        TextBox98.Text = (force_1_bearing / 10).ToString("0")   '[kg]
     End Sub
 
     'Holzer residual torque analyses
