@@ -357,7 +357,9 @@ Public Class Form1
         "Lateral force 25% dead weight applied between bearings" & vbCrLf &
         "Longitudinal force 25% dead weight applied along axis" & vbCrLf &
         "Lateral and Longitudinal force do not work concurrently" & vbCrLf &
-          ""
+        ""
+
+        TextBox30.Text = "P" & Now.ToString("yy") & ".10"
     End Sub
     Private Sub Calc_inertia()
         Dim overall_length, I_mass_inert, thick As Double
