@@ -32,10 +32,6 @@ C:\Repositories\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.vbproj.CoreCompile
 C:\Repositories\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.exe
 C:\Repositories\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.xml
 C:\Repositories\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.pdb
-C:\Repos\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.exe.manifest
-C:\Repos\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.application
-C:\Repos\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.exe.manifest
-C:\Repos\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.application
 C:\Repos\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.vbproj.ResolveComReference.cache
 C:\Repositories\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.exe.manifest
 C:\Repositories\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.application
@@ -44,3 +40,8 @@ C:\Repositories\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.exe.manifest
 C:\Repositories\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.application
 C:\Repos\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.vbprojAssemblyReference.cache
 C:\Repositories\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.vbprojAssemblyReference.cache
+C:\Repos\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.exe.manifest
+C:\Repos\VTK-Disintegrator\Dissy\Dissy\bin\Debug\Dissy.application
+C:\Repos\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.TrustInfo.xml
+C:\Repos\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.exe.manifest
+C:\Repos\VTK-Disintegrator\Dissy\Dissy\obj\Debug\Dissy.application
