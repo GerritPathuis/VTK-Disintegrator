@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("Dissy")>
 <Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("Microsoft")>
+<Assembly: AssemblyCompany("Pathuis Heavy Industries")>
 <Assembly: AssemblyProduct("Dissy")>
 <Assembly: AssemblyCopyright("Copyright © Microsoft 2017")>
 <Assembly: AssemblyTrademark("")>
