@@ -22,7 +22,7 @@ Public Class Form1
     Public Shared motor_rpm() As String = {600, 750, 1000, 1500, 3000}
 
     'according to DIN6885-1
-    Public Shared shaft_key() As String = {
+    ReadOnly shaft_key() As String = {
     "6;8;2;2;1.2;1.0",
     "8;10;3;3;1.8;1.4",
     "10;12;4;4;2.5;1.8",
@@ -52,7 +52,7 @@ Public Class Form1
 
     'Couplings Flender-Siemens (all metal)
     '"Type;Rated torque[Nm];Max torque[Nm];Stiffnes [MNm/rad]"
-    Public Shared Arpex() As String = {
+    ReadOnly Arpex() As String = {
     "Arpex 240-6 NEN;5700;10800;1.24",
     "Arpex 255-6 NEN;7600;14400;1.39",
     "Arpex 280-6 NEN;10000;19000;1.55",
