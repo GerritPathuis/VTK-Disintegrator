@@ -1557,6 +1557,10 @@ Public Class Form1
         TextBox98.Text = (force_1_bearing / 10).ToString("0")   '[kg]
     End Sub
 
+    Private Sub Button11_Click(sender As Object, e As EventArgs) Handles Button11.Click, TabPage11.Enter
+
+    End Sub
+
     'Holzer residual torque analyses
     Private Function Calc_zeroTorsion_4(omega As Double) As Double
         Dim theta_1, theta_2, theta_3 As Double
