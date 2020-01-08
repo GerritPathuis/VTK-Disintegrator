@@ -399,7 +399,7 @@ Public Class Form1
         beaters_weight = beater_weight * NumericUpDown7.Value
 
         '------ calc  shaft natural frequency -----
-        '------ Stress and strain table 8th edition 16.2
+        '------ Stress and strain, 8th edition, table 16.2
         'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
 
         Dim kn, w, L_shaft, I_shaft, dia_s As Double
@@ -414,17 +414,33 @@ Public Class Form1
         fn = kn / (2 * PI)
         fn *= Sqrt((young * I_shaft * 9.81) / (w * L_shaft ^ 4))
 
+        '------ Massa traagheid Rotor (Moment of Inertia, Principal moments)
+        '------ Simplified only the compound shaft is calculated ----
+        Dim Iz, Ix, mass As Double
+        Dim dia, hoog As Double
+
+        If Not Double.TryParse(TextBox102.Text, dia) Then dia = 999999
+        If Not Double.TryParse(TextBox102.Text, hoog) Then hoog = 9999999
+        dia /= 1000                 '[m]
+        hoog /= 1000                '[m]
+        mass = beaters_weight       '[kg]
+
+        Iz = 0.5 * mass * (dia / 2) ^ 2                     '[kg.m2]
+        Ix = mass / 12 * (3 * (dia / 2) ^ 2 + hoog ^ 2)     '[kg.m2]
+
         '----- present--------
-        TextBox26.Text = I_mass_inert.ToString("0")             '[kg.m2] one beater
-        TextBox27.Text = _inertia_beaters.ToString("0")         '[kg.m2] total beaters
-        TextBox28.Text = beater_weight.ToString("0")            '[kg]
-        TextBox80.Text = beaters_weight.ToString("0")           '[kg]
-        TextBox81.Text = beaters_weight.ToString("0")           '[kg]
-        TextBox101.Text = (fn * 60).ToString("0")               '[hz]-->[rpm]
-        TextBox102.Text = dia_s.ToString("0")                   '[mm]
-        TextBox103.Text = w.ToString("0.00")                    '[kg/mm]
-        TextBox104.Text = L_shaft.ToString("0")                 '[mm]
-        TextBox105.Text = beaters_weight.ToString("0")          '[kg]
+        TextBox26.Text = I_mass_inert.ToString("F0")        '[kg.m2] one beater
+        TextBox27.Text = _inertia_beaters.ToString("F0")    '[kg.m2] total beaters
+        TextBox28.Text = beater_weight.ToString("F0")       '[kg]
+        TextBox80.Text = beaters_weight.ToString("F0")      '[kg]
+        TextBox81.Text = beaters_weight.ToString("F0")      '[kg]
+        TextBox101.Text = (fn * 60).ToString("F0")          '[hz]-->[rpm]
+        TextBox102.Text = dia_s.ToString("F0")              '[mm]
+        TextBox103.Text = w.ToString("F2")                  '[kg/mm]
+        TextBox104.Text = L_shaft.ToString("F0")            '[mm]
+        TextBox105.Text = beaters_weight.ToString("F0")     '[kg]
+        TextBox110.Text = Iz.ToString("F1")                 '[kg.m2]
+        TextBox108.Text = Ix.ToString("F1")                 '[kg.m2]
 
         '------ Check natural speed shaft -----
         TextBox101.BackColor = IIf(_rpm > (fn * 60 * 1.2), Color.Red, Color.LightGreen)
@@ -1558,7 +1574,7 @@ Public Class Form1
     End Sub
 
     Private Sub Button11_Click(sender As Object, e As EventArgs) Handles Button11.Click, TabPage11.Enter
-
+        Calc_inertia()
     End Sub
 
     'Holzer residual torque analyses
