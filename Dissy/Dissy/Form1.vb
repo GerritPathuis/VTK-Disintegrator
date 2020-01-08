@@ -361,12 +361,37 @@ Public Class Form1
 
         TextBox30.Text = "P" & Now.ToString("yy") & ".10"
     End Sub
+    Private Sub Calc_beam_flex()
+        '------ calc  shaft natural frequency -----
+        '------ Stress and strain, 8th edition, table 16.2, page 789
+        '------ Hinged-hinged--------------
+        'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
+
+        Dim Cn, L_shaft, radius, Km As Double
+        Dim fn As Double
+
+        Cn = 31.73                                  'Hinged-hinged
+        Km = 1.0                                    'Steel
+
+        radius = NumericUpDown21.Value / (2 * 24.4) 'Friction plate diameter [inch]
+        L_shaft = NumericUpDown29.Value / 25.4      'shaft length [inch]
+
+        fn = Cn * radius / L_shaft ^ 2 * 10 ^ 4 * Km '[Hz]
+
+        '------ Present -------------
+        TextBox101.Text = (fn * 60).ToString("F0")          '[hz]-->[rpm]
+        TextBox104.Text = (L_shaft * 25.4).ToString("F0")          '[mm]
+
+        '------ Check natural speed shaft -----
+        TextBox101.BackColor = IIf(_rpm > (fn * 60 * 1.2), Color.Red, Color.LightGreen)
+
+    End Sub
     Private Sub Calc_inertia()
         Dim overall_length, I_mass_inert, thick As Double
         Dim no_beaters, B, H, H2, tip_width As Double
         Dim tb, th, I_missing_tip, tip_weight As Double
         Dim half_beater_weight, beater_weight, beaters_weight As Double
-        Dim fn As Double
+
         Dim young As Double = 210000 '[N/mm2]
 
         '-------- mass moment of --------------
@@ -398,30 +423,14 @@ Public Class Form1
         beater_weight = half_beater_weight * 2
         beaters_weight = beater_weight * NumericUpDown7.Value
 
-        '------ calc  shaft natural frequency -----
-        '------ Stress and strain, 8th edition, table 16.2
-        'https://www.engineeringtoolbox.com/torsion-shafts-d_947.html
-
-        Dim kn, w, L_shaft, I_shaft, dia_s As Double
-
-        kn = 22.4
-        dia_s = NumericUpDown21.Value   'shaft diameter [mm]
-
-        '--------- Calc Area Moment of Inertia    -----------
-        I_shaft = PI * dia_s ^ 4 / 64         '[mm4] Solid shaft
-        L_shaft = NumericUpDown29.Value       'shaft length [mm]
-        w = beaters_weight / L_shaft          '[kg/mm]
-        fn = kn / (2 * PI)
-        fn *= Sqrt((young * I_shaft * 9.81) / (w * L_shaft ^ 4))
-
         '------ Massa traagheid Rotor (Moment of Inertia, Principal moments)
         '------ Simplified only the compound shaft is calculated ----
         Dim Iz, Ix, mass As Double
         Dim dia, hoog As Double
 
-        If Not Double.TryParse(TextBox102.Text, dia) Then dia = 999999
+
+        dia = NumericUpDown21.Value / 1000 '[m]
         If Not Double.TryParse(TextBox102.Text, hoog) Then hoog = 9999999
-        dia /= 1000                 '[m]
         hoog /= 1000                '[m]
         mass = beaters_weight       '[kg]
 
@@ -434,16 +443,12 @@ Public Class Form1
         TextBox28.Text = beater_weight.ToString("F0")       '[kg]
         TextBox80.Text = beaters_weight.ToString("F0")      '[kg]
         TextBox81.Text = beaters_weight.ToString("F0")      '[kg]
-        TextBox101.Text = (fn * 60).ToString("F0")          '[hz]-->[rpm]
-        TextBox102.Text = dia_s.ToString("F0")              '[mm]
-        TextBox103.Text = w.ToString("F2")                  '[kg/mm]
-        TextBox104.Text = L_shaft.ToString("F0")            '[mm]
+
+        TextBox102.Text = (dia * 1000).ToString("F0")       '[mm]
+        ' TextBox103.Text = w.ToString("F2")                '[kg/mm]
         TextBox105.Text = beaters_weight.ToString("F0")     '[kg]
         TextBox110.Text = Iz.ToString("F1")                 '[kg.m2]
         TextBox108.Text = Ix.ToString("F1")                 '[kg.m2]
-
-        '------ Check natural speed shaft -----
-        TextBox101.BackColor = IIf(_rpm > (fn * 60 * 1.2), Color.Red, Color.LightGreen)
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
@@ -1031,29 +1036,29 @@ Public Class Form1
         Calc_frequency()
     End Sub
     Private Sub Calc_frequency()
-        'Stress and strain table 8th edition 16.2
-        Dim Cn As Double = 6.6 * 2.54
-        Dim fn As Double
-        Dim dia, spacer, hp, abw As Double
-        Dim motor_hz, ratio As Double
+        ''Stress and strain table 8th edition 16.2
+        'Dim Cn As Double = 6.6 * 2.54
+        'Dim fn As Double
+        'Dim dia, spacer, hp, abw As Double
+        'Dim motor_hz, ratio As Double
 
-        '--------- Half of the beater -------------------
-        dia = NumericUpDown8.Value / 10         'beater diameter [cm]
-        spacer = NumericUpDown21.Value / 10     'spacer diameter [cm]
+        ''--------- Half of the beater -------------------
+        'dia = NumericUpDown8.Value / 10         'beater diameter [cm]
+        'spacer = NumericUpDown21.Value / 10     'spacer diameter [cm]
 
-        abw = (NumericUpDown8.Value - NumericUpDown21.Value) / (2 * 10)  'base width [cm]
-        hp = NumericUpDown9.Value / 10           'plate thickness [cm]
+        'abw = (NumericUpDown8.Value - NumericUpDown21.Value) / (2 * 10)  'base width [cm]
+        'hp = NumericUpDown9.Value / 10           'plate thickness [cm]
 
-        fn = Cn * hp * 10 ^ 4 / abw ^ 2
-        motor_hz = _rpm / 60
+        'fn = Cn * hp * 10 ^ 4 / abw ^ 2
+        'motor_hz = _rpm / 60
 
-        '---------- present data ----------
-        TextBox73.Text = fn.ToString("0")        'Frequency half beater     
-        TextBox78.Text = motor_hz.ToString("0")  'Motor frequency
+        ''---------- present data ----------
+        'TextBox73.Text = fn.ToString("0")        'Frequency half beater     
+        'TextBox78.Text = motor_hz.ToString("0")  'Motor frequency
 
-        '---------- Checks -----------------
-        ratio = fn / motor_hz
-        TextBox73.BackColor = CType(IIf(ratio < 1.2, Color.Red, Color.LightGreen), Color)
+        ''---------- Checks -----------------
+        'ratio = fn / motor_hz
+        'TextBox73.BackColor = CType(IIf(ratio < 1.2, Color.Red, Color.LightGreen), Color)
     End Sub
 
     Private Sub Calc_shaft_coupling()
@@ -1574,6 +1579,7 @@ Public Class Form1
     End Sub
 
     Private Sub Button11_Click(sender As Object, e As EventArgs) Handles Button11.Click, TabPage11.Enter
+        Calc_beam_flex()
         Calc_inertia()
     End Sub
 
