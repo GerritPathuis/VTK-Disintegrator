@@ -369,18 +369,27 @@ Public Class Form1
 
         Dim Cn, L_shaft, radius, Km As Double
         Dim fn As Double
+        Dim staf_I As Double    'Oppervlakte traagheidsmoment (Area moment Inertia)
+        Dim staf_A As Double    'Area
+        Dim rr As Double        'Radius of Gyration of cross section
+        Cn = 31.73              'Hinged-hinged
+        Km = 1.0                'Steel
 
-        Cn = 31.73                                  'Hinged-hinged
-        Km = 1.0                                    'Steel
-
-        radius = NumericUpDown21.Value / (2 * 24.4) 'Friction plate diameter [inch]
+        radius = NumericUpDown21.Value / (2 * 25.4) 'Friction plate diameter [inch]
         L_shaft = NumericUpDown29.Value / 25.4      'shaft length [inch]
+        staf_I = PI * radius ^ 4 / 4                '[In4]
+        staf_A = PI * radius ^ 2                    '[In2]
 
-        fn = Cn * radius / L_shaft ^ 2 * 10 ^ 4 * Km '[Hz]
+        rr = Sqrt(staf_I / staf_A)                  'Radius of Gyration 
+
+        fn = Cn * rr / L_shaft ^ 2 * 10 ^ 4 * Km '[Hz]
 
         '------ Present -------------
+        TextBox73.Text = rr.ToString("F1")                  '[in]
+        TextBox78.Text = L_shaft.ToString("F1")             '[in]
+        TextBox104.Text = (L_shaft * 25.4).ToString("F0")   '[mm]
         TextBox101.Text = (fn * 60).ToString("F0")          '[hz]-->[rpm]
-        TextBox104.Text = (L_shaft * 25.4).ToString("F0")          '[mm]
+        TextBox103.Text = Cn.ToString("F1")
 
         '------ Check natural speed shaft -----
         TextBox101.BackColor = IIf(_rpm > (fn * 60 * 1.2), Color.Red, Color.LightGreen)
@@ -428,11 +437,9 @@ Public Class Form1
         Dim Iz, Ix, mass As Double
         Dim dia, hoog As Double
 
-
-        dia = NumericUpDown21.Value / 1000 '[m]
-        If Not Double.TryParse(TextBox102.Text, hoog) Then hoog = 9999999
-        hoog /= 1000                '[m]
-        mass = beaters_weight       '[kg]
+        dia = NumericUpDown21.Value / 1000                  '[m]
+        hoog = NumericUpDown29.Value / 1000                 '[m]
+        mass = beaters_weight                               '[kg]
 
         Iz = 0.5 * mass * (dia / 2) ^ 2                     '[kg.m2]
         Ix = mass / 12 * (3 * (dia / 2) ^ 2 + hoog ^ 2)     '[kg.m2]
@@ -445,10 +452,9 @@ Public Class Form1
         TextBox81.Text = beaters_weight.ToString("F0")      '[kg]
 
         TextBox102.Text = (dia * 1000).ToString("F0")       '[mm]
-        ' TextBox103.Text = w.ToString("F2")                '[kg/mm]
         TextBox105.Text = beaters_weight.ToString("F0")     '[kg]
         TextBox110.Text = Iz.ToString("F1")                 '[kg.m2]
-        TextBox108.Text = Ix.ToString("F1")                 '[kg.m2]
+        TextBox108.Text = Ix.ToString("F0")                 '[kg.m2]
     End Sub
 
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click

@@ -14,7 +14,7 @@
     <framework targetVersion="4.6.1" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="Dissy.exe.manifest" size="4888">
+    <dependentAssembly dependencyType="install" codebase="Application Files\Dissy_1_0_0_67\Dissy.exe.manifest" size="4888">
       <assemblyIdentity name="Dissy.exe" version="1.0.0.67" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
