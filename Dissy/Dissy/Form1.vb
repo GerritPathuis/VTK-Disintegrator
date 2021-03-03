@@ -13,13 +13,13 @@ Public Class Form1
     Dim _total_inertia As Double
     Dim _Springstiff_1, _Springstiff_2 As Double      'Torsional analyses
     Dim _rpm As Double
-    Dim Torsional_point(100, 2) As Double           'For calculation on torsional frequency
+    ReadOnly Torsional_point(100, 2) As Double           'For calculation on torsional frequency
 
-    Dim dirpath_Eng As String = "N:\Engineering\VBasic\Dissy_input\"
-    Dim dirpath_Rap As String = "N:\Engineering\VBasic\Dissy_rapport_copy\"
-    Dim dirpath_Home As String = "C:\Temp\"
+    ReadOnly dirpath_Eng As String = "N:\Engineering\VBasic\Dissy_input\"
+    ReadOnly dirpath_Rap As String = "N:\Engineering\VBasic\Dissy_rapport_copy\"
+    ReadOnly dirpath_Home As String = "C:\Temp\"
 
-    Public Shared motor_rpm() As String = {600, 750, 1000, 1500, 3000}
+    Public Shared motor_rpm() As Double = {600, 750, 1000, 1500, 3000}
 
     'according to DIN6885-1
     ReadOnly shaft_key() As String = {
@@ -89,6 +89,8 @@ Public Class Form1
         Dim power1, power2 As Double
         Dim motor1_torque, motor2_torque, tot_motor_torque As Double
         Dim young As Double = 210000
+        Dim t2 As Double
+
 
         If ComboBox1.SelectedIndex > -1 Then
             words = shaft_key(ComboBox1.SelectedIndex).Split(separators, StringSplitOptions.None)
@@ -96,7 +98,8 @@ Public Class Form1
             TextBox48.Text = words(2)               'Key width
             TextBox14.Text = words(3)               'Key height
             TextBox13.Text = words(4)               '(t1) Key depth in shaft
-            TextBox15.Text = words(3) - words(4)    '(t2) Key above shaft
+            t2 = CDbl(words(3)) - CDbl(words(4))
+            TextBox15.Text = t2.ToString("F1")   '(t2) Key above shaft
         End If
 
         If ComboBox2.SelectedIndex > -1 Then
@@ -105,7 +108,8 @@ Public Class Form1
             TextBox85.Text = words(2)               'Key width
             TextBox18.Text = words(3)               'Key height
             TextBox21.Text = words(4)               '(t1) Key depth in shaft
-            TextBox84.Text = words(3) - words(4)    '(t2) Key depth in coupling
+            t2 = CDbl(words(3)) - CDbl(words(4))
+            TextBox84.Text = t2.ToString("F1")     '(t2) Key depth in coupling
         End If
 
 
@@ -267,13 +271,13 @@ Public Class Form1
         TextBox70.Text = (actual_egg_key_force / 10 ^ 3).ToString("0.0")     '[kN]
 
         '------- checks---------
-        TextBox32.BackColor = IIf(FOS_coupling_key_press > 3, Color.LightGreen, Color.Red)
-        Label35.Visible = IIf(FOS_coupling_key_press > 3, False, True)
-        TextBox86.BackColor = IIf(FOS_coupling_key_shear > 3, Color.LightGreen, Color.Red)
+        TextBox32.BackColor = CType(IIf(FOS_coupling_key_press > 3, Color.LightGreen, Color.Red), Color)
+        Label35.Visible = CBool(IIf(FOS_coupling_key_press > 3, False, True))
+        TextBox86.BackColor = CType(IIf(FOS_coupling_key_shear > 3, Color.LightGreen, Color.Red), Color)
 
-        TextBox40.BackColor = IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red)
-        TextBox65.BackColor = IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red)
-        TextBox88.BackColor = IIf(dt_FOS > 3, Color.LightGreen, Color.Red)
+        TextBox40.BackColor = CType(IIf(FOS_lump_key > 3, Color.LightGreen, Color.Red), Color)
+        TextBox65.BackColor = CType(IIf(FOS_lump_nut > 3, Color.LightGreen, Color.Red), Color)
+        TextBox88.BackColor = CType(IIf(dt_FOS > 3, Color.LightGreen, Color.Red), Color)
 
         Calc_inertia()
         Calc_shaft_coupling()
@@ -392,7 +396,7 @@ Public Class Form1
         TextBox103.Text = Cn.ToString("F1")
 
         '------ Check natural speed shaft -----
-        TextBox101.BackColor = IIf(_rpm > (fn * 60 * 1.2), Color.Red, Color.LightGreen)
+        TextBox101.BackColor = CType(IIf(_rpm > (fn * 60 * 1.2), Color.Red, Color.LightGreen), Color)
 
     End Sub
     Private Sub Calc_inertia()
@@ -400,8 +404,6 @@ Public Class Form1
         Dim no_beaters, B, H, H2, tip_width As Double
         Dim tb, th, I_missing_tip, tip_weight As Double
         Dim half_beater_weight, beater_weight, beaters_weight As Double
-
-        Dim young As Double = 210000 '[N/mm2]
 
         '-------- mass moment of --------------
         'see http://www.dtic.mil/dtic/tr/fulltext/u2/274936.pdf
@@ -424,9 +426,9 @@ Public Class Form1
         I_mass_inert = (half_beater_weight / 24) * ((7 * B ^ 2) + (4 * H2 ^ 2)) '[kg.m2] one triangle
 
         '---- now subtract the missing tio
-        I_mass_inert = I_mass_inert - I_missing_tip
+        I_mass_inert -= I_missing_tip
         I_mass_inert *= 2                                   'two triangles is one beater
-        half_beater_weight = half_beater_weight - tip_weight
+        half_beater_weight -= tip_weight
         _inertia_beaters = I_mass_inert * no_beaters        '[kg.m2]
 
         beater_weight = half_beater_weight * 2
@@ -533,11 +535,11 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Electric motor "
             row += 1
             oTable.Cell(row, 1).Range.Text = "Power motor #1"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value
+            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Power motor #2"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown30.Value
+            oTable.Cell(row, 2).Range.Text = NumericUpDown30.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Speed"
@@ -1096,7 +1098,7 @@ Public Class Form1
 
         TextBox60.Text = j.ToString("0")
         '--------- checks ---------
-        TextBox46.BackColor = IIf(τ < pressure_yield_cpl, Color.LightGreen, Color.Red)
+        TextBox46.BackColor = CType(IIf(τ < pressure_yield_cpl, Color.LightGreen, Color.Red), Color)
     End Sub
     Private Sub Calc_shaft()
         Dim dia, dia_calc, t1, f1, dm1, dm2 As Double
@@ -1175,11 +1177,11 @@ Public Class Form1
         TextBox68.Text = pressure_yield_shft.ToString("0")  'yield stress
 
         '--------- checks ---------
-        TextBox50.BackColor = IIf(σ12 < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
-        TextBox52.BackColor = IIf(σd < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
-        TextBox51.BackColor = IIf(τ < (pressure_yield_shft / 3), Color.LightGreen, Color.Red)
-        TextBox59.BackColor = IIf(σb < (σ_yield_shft / 3), Color.LightGreen, Color.Red)
-        TextBox45.BackColor = IIf(FOS_stress > 3.0, Color.LightGreen, Color.Red)
+        TextBox50.BackColor = CType(IIf(σ12 < (σ_yield_shft / 3), Color.LightGreen, Color.Red), Color)
+        TextBox52.BackColor = CType(IIf(σd < (σ_yield_shft / 3), Color.LightGreen, Color.Red), Color)
+        TextBox51.BackColor = CType(IIf(τ < (pressure_yield_shft / 3), Color.LightGreen, Color.Red), Color)
+        TextBox59.BackColor = CType(IIf(σb < (σ_yield_shft / 3), Color.LightGreen, Color.Red), Color)
+        TextBox45.BackColor = CType(IIf(FOS_stress > 3.0, Color.LightGreen, Color.Red), Color)
 
         '--------- beater shaft/key length input wrong--------- 
         If (length_l < length_b) Then
@@ -1466,7 +1468,7 @@ Public Class Form1
         _Springstiff_2 = coupl_stiff           '[Nm/rad] coupling #2
 
         TextBox72.Text = (_Springstiff_1 / 10 ^ 6).ToString("0.0") 'Stiffness Coupling
-        TextBox76.Text = _rpm
+        TextBox76.Text = _rpm.ToString("F1")
 
         '------------- One or two motors-----------------
         If NumericUpDown30.Value = 0 Then
@@ -1809,11 +1811,11 @@ Public Class Form1
             oTable.Cell(row, 1).Range.Text = "Electric motor "
             row += 1
             oTable.Cell(row, 1).Range.Text = "Power motor #1"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value
+            oTable.Cell(row, 2).Range.Text = NumericUpDown1.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Power motor #2"
-            oTable.Cell(row, 2).Range.Text = NumericUpDown30.Value
+            oTable.Cell(row, 2).Range.Text = NumericUpDown30.Value.ToString
             oTable.Cell(row, 3).Range.Text = "[kW]"
             row += 1
             oTable.Cell(row, 1).Range.Text = "Speed"
